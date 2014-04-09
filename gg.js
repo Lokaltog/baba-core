@@ -60,6 +60,11 @@ var group = function () {
 }
 
 var parseString = function (str) {
+	// replace option groups: [something|something else]
+	str = str.replace(/\[(.*?)\]/gi, function (m, $1) {
+		return randItem($1.split('|'))
+	})
+	// replace variables: $variable#filter#filter2
 	str = str.replace(/\$([\w#]+)/gi, function (m, $1) {
 		var split = $1.split('#')
 		var strRef = split[0]
@@ -155,16 +160,7 @@ var grammar = {
 	commandName: group('git-', ref('verb'), '-', ref('item')),
 
 	// action (generated description)
-	action: group(
-		ref('verb'), ' ',
-		[
-			ref('locatedItem', 'prependAn'),
-			group(ref('determiner'), ' ', ref('locatedItem', 'pluralize'))
-		], ' ',
-		ref('preposition'), ' ',
-		ref('verb', 'verbPastTensify'), ' ',
-		ref('locatedItem', 'pluralize')
-	),
+	action: '$verb [$locatedItem#prependAn|$determiner $locatedItem#pluralize] $preposition $verb#verbPastTensify $locatedItem#pluralize',
 
 	// statements that use all the stuff above
 	statement: [
