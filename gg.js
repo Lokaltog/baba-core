@@ -9,6 +9,10 @@ var randInt = function (min, max) {
 var filter = function (str, filters) {
 	var ret = ''
 	filters.some(function (f) {
+		if (typeof str === 'undefined') {
+			ret = '<<ERROR>>'
+			return true
+		}
 		if (str.match(f[0])) {
 			ret = str.replace(f[0], f[1])
 			return true
