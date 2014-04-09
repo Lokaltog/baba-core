@@ -65,7 +65,7 @@ var parseString = function (str) {
 		return randItem($1.split('|'))
 	})
 	// replace variables: $variable#filter#filter2
-	str = str.replace(/\$([\w#]+)/gi, function (m, $1) {
+	str = str.replace(/\$([a-z#]+)/gi, function (m, $1) {
 		var split = $1.split('#')
 		var strRef = split[0]
 		var strFilters = split.slice(1, split.length)
@@ -127,37 +127,26 @@ var grammar = {
 	// raw word lists
 	verb: 'add,allot,annotate,apply,archive,bisect,blame,branch,bundle,check,checkout,cherry-pick,clean,clone,commit,configure,count,describe,diff,export,fail,fast-export,fast-import,fetch,filter-branch,format-patch,forward-port,fsck,grep,help,import,index,init,log,merge,name,note,pack,parse,patch,perform,prevent,prune,pull,push,quiltimport,reapply,rebase,reflog,relink,remote,remove,repack,request,reset,reset,return,rev-list,rev-parse,revert,save,send,set,show,specify,stage,stash,strip,succeed'.split(','),
 	location: group(
-		[group('non-', [group(ref('verb', 'verbPresentParticiplify'), ' '), '']), ''],
+		'[non-$verb#verbPresentParticiplify |]',
 		'applied,downstream,local,remote,staged,unstaged,upstream'.split(',')
 	),
 	item: 'archive,stash'.split(','),
-	locatedItem: group([group(ref('location'), ' '), ''], ref('item')),
+	locatedItem: '[$location |]$item',
 	determiner: 'a few,all,any,some,the,various'.split(','),
 	adjective: 'automatic,passive,temporary,original'.split(','),
 	preposition: 'before,below,for,from,inside,next to,opposite of,outside,over,to'.split(','),
 
 	// generic sentences
-	sentence: group(ref('statement', 'uppercaseFirst'), '.'),
+	sentence: '$statement#uppercaseFirst.',
 	paragraph: ref('sentence', 2, 5),
 
 	// grammar-specific words and sentences
 	taggedItem: [
-		group(
-			'<',
-			[
-				group(['new', 'old'], ref('item')),
-				group(ref('verb'), '-', ref('item')),
-			],
-			'>'
-		),
-		group(
-			ref('verb', 'uppercase'),
-			'_',
-			ref('item', 'uppercase')
-		),
+		group('<', ['[new|old]$item', '$verb-$item'], '>'),
+		'$verb#uppercase_$verb#uppercase',
 	],
-	multipleItems: group(ref('determiner'), ' ', ref('adjective'), ' ', ref('item', 'pluralize')),
-	commandName: group('git-', ref('verb'), '-', ref('item')),
+	multipleItems: '$determiner $adjective $item#pluralize',
+	commandName: 'git-$verb-$item',
 
 	// action (generated description)
 	action: '$verb [$locatedItem#prependAn|$determiner $locatedItem#pluralize] $preposition $verb#verbPastTensify $locatedItem#pluralize',
