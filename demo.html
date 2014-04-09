@@ -1,0 +1,20 @@
+<html>
+  <head>
+    <title>Baba demo</title>
+  </head>
+  <body>
+    <p><button id="refresh">Refresh</button></p>
+    <p id="contents"></p>
+
+    <script src="parser.js"></script>
+    <script src="grammars/git-manual.js"></script>
+    <script>
+      document.getElementById('refresh').addEventListener('click', function () {
+      var p = new GrammarParser()
+      var g = GitManualGrammar(p)
+      p.setGrammar(g)
+      document.getElementById('contents').textContent = p.render('paragraph')
+      })
+    </script>
+  </body>
+</html>
