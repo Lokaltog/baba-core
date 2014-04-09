@@ -13,7 +13,7 @@
       var p = new GrammarParser()
       var g = GitManualGrammar(p)
       p.setGrammar(g)
-      document.getElementById('contents').textContent = p.render('paragraph')
+      document.getElementById('contents').innerHTML = p.render('paragraph')
       })
     </script>
   </body>
