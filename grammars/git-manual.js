@@ -41,8 +41,10 @@ var GitManualGrammar = function (p) {
 		verbSupply: 'supply,specify,set,define,provide'.split(','),
 
 		// grammar objects
-		commandName: '<code>git-$verb-$object</code>',
-		commandOption: '<code>--[$verb-|]$verb-$object</code>',
+		commandNameRaw: 'git-$verb-$object',
+		commandName: '<code>$commandNameRaw</code>',
+		commandOptionRaw: '--[$verb-|]$verb-$object',
+		commandOption: '<code>$commandOptionRaw</code>',
 		action: '$gitVerb [$locatedObject#prependAn|$determiner $locatedObject#pluralize] $preposition $gitVerb#verbPastTensify $locatedObject#pluralize',
 		commandDescription: '$gitVerb#verbPresentTensify [$locatedObject#prependAn|$determiner $locatedObject#pluralize] $preposition $gitVerb#verbPastTensify $locatedObject#pluralize, and $statement.',
 		multipleObjects: '$determiner $adjective $object#pluralize',
