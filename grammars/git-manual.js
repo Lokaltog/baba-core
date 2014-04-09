@@ -7,7 +7,7 @@ var GitManualGrammar = function (p) {
 			'$statement#uppercaseFirst.',
 			'$statement#uppercaseFirst, $conclusion.',
 		],
-		paragraph: p.ref('sentence', 3, 6),
+		paragraph: p.ref('sentence', 2, 4),
 
 		// raw word lists
 		verb: 'add,allot,annotate,apply,archive,bisect,blame,branch,bundle,check,checkout,cherry-pick,clean,clone,commit,configure,count,describe,diff,export,fail,fast-export,fast-import,fetch,filter-branch,format-patch,forward-port,fsck,grep,import,index,initialize,log,merge,name,note,pack,parse,patch,perform,prevent,prune,pull,push,quiltimport,reapply,rebase,reflog,relink,remote,remove,repack,request,reset,reset,return,rev-list,rev-parse,revert,save,send,set,show,specify,stage,stash,strip'.split(','),
@@ -39,7 +39,8 @@ var GitManualGrammar = function (p) {
 		// grammar objects
 		commandName: '<code>git-$verb-$object</code>',
 		commandOption: '<code>--[$verb-|]$verb-$object</code>',
-		action: '$verb#verbPresentTensify [$locatedObject#prependAn|$determiner $locatedObject#pluralize] $preposition $verb#verbPastTensify $locatedObject#pluralize',
+		action: '$verb [$locatedObject#prependAn|$determiner $locatedObject#pluralize] $preposition $verb#verbPastTensify $locatedObject#pluralize',
+		commandDescription: '$verb#verbPresentTensify [$locatedObject#prependAn|$determiner $locatedObject#pluralize] $preposition $verb#verbPastTensify $locatedObject#pluralize, and $statement.',
 		multipleObjects: '$determiner $adjective $object#pluralize',
 		locatedObject: '[$location |]$object',
 		constantObject: [
