@@ -4,7 +4,9 @@
   </head>
   <body>
     <p><button id="refresh">Refresh</button></p>
-    <p id="contents"></p>
+    <h1 id="title"></h1>
+    <p id="description" style="font-weight:bold"></p>
+    <div id="contents"></div>
 
     <script src="parser.js"></script>
     <script src="grammars/git-manual.js"></script>
@@ -13,7 +15,10 @@
       var p = new GrammarParser()
       var g = GitManualGrammar(p)
       p.setGrammar(g)
-      document.getElementById('contents').innerHTML = p.render('paragraph')
+      var commandName = p.render('commandName')
+      document.getElementById('title').innerHTML = commandName + ' - ' + p.render('action')
+      document.getElementById('description').innerHTML = commandName + ' ' + p.render('commandDescription')
+      document.getElementById('contents').innerHTML = '<p>' + p.render('paragraph') + '<p>' + p.render('paragraph') + '<p>' + p.render('paragraph')
       })
     </script>
   </body>
