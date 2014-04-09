@@ -2,12 +2,12 @@ var GitManualGrammar = function (p) {
 	return {
 		// sentences
 		sentence: '$statement#uppercaseFirst.',
-		paragraph: p.ref('sentence', 2, 5),
+		paragraph: p.ref('sentence', 3, 6),
 
 		// raw word lists
-		verb: 'add,allot,annotate,apply,archive,bisect,blame,branch,bundle,check,checkout,cherry-pick,clean,clone,commit,configure,count,describe,diff,export,fail,fast-export,fast-import,fetch,filter-branch,format-patch,forward-port,fsck,grep,help,import,index,init,log,merge,name,note,pack,parse,patch,perform,prevent,prune,pull,push,quiltimport,reapply,rebase,reflog,relink,remote,remove,repack,request,reset,reset,return,rev-list,rev-parse,revert,save,send,set,show,specify,stage,stash,strip,succeed'.split(','),
+		verb: 'add,allot,annotate,apply,archive,bisect,blame,branch,bundle,check,checkout,cherry-pick,clean,clone,commit,configure,count,describe,diff,export,fail,fast-export,fast-import,fetch,filter-branch,format-patch,forward-port,fsck,grep,import,index,initialize,log,merge,name,note,pack,parse,patch,perform,prevent,prune,pull,push,quiltimport,reapply,rebase,reflog,relink,remote,remove,repack,request,reset,reset,return,rev-list,rev-parse,revert,save,send,set,show,specify,stage,stash,strip,succeed'.split(','),
 		verbPerform: 'perform,execute,apply'.split(','),
-		object: 'archive,area,base,branch,change,commit,file,head,history,index,log,object,pack,ref,stage,stash,submodule,subtree,tag,tip,tree'.split(','),
+		object: 'archive,area,base,branch,change,commit,file,head,history,index,log,object,pack,path,ref,stage,stash,submodule,subtree,tag,tip,tree'.split(','),
 		location: p.group(
 			'[non-$verb#verbPresentParticiplify |]',
 			'applied,downstream,local,remote,staged,unstaged,upstream'.split(',')
@@ -21,6 +21,8 @@ var GitManualGrammar = function (p) {
 
 		// make sure we're not consistent
 		wordFailure: 'failure,error,breakdown,segfault,collapse'.split(','),
+		wordImmediately: 'immediately,soon,some time,a while'.split(','),
+		wordOption: 'option,argument'.split(','),
 		wordPossible: 'possible,a [$chanceDeterminer |]possibility,a [$chanceDeterminer |] chance'.split(','),
 		wordPreviously: 'previously,earlier,formerly,once'.split(','),
 		wordShould: 'will have to,may have to,should'.split(','),
@@ -29,14 +31,14 @@ var GitManualGrammar = function (p) {
 		wordWill: 'can,may,must,should,will'.split(','),
 
 		// grammar objects
-		commandName: 'git-$verb-$object',
-		commandOption: '--[$verb-|]$verb-$object',
-		action: '$verb [$locatedObject#prependAn|$determiner $locatedObject#pluralize] $preposition $verb#verbPastTensify $locatedObject#pluralize',
+		commandName: '<code>git-$verb-$object</code>',
+		commandOption: '<code>--[$verb-|]$verb-$object</code>',
+		action: '$verb#verbPresentTensify [$locatedObject#prependAn|$determiner $locatedObject#pluralize] $preposition $verb#verbPastTensify $locatedObject#pluralize',
 		multipleObjects: '$determiner $adjective $object#pluralize',
 		locatedObject: '[$location |]$object',
 		constantObject: [
-			p.group('<', ['[new|old]$object', '$verb-$object'], '>'),
-			'$verb#uppercase_$verb#uppercase',
+			p.group('<i>&lt;', ['[new|old]$object', '$verb-$object'], '&gt;</i>'),
+			'<code>$verb#uppercase_$verb#uppercase</code>',
 		],
 		condition: [
 			'$constantObject is [not |]$verb#verbPastTensify',
@@ -49,10 +51,15 @@ var GitManualGrammar = function (p) {
 			'$multipleObjects are $verb#verbPastTensify to $constantObject by $commandName',
 			'the same set of $object#pluralize would [$wordSometimes |]be $verb#verbPastTensify in $adjective#prependAn $object',
 			'$constantObject is $verb#verbPastTensify to $verb the $object of the $object $preposition the $object',
-			'$multipleObjects that were $wordPreviously $verb#verbPastTensify $preposition the $adjective $object are $verb#verbPastTensify to $adjective#prependAn $object',
+			'$multipleObjects that were $wordPreviously $verb#verbPastTensify $preposition the $adjective $object#pluralize are $verb#verbPastTensify to $adjective#prependAn $object',
 			'it is [$wordSometimes |]$wordPossible that $verb#verbPastTensify#prependAn $wordFailure will prevent $adjective $verb#verbPresentParticiplify of $multipleObjects',
 			'$subject $wordWill $verb any such $wordFailure#pluralize and run $commandName $commandOption instead',
 			'to $verb $adjective#prependAn $constantObject and $verb the working $object#pluralize, use the command $commandName $commandOption instead',
+			'the $object to be $verb#verbPastTensify can be $wordSupplied in several ways',
+			'the $commandOption $wordOption can be used to $verb $object#prependAn for the $object that is $verb#verbPastTensify by $adjective#prependAn $object',
+			'if you $verb $object#prependAn and it $verb#verbPresentTensify $object#prependAn $wordImmediately after that, you can $verb it with $commandName',
+			'after $verb#verbPresentParticiplify $object#pluralize to many $object#pluralize, you can $verb the $object of the $object#pluralize',
+			'after $commandName#prependAn ($verb#verbPastTensify by $commandName[ or $commandName|]) $verb#verbPresentTensify $object#prependAn, cleanly $verb#verbPastTensify $object#pluralize are $verb#verbPastTensify for $subject, and $object#pluralize that were $verb#verbPastTensify during $verb#verbPresentParticiplify are left in $verb#verbPastTensify#prependAn state',
 		],
 	}
 }

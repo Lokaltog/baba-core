@@ -122,11 +122,18 @@ GrammarParser.prototype.filters = {
 		[/(.*)([sc]h|s)$/i, '$1$2es'],
 		[/(.*)/i, '$1s'],
 	],
+	verbPresentTensify: [
+		// general rules
+		[/(.*)y$/i, '$1ies'],
+		[/(.*)([sc]h|s)$/i, '$1$2es'],
+		[/(.*)/i, '$1s'],
+	],
 	verbPastTensify: [
 		// exceptions
 		[/^((re)?set)$/i, '$1'],
 		[/^(send)$/i, 'sent'],
 		[/^(show)$/i, 'shown'],
+		[/^(checkout)$/i, 'checked out'],
 		// general rules
 		[/(.*[aeiouy])([tgp])$/i, '$1$2$2ed'],
 		[/(.*)e$/i, '$1ed'],
