@@ -17,16 +17,32 @@ var filter = function (str, filters) {
 	return ret
 }
 
-var ref = function (key, min, max, filters) {
-	if (typeof min === 'object' && !filters) {
-		filters = min
+var ref = function (key, min, max, filterList) {
+	var refFilters = []
+	if (typeof min === 'string' && !filterList) {
+		filterList = min
 	}
+
+	if (filterList) {
+        if (typeof filterList === 'string') {
+            filterList = [filterList]
+        }
+        filterList.forEach(function (filter) {
+            refFilters.push(filters[filter])
+        })
+	}
+
 	return function () {
 		var ret = []
 		var len = typeof min === 'number' && typeof max === 'number' ? randInt(min, max) : 1
 		for (var i = 0; i < len; i++) {
 			var item = parseGrammar(grammar[key])
-			ret.push(filters ? filter(item, filters) : item)
+			if (refFilters) {
+				refFilters.forEach(function (f) {
+					item = filter(item, f)
+				})
+			}
+			ret.push(item)
 		}
 		return ret.join(' ')
 	}
@@ -43,6 +59,17 @@ var group = function () {
 	}
 }
 
+var parseString = function (str) {
+	str = str.replace(/\$([\w#]+)/gi, function (m, $1) {
+		var split = $1.split('#')
+		var strRef = split[0]
+		var strFilters = split.slice(1, split.length)
+
+		return ref(strRef, null, null, strFilters)()
+	})
+	return str
+}
+
 var parseGrammar = function (elements, root) {
 	if (typeof elements === 'function') {
 		return parseGrammar(elements())
@@ -51,7 +78,7 @@ var parseGrammar = function (elements, root) {
 		return parseGrammar(randItem(elements))
 	}
 	if (typeof elements === 'string') {
-		return elements
+		return parseString(elements)
 	}
 }
 
@@ -95,7 +122,7 @@ var grammar = {
 	// raw word lists
 	verb: 'add,allot,annotate,apply,archive,bisect,blame,branch,bundle,check,checkout,cherry-pick,clean,clone,commit,configure,count,describe,diff,export,fail,fast-export,fast-import,fetch,filter-branch,format-patch,forward-port,fsck,grep,help,import,index,init,log,merge,name,note,pack,parse,patch,perform,prevent,prune,pull,push,quiltimport,reapply,rebase,reflog,relink,remote,remove,repack,request,reset,reset,return,rev-list,rev-parse,revert,save,send,set,show,specify,stage,stash,strip,succeed'.split(','),
 	location: group(
-		[group('non-', [group(ref('verb', filters.verbPresentParticiplify), ' '), '']), ''],
+		[group('non-', [group(ref('verb', 'verbPresentParticiplify'), ' '), '']), ''],
 		'applied,downstream,local,remote,staged,unstaged,upstream'.split(',')
 	),
 	item: 'archive,stash'.split(','),
@@ -105,7 +132,7 @@ var grammar = {
 	preposition: 'before,below,for,from,inside,next to,opposite of,outside,over,to'.split(','),
 
 	// generic sentences
-	sentence: group(ref('statement', filters.uppercaseFirst), '.'),
+	sentence: group(ref('statement', 'uppercaseFirst'), '.'),
 	paragraph: ref('sentence', 2, 5),
 
 	// grammar-specific words and sentences
@@ -119,29 +146,29 @@ var grammar = {
 			'>'
 		),
 		group(
-			ref('verb', filters.uppercase),
+			ref('verb', 'uppercase'),
 			'_',
-			ref('item', filters.uppercase)
+			ref('item', 'uppercase')
 		),
 	],
-	multipleItems: group(ref('determiner'), ' ', ref('adjective'), ' ', ref('item', filters.pluralize)),
+	multipleItems: group(ref('determiner'), ' ', ref('adjective'), ' ', ref('item', 'pluralize')),
 	commandName: group('git-', ref('verb'), '-', ref('item')),
 
 	// action (generated description)
 	action: group(
 		ref('verb'), ' ',
 		[
-			ref('locatedItem', filters.prependAn),
-			group(ref('determiner'), ' ', ref('locatedItem', filters.pluralize))
+			ref('locatedItem', 'prependAn'),
+			group(ref('determiner'), ' ', ref('locatedItem', 'pluralize'))
 		], ' ',
 		ref('preposition'), ' ',
-		ref('verb', filters.verbPastTensify), ' ',
-		ref('locatedItem', filters.pluralize)
+		ref('verb', 'verbPastTensify'), ' ',
+		ref('locatedItem', 'pluralize')
 	),
 
 	// statements that use all the stuff above
 	statement: [
-		group(ref('multipleItems'), ' are ', ref('verb', filters.verbPastTensify), ' to ', ref('taggedItem'), ' by ', ref('commandName')),
+		['$multipleItems are $verb#verbPastTensify to $taggedItem by $commandName'],
 	],
 }
 
