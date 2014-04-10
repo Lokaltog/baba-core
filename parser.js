@@ -135,13 +135,13 @@ GrammarParser.prototype.filters = {
 		[/^(show)$/i, 'shown'],
 		[/^(checkout)$/i, 'checked out'],
 		// general rules
-		[/(.*[aeiouy])([bcdfglmpstvz])$/i, '$1$2$2ed'],
+		[/(.*[^aeiouy][aeiouy])([bcdfglmpstvz])$/i, '$1$2$2ed'],
 		[/(.*)e$/i, '$1ed'],
 		[/(.*)y$/i, '$1ied'],
 		[/(.*)/i, '$1ed'],
 	],
 	verbPresentParticiplify: [
-		[/(.*[aeiouy])([bcdfglmpstvz])$/i, '$1$2$2ing'],
+		[/(.*[^aeiouy][aeiouy])([bcdfglmpstvz])$/i, '$1$2$2ing'],
 		[/(.*)e$/i, '$1ing'],
 		[/(.*)$/i, '$1ing'],
 	],
