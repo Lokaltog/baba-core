@@ -40,6 +40,8 @@ var GitManualGrammar = function (p) {
 		verbPerform: 'perform,execute,apply'.split(','),
 		verbSupply: 'supply,specify,set,define,provide'.split(','),
 
+		andOr: ['and', 'or', 'and/or'],
+
 		// grammar objects
 		commandNameRaw: 'git-$verb-$object',
 		commandName: '<code>$commandNameRaw</code>',
@@ -72,19 +74,19 @@ var GitManualGrammar = function (p) {
 			'the same set of $object#pluralize would [$wordSometimes |]be $gitVerb#verbPastTensify in $actionAdjective#prependAn $object',
 			'$multipleObjects that were $wordPreviously $gitVerb#verbPastTensify $preposition the $actionAdjective $object#pluralize are $gitVerb#verbPastTensify to $actionAdjective#prependAn $object',
 			'it is [$wordSometimes |]$wordPossible that $gitVerb#verbPastTensify#prependAn $wordFailure will prevent $actionAdjective $gitVerb#verbPresentParticiplify of $multipleObjects',
-			'$subject $wordWill $gitVerb any such $object#pluralize and run $commandName $commandOption instead',
-			'to $gitVerb $actionAdjective#prependAn $constantObject and $gitVerb the working $object#pluralize, use the command $commandName $commandOption',
+			'$subject $wordWill $gitVerb any such $object#pluralize $andOr run $commandName $commandOption instead',
+			'to $gitVerb $actionAdjective#prependAn $constantObject $andOr $gitVerb the working $object#pluralize, use the command $commandName $commandOption',
 			'the $object to be $gitVerb#verbPastTensify can be $verbSupply#verbPastTensify in several ways',
 			'the $commandOption $wordOption can be used to $gitVerb $object#prependAn for the $object that is $gitVerb#verbPastTensify by $actionAdjective#prependAn $object',
 			'any $gitVerb#verbPresentParticiplify of $object#prependAn that $gitVerb#verbPresentTensify $object#prependAn $wordImmediately after can be $gitVerb#verbPastTensify with $commandName',
 			'after $gitVerb#verbPresentParticiplify $object#pluralize to many $object#pluralize, you can $gitVerb the $object of the $object#pluralize',
-			'after $commandName#prependAn ($gitVerb#verbPastTensify by $commandName[ or $commandName|]) $gitVerb#verbPresentTensify $object#prependAn, cleanly $gitVerb#verbPastTensify $object#pluralize are $gitVerb#verbPastTensify for $subject, and $object#pluralize that were $gitVerb#verbPastTensify during $gitVerb#verbPresentParticiplify are left in $gitVerb#verbPastTensify#prependAn state',
+			'after $commandName#prependAn ($gitVerb#verbPastTensify by $commandName[ $andOr $commandName|]) $gitVerb#verbPresentTensify $object#prependAn, cleanly $gitVerb#verbPastTensify $object#pluralize are $gitVerb#verbPastTensify for $subject, and $object#pluralize that were $gitVerb#verbPastTensify during $gitVerb#verbPresentParticiplify are left in $gitVerb#verbPastTensify#prependAn state',
 			'$multipleObjects $gitVerb#verbPastTensify by $object#pluralize in the $locatedObject, but that [$wordSometimes |]are [not |]in $constantObject, are $gitVerb#verbPastTensify in $actionAdjective#prependAn $object',
 			'$commandName takes $wordOption#pluralize $wordRelevant to the $commandName command to control what is $verb#verbPastTensify and how',
 		],
 		optionDescription: [
 			'$gitVerb the $object#pluralize of any $object#pluralize that are $gitVerb#verbPastTensify',
-			'$conditionalConjunction this $wordOption is $verbSupply#verbPastTensify, the $object prefixes $gitPath [and|or] $gitPath',
+			'$conditionalConjunction this $wordOption is $verbSupply#verbPastTensify, the $object prefixes $gitPath $andOr $gitPath',
 			'the $object will [not |]be $verb#verbPastTensify by $gitVerb#verbPastTensify#prependAn $object',
 			'use $object to $gitVerb $gitPath to $gitVerb#prependAn $object',
 			'with[out|] this $wordOption, $commandName $commandOption $gitVerb#verbPresentTensify $object#pluralize that $verb the $verbSupply#verbPastTensify $object#pluralize',
