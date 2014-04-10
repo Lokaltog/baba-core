@@ -123,7 +123,10 @@ GrammarParser.prototype.filters = {
 		[/(.*)/i, '$1s'],
 	],
 	verbPresentTensify: [
+		// exceptions
+		[/^(checkout)$/i, 'checks out'],
 		// general rules
+		[/(.*)ex$/i, '$1exes'],
 		[/(.*)y$/i, '$1ies'],
 		[/(.*)([sc]h|s)$/i, '$1$2es'],
 		[/(.*)/i, '$1s'],
