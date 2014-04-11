@@ -10,15 +10,15 @@ module.exports = function (grunt) {
 			production: {
 				files: [{
 					expand: true,
-					cwd: '.',
+					cwd: 'src',
 					src: 'baba.js',
-					dest: 'build',
+					dest: 'dest',
 					ext: '.min.js',
 				}, {
 					expand: true,
-					cwd: '.',
+					cwd: 'src',
 					src: 'grammar/*.js',
-					dest: 'build',
+					dest: 'dest',
 					ext: '.min.js',
 				}],
 				options: {
