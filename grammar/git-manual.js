@@ -7,6 +7,15 @@
  */
 
 if (typeof babaGrammars === 'undefined') var babaGrammars = {}
+if (typeof babaTransforms === 'undefined') var babaTransforms = {}
+
+babaTransforms.gitManual = {
+	'__common__': {
+		'constantify': function (str) {
+			return str.toUpperCase().replace(/[^a-z0-9]/gi, '_')
+		},
+	},
+}
 
 babaGrammars.gitManual = {
 	'sentence': [

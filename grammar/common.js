@@ -1,5 +1,5 @@
 /*!
- * baba/transforms/common - Common transforms for Baba
+ * baba/grammar/common - Common grammar and transforms for Baba
  *
  * Author: Kim Silkebækken
  *
@@ -9,7 +9,7 @@
 if (typeof babaTransforms === 'undefined') var babaTransforms = {}
 
 babaTransforms.common = {
-	__common__: {
+	'__common__': {
 		'prepend-an': function (str) {
 			if (str[0].match(/[aeiou]/)) {
 				return 'an ' + str
@@ -25,13 +25,10 @@ babaTransforms.common = {
 		'lowercase': function (str) {
 			return str.toLowerCase()
 		},
-		'constantify': function (str) {
-			return str.toUpperCase().replace(/[^a-z0-9]/gi, '_')
-		},
 	},
-	verb: {
-		tense: {
-			past: function (str) {
+	'verb': {
+		'tense': {
+			'past': function (str) {
 				[
 					// exceptions
 					[/^((re)?set)$/i, '$1'],
@@ -51,7 +48,7 @@ babaTransforms.common = {
 				})
 				return ret
 			},
-			present: function (str) {
+			'present': function (str) {
 				[
 					// exceptions
 					[/^(checkout)$/i, 'checks out'],
@@ -83,8 +80,8 @@ babaTransforms.common = {
 			},
 		},
 	},
-	noun: {
-		plural: function (str) {
+	'noun': {
+		'plural': function (str) {
 			[
 				[/(.*)ex$/i, '$1ices'],
 				[/(.*)y$/i, '$1ies'],
