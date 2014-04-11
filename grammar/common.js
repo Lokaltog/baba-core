@@ -54,7 +54,7 @@ babaTransforms.common = {
 					[/^(checkout)$/i, 'checks out'],
 					// general rules
 					[/(.*)ex$/i, '$1exes'],
-					[/(.*)y$/i, '$1ies'],
+					[/(.*)([^aeo])y$/i, '$1$2ies'],
 					[/(.*)([sc]h|s)$/i, '$1$2es'],
 					[/(.*)/i, '$1s'],
 				].some(function (filter) {
@@ -67,6 +67,9 @@ babaTransforms.common = {
 			},
 			'present-participle': function (str) {
 				[
+					// exceptions
+					[/^(checkout)$/i, 'checking out'],
+					// general rules
 					[/(.*[^aeiouy][aeiouy])([bcdfglmpstvz])$/i, '$1$2$2ing'],
 					[/(.*)e$/i, '$1ing'],
 					[/(.*)$/i, '$1ing'],
