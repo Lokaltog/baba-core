@@ -25,14 +25,14 @@
 		return string.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&')
 	}
 
-	function escapeTags (tags) {
+	function escapeTags (tags, consumeWs) {
 		if (!Array.isArray(tags) || tags.length !== 2) {
 			throw new Error('Invalid tags: ' + tags)
 		}
 
 		return [
-			escapeRegExp(tags[0]) + '\\s*',
-			'\\s*' + escapeRegExp(tags[1]),
+			escapeRegExp(tags[0]) + (consumeWs ? '\\s*' : ''),
+			(consumeWs ? '\\s*' : '') + escapeRegExp(tags[1]),
 		]
 	}
 
@@ -85,11 +85,11 @@
 	}
 
 	function parseString (str) {
-	    var refTagRE = escapeTags(baba.refTags)
-	    var altTagRE = escapeTags(baba.altTags)
+		var refTagRE = escapeTags(baba.refTags, true)
+		var altTagRE = escapeTags(baba.altTags)
 
-        str = str.replace(new RegExp(refTagRE[0] + '(.+?)' + refTagRE[1], 'g'), replaceRefTags)
-        str = str.replace(new RegExp(altTagRE[0] + '(.+?)' + altTagRE[1], 'g'), replaceAltTags)
+		str = str.replace(new RegExp(refTagRE[0] + '(.+?)' + refTagRE[1], 'g'), replaceRefTags)
+		str = str.replace(new RegExp(altTagRE[0] + '(.+?)' + altTagRE[1], 'g'), replaceAltTags)
 
 		return str
 	}
