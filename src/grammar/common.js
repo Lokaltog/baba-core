@@ -101,8 +101,8 @@
 				'-ity': replaceRegexp.bind(this, [
 					// general rules
 					[/(.*)eme$/i, '$1emacy'],
-					[/(.*)ible$/i, '$1ibility'],
-					[/(.*)able$/i, '$1abity'],
+					[/(.*)([ia])ble$/i, '$1$2bility'],
+					[/(.*)([tv])e$/i, '$1$2eness'],
 					[/(.*)[aeiouy]$/i, '$1ity'],
 					[/(.*)$/i, '$1ity'],
 				]),
