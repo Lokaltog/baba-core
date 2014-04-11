@@ -43,7 +43,7 @@ babaGrammars.gitManual = {
 
 	'noun': {
 		'git': '[[archive|area|base|branch|change|commit|file|head|history|index|log|object|origin|pack|path|ref|remote|stage|stash|submodule|subtree|tag|tip|tree|upstream]]',
-		'location': '[[non-{{verb.git|tense.present-participle}} |]][[applied|downstream|local|remote|staged|unstaged|upstream]]',
+		'location': '[[non-{{verb.git|tense.past}} |]][[applied|downstream|local|remote|staged|unstaged|upstream]]',
 		'synonym': {
 			'failure': '[[failure|error]]',
 			'option': '[[option|argument|flag]]',
