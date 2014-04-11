@@ -13,7 +13,7 @@
     <script src="baba.js"></script>
     <script>
       document.getElementById('refresh').addEventListener('click', function () {
-      Baba.init(babaGrammars.gitManual, babaTransforms.common)
+      Baba.init(babaGrammars.gitManual, [babaTransforms.common, babaTransforms.gitManual])
       document.getElementById('description').innerHTML = Baba.render(babaGrammars.gitManual.paragraph)
       })
     </script>
