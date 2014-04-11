@@ -8,17 +8,13 @@
     <p id="description" style="font-weight:bold"></p>
     <div id="contents"></div>
 
-    <script src="parser.js"></script>
-    <script src="grammars/git-manual.js"></script>
+    <script src="grammar/common.js"></script>
+    <script src="grammar/git-manual.js"></script>
+    <script src="baba.js"></script>
     <script>
       document.getElementById('refresh').addEventListener('click', function () {
-      var p = new GrammarParser()
-      var g = GitManualGrammar(p)
-      p.setGrammar(g)
-      var commandName = p.render('commandName')
-      document.getElementById('title').innerHTML = commandName + ' - ' + p.render('action')
-      document.getElementById('description').innerHTML = commandName + ' ' + p.render('commandDescription')
-      document.getElementById('contents').innerHTML = '<p>' + p.render('paragraph') + '<p>' + p.render('paragraph') + '<p>' + p.render('paragraph')
+      Baba.init(babaGrammars.gitManual, babaTransforms.common)
+      document.getElementById('description').innerHTML = Baba.render(babaGrammars.gitManual.paragraph)
       })
     </script>
   </body>
