@@ -1,5 +1,5 @@
 /*!
- * baba/grammars/git-manual - Git manual grammar for Baba
+ * baba/grammar/git-manual - Git manual grammar for Baba
  *
  * Author: Kim Silkebækken
  *
