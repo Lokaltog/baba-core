@@ -124,8 +124,20 @@
 			}
 
 			if (ref[0] === '$') {
-				ref = ref.slice(1, ref.length)
-				refValue = getVariable(ref)
+				var varNameSplit = ref.split(/\s+/g)
+				var key = varNameSplit[0].slice(1, varNameSplit[0].length)
+				var fallback = typeof varNameSplit[1] !== 'undefined' ? varNameSplit[1] : null
+
+				if (variables.hasOwnProperty(key)) {
+					refValue = variables[key]
+				}
+				else if (fallback) {
+					refValue = objPropertyPath(grammar, fallback)
+					grammarParent = fallback.split('.')[0]
+				}
+				else {
+					throw 'Undefined variable: $' + key
+				}
 			}
 			else {
 				refValue = objPropertyPath(grammar, ref)
@@ -201,13 +213,6 @@
 			})
 
 			return transformedStr
-		}
-
-		function getVariable(key) {
-			if (variables.hasOwnProperty(key)) {
-				return variables[key]
-			}
-			throw 'Undefined variable: $' + key
 		}
 	}
 
