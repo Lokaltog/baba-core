@@ -25,7 +25,7 @@
 		return string.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&')
 	}
 
-	function escapeTags (tags, consumeWs) {
+	function escapeTags(tags, consumeWs) {
 		if (!Array.isArray(tags) || tags.length !== 2) {
 			throw new Error('Invalid tags: ' + tags)
 		}
@@ -47,7 +47,7 @@
 					obj1[p] = obj2[p]
 				}
 			}
-			catch(e) {
+			catch (e) {
 				// Property in destination object not set create it and set its value.
 				obj1[p] = obj2[p]
 			}
@@ -55,12 +55,8 @@
 		return obj1
 	}
 
-	function randItem (items) {
+	function randItem(items) {
 		return items[Math.floor(Math.random() * items.length)]
-	}
-
-	function randInt (min, max) {
-		return Math.floor(Math.random() * (max - min + 1)) + min
 	}
 
 	function objPropertyPath(obj, path, silent) {
@@ -72,7 +68,7 @@
 		return obj
 	}
 
-	function parseGrammar (elements) {
+	function parseGrammar(elements) {
 		if (typeof elements === 'function') {
 			return parseGrammar(elements())
 		}
@@ -84,7 +80,7 @@
 		}
 	}
 
-	function parseString (str) {
+	function parseString(str) {
 		var refTagRE = escapeTags(baba.refTags, true)
 		var altTagRE = escapeTags(baba.altTags)
 
@@ -94,16 +90,16 @@
 		return str
 	}
 
-	function replaceAltTags (m, $1) {
+	function replaceAltTags(m, $1) {
 		return randItem($1.split('|'))
 	}
 
-	function replaceRefTags (m, $1) {
+	function replaceRefTags(m, $1) {
 		// Split variable and modifiers
 		var split = $1.match(/(\\.|[^\|])+/g)
 		var ref = split[0]
 		var transforms = split.slice(1, split.length)
-		var grammarPath = ''
+		var grammarParent = ''
 		var refValue = ''
 
 		// Check if we need to assign variables later
@@ -144,7 +140,7 @@
 		return refValue
 	}
 
-	function applyTransform (str, transform, grammarParent) {
+	function applyTransform(str, transform, grammarParent) {
 		// Check if we need to assign variables later
 		var transformToVariables = []
 		var transformSplit = transform.split('->')
@@ -194,11 +190,11 @@
 		return transformedStr
 	}
 
-	function getTagVariable (key) {
+	function getTagVariable(key) {
 		if (baba.tagVariables.hasOwnProperty(key)) {
 			return baba.tagVariables[key]
 		}
-		throw 'Undefined variable: $'+ key
+		throw 'Undefined variable: $' + key
 	}
 
 	baba.name = 'baba.js'
