@@ -1,6 +1,8 @@
 /*!
  * baba.js - JavaScript garbage text generator inspired by the Dada Engine
  *
+ * Author: Kim Silkebækken
+ *
  * https://github.com/Lokaltog/baba
  */
 
@@ -100,10 +102,13 @@
 		}
 		else {
 			refValue = objPropertyPath(baba.grammar, ref)
-			grammarPath = ref.split('.').slice(0, -1).join('.')
+			grammarParent = ref.split('.')[0]
 		}
 
 		refValue = parseGrammar(refValue)
+		if (typeof refValue === 'undefined') {
+			throw 'Invalid reference: ' + $1
+		}
 
 		// Set any variables to the raw parsed value here
 		refToVariables.forEach(function (key) {
@@ -112,7 +117,7 @@
 
 		// Transform the value
 		transforms.forEach(function (transform) {
-			refValue = applyTransform(refValue, transform, grammarPath)
+			refValue = applyTransform(refValue, transform, grammarParent)
 		})
 
 		// Re-parse the transform data in case the transform returns more stuff to be interpolated
@@ -121,7 +126,7 @@
 		return refValue
 	}
 
-	function applyTransform (str, transform, grammarPath) {
+	function applyTransform (str, transform, grammarParent) {
 		// Check if we need to assign variables later
 		var transformToVariables = []
 		var transformSplit = transform.split('->')
@@ -147,15 +152,15 @@
 			}
 		}
 
-		// Find transform path (not very elegant, I know)
+		// Find transform property path, could probably be improved a bit
 		if (objPropertyPath(baba.transforms, transform, true)) {
 			transformPath = transform
 		}
 		else if (objPropertyPath(baba.transforms, ['__common__', transform].join('.'), true)) {
 			transformPath = ['__common__', transform].join('.')
 		}
-		else if (objPropertyPath(baba.transforms, [grammarPath, transform].join('.'), true)) {
-			transformPath = [grammarPath, transform].join('.')
+		else if (objPropertyPath(baba.transforms, [grammarParent, transform].join('.'), true)) {
+			transformPath = [grammarParent, transform].join('.')
 		}
 		else {
 			throw 'Invalid transformer: ' + transform
@@ -199,13 +204,6 @@
 	}
 
 	baba.render = function (template) {
-		template = template || ''
-		try {
-			template = parseGrammar(template)
-		}
-		catch (e) {
-			console.warn(e)
-		}
-		return template
+		return parseGrammar(template || '')
 	}
 }))
