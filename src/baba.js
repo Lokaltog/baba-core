@@ -104,7 +104,13 @@
 			}
 
 			function replaceAltTags(m, $1) {
-				return randomItem($1.split('|'))
+				var split = $1.split('|')
+				if (split.length === 1) {
+					// Make sure there's at least two elements in the array
+					// This allows adding single words with a 50% probability like '[word]' (instead of '[word|]')
+					split.push('')
+				}
+				return randomItem(split)
 			}
 
 			function replaceRefTags(m, $1) {
