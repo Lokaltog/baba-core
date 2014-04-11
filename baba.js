@@ -98,7 +98,6 @@
 		return randItem($1.split('|'))
 	}
 
-	var tagVariables = {}
 	function replaceRefTags (m, $1) {
 		// Split variable and modifiers
 		var split = $1.match(/(\\.|[^\|])+/g)
@@ -131,7 +130,7 @@
 
 		// Set any variables to the raw parsed value here
 		refToVariables.forEach(function (key) {
-			tagVariables[key] = refValue
+			baba.tagVariables[key] = refValue
 		})
 
 		// Transform the value
@@ -189,15 +188,15 @@
 
 		// Set any variables to the raw parsed value here
 		transformToVariables.forEach(function (key) {
-			tagVariables[key] = transformedStr
+			baba.tagVariables[key] = transformedStr
 		})
 
 		return transformedStr
 	}
 
 	function getTagVariable (key) {
-		if (tagVariables.hasOwnProperty(key)) {
-			return tagVariables[key]
+		if (baba.tagVariables.hasOwnProperty(key)) {
+			return baba.tagVariables[key]
 		}
 		throw 'Undefined variable: $'+ key
 	}
@@ -208,8 +207,9 @@
 	baba.altTags = ['[[', ']]']
 	baba.grammar = {}
 	baba.transforms = {}
+	baba.tagVariables = {}
 
-	baba.init = function (grammar, transforms, refTags, altTags) {
+	baba.init = function (grammar, transforms, refTags, altTags, tagVariables) {
 		if (refTags) {
 			baba.refTags = refTags
 		}
@@ -217,6 +217,7 @@
 			baba.altTags = altTags
 		}
 		baba.grammar = grammar
+		baba.tagVariables = tagVariables || {}
 
 		// Load all transforms
 		if (!Array.isArray(transforms)) {
