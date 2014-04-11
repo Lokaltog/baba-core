@@ -8,9 +8,19 @@ module.exports = function (grunt) {
 
 		uglify: {
 			production: {
-				files: {
-					'baba.min.js': ['baba.js'],
-				},
+				files: [{
+					expand: true,
+					cwd: '.',
+					src: 'baba.js',
+					dest: 'build',
+					ext: '.min.js',
+				}, {
+					expand: true,
+					cwd: '.',
+					src: 'grammar/*.js',
+					dest: 'build',
+					ext: '.min.js',
+				}],
 				options: {
 					compress: {
 						drop_console: true,
