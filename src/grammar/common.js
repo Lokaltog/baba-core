@@ -7,6 +7,17 @@
  */
 
 (function (global, module, define) {
+	function replaceRegexp (rules, str) {
+		var ret
+		rules.some(function (filter) {
+			if (str.match(filter[0])) {
+				ret = str.replace(filter[0], filter[1])
+				return true
+			}
+		})
+		return ret
+	}
+
 	function init (Baba) {
 		var grammar = new Baba.Grammar('common')
 
@@ -30,134 +41,71 @@
 			},
 			'verb': {
 				'tense': {
-					'past': function (str) {
-						var ret
-						[
-							// exceptions
-							[/^((re)?set)$/i, '$1'],
-							[/^(send)$/i, 'sent'],
-							[/^(show)$/i, 'shown'],
-							[/^(checkout)$/i, 'checked out'],
-							// general rules
-							[/(.*[^aeiouy][aeiouy])([bcdfglmpstvz])$/i, '$1$2$2ed'],
-							[/(.*)e$/i, '$1ed'],
-							[/(.*)y$/i, '$1ied'],
-							[/(.*)/i, '$1ed'],
-						].some(function (filter) {
-							if (str.match(filter[0])) {
-								ret = str.replace(filter[0], filter[1])
-								return true
-							}
-						})
-						return ret
-					},
-					'present': function (str) {
-						var ret
-						[
-							// exceptions
-							[/^(checkout)$/i, 'checks out'],
-							// general rules
-							[/(.*)ex$/i, '$1exes'],
-							[/(.*)([^aeo])y$/i, '$1$2ies'],
-							[/(.*)([sc]h|s)$/i, '$1$2es'],
-							[/(.*)/i, '$1s'],
-						].some(function (filter) {
-							if (str.match(filter[0])) {
-								ret = str.replace(filter[0], filter[1])
-								return true
-							}
-						})
-						return ret
-					},
-					'present-participle': function (str) {
-						var ret
-						[
-							// exceptions
-							[/^(checkout)$/i, 'checking out'],
-							// general rules
-							[/(.*[^aeiouy][aeiouy])([bcdfglmpstvz])$/i, '$1$2$2ing'],
-							[/(.*)e$/i, '$1ing'],
-							[/(.*)$/i, '$1ing'],
-						].some(function (filter) {
-							if (str.match(filter[0])) {
-								ret = str.replace(filter[0], filter[1])
-								return true
-							}
-						})
-						return ret
-					},
-				},
-				'-ion': function (str) {
-					var ret
-					[
-						// general rules
-						[/(.*)y$/i, '$1ication'],
-						[/(.*)ize$/i, '$1ization'],
-						[/(.*)de$/i, '$1sion'],
-						[/(.*)[aeiou]$/i, '$1ion'],
-						[/(.*)$/i, '$1ion'],
-					].some(function (filter) {
-						if (str.match(filter[0])) {
-							ret = str.replace(filter[0], filter[1])
-							return true
-						}
-					})
-					return ret
-				},
-				'-ize': function (str) {
-					var ret
-					[
-						// general rules
-						[/(.*)[aeiouy]$/i, '$1ize'],
-						[/(.*)$/i, '$1ize'],
-					].some(function (filter) {
-						if (str.match(filter[0])) {
-							ret = str.replace(filter[0], filter[1])
-							return true
-						}
-					})
-					return ret
-				},
-			},
-			'noun': {
-				'plural': function (str) {
-					var ret
-					[
+					'past': replaceRegexp.bind(this, [
 						// exceptions
-						[/^(.*)man$/i, '$1men'],
-						[/^(womyn)$/i, 'wymyn'],
+						[/^((re)?set)$/i, '$1'],
+						[/^(send)$/i, 'sent'],
+						[/^(show)$/i, 'shown'],
+						[/^(checkout)$/i, 'checked out'],
 						// general rules
-						[/(.*)ex$/i, '$1ices'],
-						[/(.*)y$/i, '$1ies'],
+						[/(.*[^aeiouy][aeiouy])([bcdfglmpstvz])$/i, '$1$2$2ed'],
+						[/(.*)e$/i, '$1ed'],
+						[/(.*)y$/i, '$1ied'],
+						[/(.*)/i, '$1ed'],
+					]),
+					'present': replaceRegexp.bind(this, [
+						// exceptions
+						[/^(checkout)$/i, 'checks out'],
+						// general rules
+						[/(.*)ex$/i, '$1exes'],
+						[/(.*)([^aeo])y$/i, '$1$2ies'],
 						[/(.*)([sc]h|s)$/i, '$1$2es'],
 						[/(.*)/i, '$1s'],
-					].some(function (filter) {
-						if (str.match(filter[0])) {
-							ret = str.replace(filter[0], filter[1])
-							return true
-						}
-					})
-					return ret
+					]),
+					'present-participle': replaceRegexp.bind(this, [
+						// exceptions
+						[/^(checkout)$/i, 'checking out'],
+						// general rules
+						[/(.*[^aeiouy][aeiouy])([bcdfglmpstvz])$/i, '$1$2$2ing'],
+						[/(.*)e$/i, '$1ing'],
+						[/(.*)$/i, '$1ing'],
+					]),
 				},
+				'-ion': replaceRegexp.bind(this, [
+					// general rules
+					[/(.*)y$/i, '$1ication'],
+					[/(.*)ize$/i, '$1ization'],
+					[/(.*)de$/i, '$1sion'],
+					[/(.*)[aeiou]$/i, '$1ion'],
+					[/(.*)$/i, '$1ion'],
+				]),
+				'-ize': replaceRegexp.bind(this, [
+					// general rules
+					[/(.*)[aeiouy]$/i, '$1ize'],
+					[/(.*)$/i, '$1ize'],
+				]),
+			},
+			'noun': {
+				'plural': replaceRegexp.bind(this, [
+					// exceptions
+					[/^(.*)man$/i, '$1men'],
+					[/^(womyn)$/i, 'wymyn'],
+					// general rules
+					[/(.*)ex$/i, '$1ices'],
+					[/(.*)y$/i, '$1ies'],
+					[/(.*)([sc]h|s)$/i, '$1$2es'],
+					[/(.*)/i, '$1s'],
+				]),
 			},
 			'adjective': {
-				'-ity': function (str) {
-					var ret
-					[
-						// general rules
-						[/(.*)eme$/i, '$1emacy'],
-						[/(.*)ible$/i, '$1ibility'],
-						[/(.*)able$/i, '$1abity'],
-						[/(.*)[aeiouy]$/i, '$1ity'],
-						[/(.*)$/i, '$1ity'],
-					].some(function (filter) {
-						if (str.match(filter[0])) {
-							ret = str.replace(filter[0], filter[1])
-							return true
-						}
-					})
-					return ret
-				},
+				'-ity': replaceRegexp.bind(this, [
+					// general rules
+					[/(.*)eme$/i, '$1emacy'],
+					[/(.*)ible$/i, '$1ibility'],
+					[/(.*)able$/i, '$1abity'],
+					[/(.*)[aeiouy]$/i, '$1ity'],
+					[/(.*)$/i, '$1ity'],
+				]),
 			},
 		})
 	}
