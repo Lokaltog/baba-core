@@ -87,7 +87,6 @@ babaGrammars.gitManual = {
 	'subject': '[[you|the user|the {{command-name}} command]]',
 
 	'command-name-raw': 'git-{{verb.common}}-{{noun.git}}',
-	'command-name-main': 'git-{{verb.common->command-verb}}-{{noun.git->command-noun}}',
 	'command-name': '<code>{{command-name-raw}}</code>',
 	'command-option-raw': '--[[{{verb.common}}-|]]{{verb.common}}-{{noun.git}}',
 	'command-option': '<code>{{command-option-raw}}</code>',
@@ -129,8 +128,8 @@ babaGrammars.gitManual = {
 		'{{multiple-nouns}} {{verb.git|tense.past}} by {{noun.git|plural}} in the {{located-noun}}, but that [[{{adverb.synonym.sometimes}} |]]are [[not |]]in {{constant-noun}}, are {{verb.git|tense.past}} in {{adjective.git-action|prepend-an}} {{noun.git}}',
 		'{{command-name}} takes {{noun.synonym.option|plural}} {{adjective.synonym.relevant}} to the {{command-name}} {{noun.synonym.command}} to {{verb.synonym.verify}} what is {{verb.git|tense.past}} and how',
 	],
-	'command-action': '{{$command-verb}} {{determiner}} {{noun.location}} {{$command-noun|noun.plural}} {{preposition}} {{determiner}} {{verb.git|tense.past}} {{located-noun|noun.plural}}',
-	'command-description': '{{$command-verb|verb.tense.present}} {{determiner}} {{noun.location}} {{$command-noun|noun.plural}} {{preposition}} {{determiner}} {{verb.git|tense.past}} {{located-noun|noun.plural}}, and {{statement}}.',
+	'command-action': '{{$command-verb verb.common}} {{determiner}} {{noun.location}} {{$command-noun noun.git|noun.plural}} {{preposition}} {{determiner}} {{verb.git|tense.past}} {{located-noun|noun.plural}}',
+	'command-description': '{{$command-verb verb.common|verb.tense.present}} {{determiner}} {{noun.location}} {{$command-noun noun.git|noun.plural}} {{preposition}} {{determiner}} {{verb.git|tense.past}} {{located-noun|noun.plural}}, and {{statement}}.',
 	'option-description': [
 		'{{verb.git}} the {{noun.git|plural}} of {{determiner}} {{noun.git|plural}} that are {{verb.git|tense.past}}',
 		'{{conjunction.conditional}} this {{noun.synonym.option}} is {{verb.synonym.supply|tense.past}}, the {{noun.git}} prefixes {{git-path}} {{conjunction.and-or}} {{git-path}}',
