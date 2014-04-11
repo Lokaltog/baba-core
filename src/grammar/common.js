@@ -31,6 +31,7 @@
 			'verb': {
 				'tense': {
 					'past': function (str) {
+						var ret
 						[
 							// exceptions
 							[/^((re)?set)$/i, '$1'],
@@ -51,6 +52,7 @@
 						return ret
 					},
 					'present': function (str) {
+						var ret
 						[
 							// exceptions
 							[/^(checkout)$/i, 'checks out'],
@@ -68,6 +70,7 @@
 						return ret
 					},
 					'present-participle': function (str) {
+						var ret
 						[
 							// exceptions
 							[/^(checkout)$/i, 'checking out'],
@@ -84,14 +87,69 @@
 						return ret
 					},
 				},
+				'-ion': function (str) {
+					var ret
+					[
+						// general rules
+						[/(.*)y$/i, '$1ication'],
+						[/(.*)ize$/i, '$1ization'],
+						[/(.*)de$/i, '$1sion'],
+						[/(.*)[aeiou]$/i, '$1ion'],
+						[/(.*)$/i, '$1ion'],
+					].some(function (filter) {
+						if (str.match(filter[0])) {
+							ret = str.replace(filter[0], filter[1])
+							return true
+						}
+					})
+					return ret
+				},
+				'-ize': function (str) {
+					var ret
+					[
+						// general rules
+						[/(.*)[aeiouy]$/i, '$1ize'],
+						[/(.*)$/i, '$1ize'],
+					].some(function (filter) {
+						if (str.match(filter[0])) {
+							ret = str.replace(filter[0], filter[1])
+							return true
+						}
+					})
+					return ret
+				},
 			},
 			'noun': {
 				'plural': function (str) {
+					var ret
 					[
+						// exceptions
+						[/^(.*)man$/i, '$1men'],
+						[/^(womyn)$/i, 'wymyn'],
+						// general rules
 						[/(.*)ex$/i, '$1ices'],
 						[/(.*)y$/i, '$1ies'],
 						[/(.*)([sc]h|s)$/i, '$1$2es'],
 						[/(.*)/i, '$1s'],
+					].some(function (filter) {
+						if (str.match(filter[0])) {
+							ret = str.replace(filter[0], filter[1])
+							return true
+						}
+					})
+					return ret
+				},
+			},
+			'adjective': {
+				'-ity': function (str) {
+					var ret
+					[
+						// general rules
+						[/(.*)eme$/i, '$1emacy'],
+						[/(.*)ible$/i, '$1ibility'],
+						[/(.*)able$/i, '$1abity'],
+						[/(.*)[aeiouy]$/i, '$1ity'],
+						[/(.*)$/i, '$1ity'],
 					].some(function (filter) {
 						if (str.match(filter[0])) {
 							ret = str.replace(filter[0], filter[1])
