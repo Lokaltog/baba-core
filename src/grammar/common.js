@@ -71,14 +71,6 @@
 						[/(.*)$/i, '$1ing'],
 					]),
 				},
-				'-ion': replaceRegexp.bind(this, [
-					// general rules
-					[/(.*)y$/i, '$1ication'],
-					[/(.*)ize$/i, '$1ization'],
-					[/(.*)de$/i, '$1sion'],
-					[/(.*)[aeiou]$/i, '$1ion'],
-					[/(.*)$/i, '$1ion'],
-				]),
 				'-ize': replaceRegexp.bind(this, [
 					// general rules
 					[/(.*)[aeiouy]$/i, '$1ize'],
@@ -90,7 +82,9 @@
 					// exceptions
 					[/^(.*)man$/i, '$1men'],
 					[/^(womyn)$/i, 'wymyn'],
+					[/^(person)$/i, 'people'],
 					// general rules
+					[/(.*)ife$/i, '$1ives'],
 					[/(.*)ex$/i, '$1ices'],
 					[/(.*)y$/i, '$1ies'],
 					[/(.*)([sc]h|s)$/i, '$1$2es'],
@@ -106,6 +100,12 @@
 					[/(.*)[aeiouy]$/i, '$1ity'],
 					[/(.*)$/i, '$1ity'],
 				]),
+				'-ly': replaceRegexp.bind(this, [
+					// general rules
+					[/(.*)ic$/i, '$1ically'],
+					[/(.*)[aeiouy]$/i, '$1y'],
+					[/(.*)$/i, '$1ly'],
+				])
 			},
 		})
 	}
