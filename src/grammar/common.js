@@ -80,13 +80,13 @@
 			'noun': {
 				'plural': replaceRegexp.bind(this, [
 					// exceptions
-					[/^(.*)man$/i, '$1men'],
-					[/^(womyn)$/i, 'wymyn'],
-					[/^(person)$/i, 'people'],
+					[/(.*)man$/i, '$1men'],
+					[/(womyn)$/i, 'wymyn'],
+					[/(person)$/i, 'people'],
 					// general rules
 					[/(.*)ife$/i, '$1ives'],
 					[/(.*)ex$/i, '$1ices'],
-					[/(.*)y$/i, '$1ies'],
+					[/(.*)([^ou])y$/i, '$1$2ies'],
 					[/(.*)([sc]h|s)$/i, '$1$2es'],
 					[/(.*)/i, '$1s'],
 				]),

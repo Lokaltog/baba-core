@@ -30,8 +30,8 @@
 				'personal': '{alignment.pre.personal}{alignment.post.personal}',
 			},
 			'adjective': {
-				'good': split('attractive|neutral|natural|integral|intersectional|equal|feminine|invisible|fat|deathfat|confident|proud'),
-				'bad': split('masculine|white|able-bodied|binary|smallfat|thin|antediluvian|awful|body-shaming|chauvinistic|ciscentric|close-minded|deluded|entitled|heteropatriarchal|patriarchal|ignorant|inconsiderate|insensitive|intolerant|judgmental|misogynistic|nphopic|oppressive|pathetic|racist|rape culture-supporting|worthless'),
+				'good': split('attractive|neutral|natural|integral|intersectional|equal|feminine|invisible|fat|deathfat|confident|proud|differently abled'),
+				'bad': split('masculine|white|able-bodied|binary|smallfat|thin|antediluvian|awful|body-shaming|chauvinistic|ciscentric|close-minded|deluded|entitled|heteropatriarchal|patriarchal|ignorant|inconsiderate|insensitive|intolerant|judgmental|misogynistic|nphopic|oppressive|pathetic|racist|rape culture-supporting|worthless|butthurt'),
 				'ist': split('cyber|gay|lesbian|liberal|radical|sex-positive|male|intersectional'),
 				'sn': {
 					'bad': split('bad|terrible|awful|problematic'),
@@ -62,20 +62,22 @@
 					'should': split('should|must|need to|can'),
 				},
 
+				'explain': '[thins|reddits|whites|ex]plain',
 				'check': split('check|acknowledge'),
 				'swear': split('screw|fuck|damn'),
+				'stop': split('stop|quit'),
 			},
 			'noun': {
 				'subject': {
 					// Example: "you fucking {basement dweller}", "all {male}s must die"
 					// Must be pluralizable
-					'good': split('CAFAB|CAMAB|PoC|QTPOC|WoC|ace|agnostic|ally|amputee|cross-dresser|fatty|female|furry|headmate|ladytype|little person|minority|native american|princex|radfem|survivor|transman|transnormative|transwoman|vegan|vegetarian|victim|womyn|food addict'),
-					'bad': split('male|cishet|cisgender|hetero|smallfat|uterus-bearer|white womyn|MRA|TERF|asshole|basement dweller|bigot|brogrammer|cracker|creep|dudebro|feminazi|femscum|hitler|twat|loser|lowlife|mouthbreather|nazi|neckbeard|oppressor|pedophile|piece of shit|radscum|rapist|redditor|scum|shit stain|subhuman|troll|truscum|virgin'),
+					'good': split('CAFAB|CAMAB|PoC|QTPOC|WoC|ace|agnostic|ally|amputee|cross-dresser|fatty|female|furry|headmate|ladytype|little person|minority|native american|princex|radfem|survivor|transman|transnormative|transwoman|vegan|vegetarian|victim|womyn|food addict|girl'),
+					'bad': split('male|cishet|cisgender|hetero|smallfat|uterus-bearer|white womyn|MRA|TERF|asshole|basement dweller|bigot|brogrammer|cracker|creep|dudebro|feminazi|femscum|hitler|twat|loser|lowlife|mouthbreather|nazi|neckbeard|oppressor|pedophile|piece of shit|radscum|rapist|redditor|scum|shit stain|subhuman|troll|truscum|virgin|dick|dickwad|guy|boy|man'),
 				},
 				'concept': {
 					// Example: "fuck [white womyn] {standards}"
 					'good': split('rights|opinions|supremacy'),
-					'bad': split('gender roles|standards'),
+					'bad': split('body images|gender roles|standards'),
 				},
 				'action': {
 					// Example: "species {entitlement} is bad"
@@ -90,13 +92,13 @@
 					// Example: "{misandry} is good", "{weight} is good", "{misogyny} is bad"
 					// Will not be pluralized
 					'good': split('misandry|femininity|integrity|equality|intersectionality|multiplicity|ethnicity' +
-					              '|appearance|height|weight|race|womyn|hair|body hair|body|fandom|species|fat|fatty|female|food|stretchmark|color|body image'),
+					              '|appearance|height|weight|race|womyn|hair|body hair|body|fandom|species|fat|fatty|female|food|stretchmark|color|kinship'),
 					'bad': split('masculinity|kyriarchy|patriarcy|superiority|misogyny' +
 					             '|ideals'),
 				},
 				'ism-pre': {
 					// Must be able to be suffixed with -ism and -ist
-					'good-base': split('misandr|femin|equal|intersectional|activ|separat|commun|egalitarian|fandom|fat|lesbian|freegan|social|vegan|vegetarian|athe|food|liberation'),
+					'good-base': split('misandr|femin|equal|intersectional|activ|separat|commun|egalitarian|fandom|fat|lesbian|freegan|social|vegan|vegetarian|athe|food|liberation|ideal'),
 					'bad-base': split('TERF|patriarch|kyriarch|masculin|misogyn|rac|fasc|able|age|binar|assimilation|chauvin|carn|cissex|class|essential|rape-apolog|singlet|traditional|transmisogyn'),
 					'good': ['{noun.ism-pre.good-base}', 'anti-{noun.ism-pre.bad-base}'],
 					'bad': ['{noun.ism-pre.bad-base}', 'anti-{noun.ism-pre.good-base}'],
@@ -111,9 +113,15 @@
 				},
 				'kin-type': split('cat|demon|dog|dolphin|dragon|fox|goat|other|poly|bunny|wolf|vampire'),
 				'kin': '{noun.kin-type->kin}kin', // the $kin variable is later available, and is also used by pronoun.random
-				'personality': split('individual|personality|person|spirit|entity'),
-				'alignment': '{noun.personality}-[aligned|associating|identifying|type|supporting] {noun.oppressed}',
+				'personality': split('individual|personality|person|spirit|entity|identity'),
+				'alignment': [
+					'{noun.subject.good}',
+					'{noun.subject.good}-{alignment-verb} {noun.personality}',
+					'{alignment.sexual}-{alignment-verb} {noun.personality}',
+					'{alignment.personal}-{alignment-verb} {noun.personality}',
+				],
 				'trigger': '{noun.good} {noun.concept.bad}',
+				'explain': '[thins|reddits|whites|ex]planation',
 			},
 			'pronoun': {
 				// Actually map kins to proper pronouns
@@ -156,7 +164,7 @@
 					}
 					return realPronouns[Math.floor(Math.random() * realPronouns.length)]
 				},
-				'second-person': '[all ]you',
+				'second-person': ['all', 'you', '[y\'|you ]all'],
 			},
 			'concept': {
 				'good': [
@@ -184,7 +192,7 @@
 					// supremacies/cultures, e.g. "cishet domination"
 					'{noun.subject.bad} [culture|domination|entitlement|feminism|kyriarchy|opinions|privilege|rights|superiority|supremacy]',
 				].concat(
-					split('bindi wearing|hypermasculinity|men\'s rights|patriarchal beauty standards')
+					split('bindi wearing|hypermasculinity|men\'s rights|patriarchal beauty standards|thin privilege|thin culture')
 				),
 				'phobia': function (variables, grammar) {
 					return grammar['phobia-pre'].map(function (el) {
@@ -192,6 +200,7 @@
 					})
 				},
 			},
+			'alignment-verb': split('aligned|associating|identifying|type|supporting'),
 			'fuck': '{verb.swear}',
 			'fuck-off': {
 				'universal': [
@@ -199,7 +208,7 @@
 					'[burn in|go to|rot in] hell',
 					'go die in a [ditch|fire]',
 					'drink [bleach|piss]',
-					'fuck [off|you]',
+					'fuck off',
 					'shut [the fuck ]up',
 					'{verb.check} your [fucking ]{noun.subject.bad} privilege',
 				],
@@ -222,8 +231,60 @@
 			'interjection': split('goddamn it|ffs|for fucks sake'),
 			'conjunction': {
 				'and-or': split('and|or|and/or'),
-				'conditional': split('if|because'),
+				'conditional': split('if|when|whenever'),
 				'conclusion': split('as|because|and|but|so'),
+			},
+			'statement': {
+				'toucan': [
+					'[do not|never] reblog my posts [ever ]again',
+					'[like ][fucking ]seriously, [just ]{fuck-off.universal}',
+					'[now ]go [the fuck ]away',
+					'[oh my god|omg]',
+					'[please ]leave me [the fuck ]alone',
+					'feel free to unfollow {conjunction.and-or} block/ignore me',
+					'for the love of god',
+					'fucking {adjective.bad} [people|folk]',
+					'fucking {noun.subject.good}-{verb.bad|tense.present-participle} {noun.subject.bad|plural}',
+					'i [don|can]\'t even',
+					'i am [literally ]100% done',
+					'i am [literally ]not [fucking ]speaking to you anymore',
+					'i do not [fucking ]care anymore',
+					'i do not give a [shit|fuck]',
+					'just[...] stop',
+					'no. just no',
+					'seriously',
+					'this. is. not. okay',
+					'try again, [fucking ][{adjective.bad} ]{noun.subject.bad}',
+					'unfollow me right [fucking ]now',
+					'wow. just. wow',
+					'you did not just [fucking ]say that',
+					'you guys are [fucking ]impossible',
+					'you know what? [fuck|screw] it',
+				],
+				'condescending': [
+					'[girl|sweetie], please',
+					'oh, [honey|sweetie]',
+					'yeah, no',
+					'you [look|are] [cute|adorable|hot|sexy] when you are [angry|pissed off]',
+					'i [literally ]could not care less[ about you| what you think|]',
+				],
+				'conditional': [
+					'if you {verb.bad} {noun.subject.good|plural}',
+				],
+			},
+			'introduction': {
+				'unbelievable': [
+					'how [can it be|is it] so [fucking ]difficult to[ just]',
+					'how [fucking ]difficult is it to[ just]',
+					'how [fucking ]often do I have to tell you to[ just]',
+					'i have [already ][repeatedly ]told you to[ just]',
+					'[how ]is it so [fucking ]difficult to[ just]',
+					'why can\'t you[ just]',
+					'why is it so [fucking ]hard for you to[ just]',
+					'you should[ really][ just]',
+				],
+				'conditional': [
+				],
 			},
 		})
 
@@ -233,60 +294,11 @@
 			'alignment': {
 				'angry': '[{alignment.pre.sexual}|{alignment.pre.personal}] fucking [{alignment.post.sexual}|{alignment.post.personal}]',
 			},
-			'condition': [
-				'{conjunction.conditional} you {verb.bad} {noun.good|plural}',
-			],
 			'statement': {
 				'universal': [
-					'{pronoun.second-person} [fucking ]{noun.subject.good}-{verb.bad|tense.present-participle} {noun.ist.bad|plural} can all {fuck-off.universal}',
-					'[learn|use] [my|the correct] [fucking ]pronouns you [fucking ]{adjective.bad} {noun.subject.bad}, I am {adjective.good|prepend-an}[, {adjective.good}] {noun.kin} and my pronouns are {pronoun.random}',
-				],
-				'conditional': [
-					'if you XXX',
-				],
-				'toucan': [
-					'[do not|never] reblog my posts [ever ]again',
-					'feel free to unfollow {conjunction.and-or} block/ignore me',
-					'fucking {noun.subject.bad}-{adjective.bad} people',
-					'i [don|can]\'t even',
-					'i am [literally ]100% done',
-					'now go [the fuck ]away',
-					'[please ]leave me [the fuck ]alone',
-					'try again, [fucking ]{nouns.privileged}',
-					'unfollow me right [fucking ]now',
-					'you guys are [fucking ]impossible',
-					'for the love of god',
-					'i do not [fucking ]care anymore',
-					'no. just no',
-					'[oh my god|omg]',
-					'just[...] stop',
-					'seriously',
-					'this. is. not. okay',
-					'wow. just. wow',
-					'i do not give a [shit|fuck]',
-					'you know what? [fuck|screw] it',
-					'you did not just [fucking ]say that',
-					'[like ][fucking ]seriously, [just ]{fuck-off.universal}',
-					'i am [literally ]not [fucking ]speaking to you anymore',
-				],
-				'condescending': [
-					'[girl|sweetie], please',
-					'oh, [honey|sweetie]',
-					'yeah, no',
-					'you [look|are] [cute|adorable|hot|sexy] when you are [angry|pissed off]',
-					'i [literally ]could not care less[ about you| what you think|]',
-				],
-			},
-			'introduction': {
-				'unbelievable': [
-					'how [can it be|is it] so [fucking ]difficult to[ just]',
-					'how [fucking ]difficult is it to[ just]',
-					'how [fucking ]often do I have to tell you to[ just]',
-					'i have [already ][repeatedly ] told you to[ just]',
-					'[how ]is it so [fucking ]difficult to[ just]',
-					'why can\'t you[ just]',
-					'why is it so [fucking ]hard for you to[ just]',
-					'you should[ really][ just]',
+					'{pronoun.second-person} [fucking ]{noun.subject.good}-{verb.bad|tense.present-participle} {noun.ist.bad|plural} [can|should] {fuck-off.universal}',
+					'{introduction.unbelievable} [learn|use] [my|the correct] [fucking ]pronouns you [fucking ]{adjective.bad} {noun.subject.bad}, I am {adjective.good|prepend-an}[, {adjective.good}] [{noun.kin}|{noun.subject.good->kin}] and my pronouns are {pronoun.random}',
+					'{statement.conditional|uppercase-first} you [fucking ]{adjective.bad} {noun.subject.bad|plural} [can|should] {fuck-off.universal}',
 				],
 			},
 			'conclusion': [
@@ -294,18 +306,18 @@
 				'never [fucking ][reblog|mention] [any of ]my posts [ever ]again',
 			],
 			'sentence': [
-				'{statement.universal|uppercase-first}!',
+				'[{statement.toucan|uppercase-first}. |{statement.condescending|uppercase-first}. ]{statement.universal|uppercase-first}! [{emoji}]',
 			],
 		})
 
 		var calm = new Baba.Grammar('tumblr-calm', ['{', '}'], ['[', ']'])
 		calm.require('tumblr-common')
 		calm.addGrammar({
-			'sentence': [
-				'{statement}.',
-			],
 			'statement': [
-				'it is {adjective.sn.important} that you[ all] [are aware|realize] that {noun.ist.good} {noun.action.bad} is {adverb.sn.really} {adjective.sn.bad}',
+				'it is {adjective.sn.important} that you[ all] [are aware|realize] that {noun.ist.good} {noun.action.bad} [and {noun.action.bad} of {noun.alignment|plural} ]is {adverb.sn.really} {adjective.sn.bad}',
+			],
+			'sentence': [
+				'{statement|uppercase-first}.',
 			],
 		})
 
