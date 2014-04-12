@@ -83,7 +83,7 @@
 			// Private methods
 			function parseGrammar(elements) {
 				if (typeof elements === 'function') {
-					return parseGrammar(elements())
+					return parseGrammar(elements(_variables, _grammar.grammar))
 				}
 				if (typeof elements === 'object') {
 					return parseGrammar(randomItem(elements))
