@@ -73,6 +73,13 @@
 					// Must be pluralizable
 					'good': split('CAFAB|CAMAB|PoC|QTPOC|WoC|ace|agnostic|ally|amputee|cross-dresser|fatty|female|furry|headmate|ladytype|little person|minority|native american|princex|radfem|survivor|transman|transnormative|transwoman|vegan|vegetarian|victim|womyn|food addict|girl'),
 					'bad': split('male|cishet|cisgender|hetero|smallfat|uterus-bearer|white womyn|MRA|TERF|asshole|basement dweller|bigot|brogrammer|cracker|creep|dudebro|feminazi|femscum|hitler|twat|loser|lowlife|mouthbreather|nazi|neckbeard|oppressor|pedophile|piece of shit|radscum|rapist|redditor|scum|shit stain|subhuman|troll|truscum|virgin|dick|dickwad|guy|boy|man'),
+					'aligned': [
+						'{noun.kin}',
+						'{noun.subject.good}',
+						'{noun.subject.good}-{alignment-verb} {noun.personality}',
+						'{alignment.sexual}-{alignment-verb} {noun.personality}',
+						'{alignment.personal}-{alignment-verb} {noun.personality}',
+					],
 				},
 				'concept': {
 					// Example: "fuck [white womyn] {standards}"
@@ -112,20 +119,14 @@
 					'bad': '{noun.ism-pre.bad}ist',
 				},
 				'kin-type': split('cat|demon|dog|dolphin|dragon|fox|goat|other|poly|bunny|wolf|vampire'),
-				'kin': '{noun.kin-type->kin}kin', // the $kin variable is later available, and is also used by pronoun.random
+				'kin': '{noun.kin-type}kin',
 				'personality': split('individual|personality|person|spirit|entity|identity'),
-				'alignment': [
-					'{noun.subject.good}',
-					'{noun.subject.good}-{alignment-verb} {noun.personality}',
-					'{alignment.sexual}-{alignment-verb} {noun.personality}',
-					'{alignment.personal}-{alignment-verb} {noun.personality}',
-				],
 				'trigger': '{noun.good} {noun.concept.bad}',
 				'explain': '[thins|reddits|whites|ex]planation',
 			},
 			'pronoun': {
 				// Actually map kins to proper pronouns
-				'random': function (variables) {
+				'random': function (parser, $subject) {
 					// Thanks for the help, askanonbinary
 					// http://askanonbinary.tumblr.com/creature
 					var kinPronounMap = {
@@ -159,8 +160,9 @@
 						'xe/xer/xerself',
 						'zhe/zhim/zherself',
 					]
-					if (kinPronounMap.hasOwnProperty(variables['kin'])) {
-						return kinPronounMap[variables['kin']]
+					$subject = (parser.getVariable($subject) || '').replace(/kin$/, '')
+					if (kinPronounMap.hasOwnProperty($subject)) {
+						return kinPronounMap[$subject]
 					}
 					return realPronouns[Math.floor(Math.random() * realPronouns.length)]
 				},
@@ -297,7 +299,7 @@
 			'statement': {
 				'universal': [
 					'{pronoun.second-person} [fucking ]{noun.subject.good}-{verb.bad|tense.present-participle} {noun.ist.bad|plural} [can|should] {fuck-off.universal}',
-					'{introduction.unbelievable} [learn|use] [my|the correct] [fucking ]pronouns you [fucking ]{adjective.bad} {noun.subject.bad}, I am {adjective.good|prepend-an}[, {adjective.good}] [{noun.kin}|{noun.subject.good->kin}] and my pronouns are {pronoun.random}',
+					'{introduction.unbelievable} [learn|use] [my|the correct] [fucking ]pronouns you [fucking ]{adjective.bad} {noun.subject.bad}, I am {adjective.good|prepend-an}[, {adjective.good}] {noun.subject.aligned->subject} and my pronouns are {pronoun.random("$subject")}',
 					'{statement.conditional|uppercase-first} you [fucking ]{adjective.bad} {noun.subject.bad|plural} [can|should] {fuck-off.universal}',
 				],
 			},
@@ -314,7 +316,7 @@
 		calm.require('tumblr-common')
 		calm.addGrammar({
 			'statement': [
-				'it is {adjective.sn.important} that you[ all] [are aware|realize] that {noun.ist.good} {noun.action.bad} [and {noun.action.bad} of {noun.alignment|plural} ]is {adverb.sn.really} {adjective.sn.bad}',
+				'it is {adjective.sn.important} that you[ all] [are aware|realize] that {noun.ist.good} {noun.action.bad} [and {noun.action.bad} of {noun.subject.aligned|plural} ]is {adverb.sn.really} {adjective.sn.bad}',
 			],
 			'sentence': [
 				'{statement|uppercase-first}.',
