@@ -68,8 +68,9 @@
 			else if (!_babaGrammars.hasOwnProperty(grammar)) {
 				throw 'Grammar ' + grammar + ' not loaded'
 			}
-			var _grammar = _babaGrammars[grammar]
+			var _grammar = this.grammar = _babaGrammars[grammar]
 			var _variables = variables || {}
+			var _parser = this
 
 			// Public methods
 			this.render = function (grammarPath) {
@@ -80,10 +81,20 @@
 				_variables[key] = value
 			}
 
+			this.getVariable = function (key) {
+				if (!key || !key.length) {
+					return undefined
+				}
+				if (key[0] === '$') {
+					key = key.slice(1, key.length)
+				}
+				return _variables[key]
+			}
+
 			// Private methods
-			function parseGrammar(elements) {
+			function parseGrammar(elements, args) {
 				if (typeof elements === 'function') {
-					return parseGrammar(elements(_variables, _grammar.grammar))
+					return parseGrammar(elements.apply(this, [_parser].concat(args || [])))
 				}
 				if (typeof elements === 'object') {
 					return parseGrammar(randomItem(elements))
@@ -119,7 +130,9 @@
 				var ref = split[0]
 				var transforms = split.slice(1, split.length)
 				var grammarParent = ''
+				var refStrMatch = ref.match(/^("|')(.+?)\1$/)
 				var refValue = ''
+				var refArgs = []
 
 				// Check if we need to assign variables later
 				var refToVariables = []
@@ -130,6 +143,7 @@
 				}
 
 				if (ref[0] === '$') {
+					// Value is a variable
 					var varNameSplit = ref.split(/\s+/g)
 					var key = varNameSplit[0].slice(1, varNameSplit[0].length)
 					var fallback = typeof varNameSplit[1] !== 'undefined' ? varNameSplit[1] : null
@@ -145,12 +159,35 @@
 						throw 'Undefined variable: $' + key
 					}
 				}
+				else if (refStrMatch) {
+					// Value is a static string
+					refValue = refStrMatch[2]
+				}
 				else {
+					// Value is a grammar reference
+
+					// The reference accept a JSON array as argument, this array will
+					// be passed as argument *if* the grammar reference is a
+					// function, otherwise it will be ignored
+					var refData = ref.match(/^([\w\.\-]+)(\s*\((.*)\))?/)
+					if (refData[3]) {
+						var jsonArr = []
+						try {
+							jsonArr = JSON.parse('[' + refData[3] + ']')
+						}
+						catch (e) {
+							throw 'JSON parse error: ' + e
+						}
+
+						ref = refData[1] // matched object path
+						refArgs = refArgs.concat(jsonArr)
+					}
+
 					refValue = objPropertyPath(_grammar.grammar, ref)
 					grammarParent = ref.split('.')[0]
 				}
 
-				refValue = parseGrammar(refValue)
+				refValue = parseGrammar(refValue, refArgs)
 				if (typeof refValue === 'undefined') {
 					throw 'Invalid reference: ' + $1
 				}
@@ -166,7 +203,7 @@
 				})
 
 				// Re-parse the transform data in case the transform returns more stuff to be interpolated
-				refValue = parseGrammar(refValue)
+				refValue = parseGrammar(refValue, refArgs)
 
 				return refValue
 			}
@@ -182,15 +219,15 @@
 
 				// Transforms accept a JSON array as argument, this array will be passed as
 				// arguments to the transform function
-				var transformData = transform.match(/^([\w\.\-]+)\s*(.*)$/)
+				var transformData = transform.match(/^([\w\.\-]+)(\s*\((.*)\))?$/)
 				var transformPath = ''
 				var callArgs = [str]
 				var transformedStr = ''
 
 				transform = transformData[1]
-				if (transformData[2]) {
+				if (transformData[3]) {
 					try {
-						callArgs = callArgs.concat(JSON.parse(transformData[2]))
+						callArgs = callArgs.concat(JSON.parse('[' + transformData[3] + ']'))
 					}
 					catch (e) {
 						throw 'JSON parse error: ' + e
