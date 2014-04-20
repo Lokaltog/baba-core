@@ -22,9 +22,9 @@
 				for (var key in name) {
 					if (name.hasOwnProperty(key)) {
 						reg[key] = name[key]
-						return reg
 					}
 				}
+				return reg
 			}
 			reg[name] = value
 			return reg
