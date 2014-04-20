@@ -17,7 +17,7 @@ module.exports = function (grunt) {
 				}, {
 					expand: true,
 					cwd: 'src',
-					src: 'grammar/*.js',
+					src: 'grammars/*.js',
 					dest: 'dest',
 					ext: '.min.js',
 				}],
