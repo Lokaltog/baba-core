@@ -6,9 +6,7 @@
  * https://github.com/Lokaltog/baba
  */
 
-var Baba = (function () {
-	var _grammars = {}
-
+(function (global, module, define) {
 	function randomItem(items) {
 		return items[Math.floor(Math.random() * items.length)]
 	}
@@ -45,76 +43,91 @@ var Baba = (function () {
 	}
 
 	// Global Baba object
-	return {
+	var Baba = global.Baba = {
+		__grammars__: {},
+		registerGrammar: function (name, init) {
+			Baba.__grammars__[name] = new Baba.GrammarDefinition(init)
+		},
+
 		Grammar: function (grammarName) {
-			var grammar = new _grammars[grammarName]()
+			var grammar = Baba.__grammars__[grammarName]
 
 			this.render = function (resource, variables) {
 				return grammar.parseValue(grammar.res(resource))(variables)
 			}
 		},
-		registerGrammar: function (name, init) {
+		GrammarDefinition: function (init) {
 			var registeredResources = _register({})
 			var registeredTransforms = _register({})
 
-			_grammars[name] = function () {
-				// Use shorter variables
-				this.res = registeredResources
-				this.tf = registeredTransforms
+			// Use shorter variables
+			this.res = registeredResources
+			this.tf = registeredTransforms
 
-				var _require = function (grammar) {
-					if (!_grammars.hasOwnProperty(grammar)) {
-						throw 'Grammar ' + grammar + ' not available'
+			this.parseValue = function parseValue() {
+				var args = arguments
+				return function(variables) {
+					var ret = []
+					if (variables) {
+						// variables is an optional argument: do not set
+						// this.variables unless we actually have a value as
+						// this.variables can be used at every node in the tree
+						this.variables = variables
 					}
-					return new _grammars[grammar](this.vars)
-				}.bind(this)
 
-				this.parseValue = function parseValue() {
-					var args = arguments
-					return function(variables) {
-						var ret = []
-						if (variables) {
-							// variables is an optional argument: do not set
-							// this.variables unless we actually have a value as
-							// this.variables can be used at every node in the tree
-							this.variables = variables
-						}
+					for (var arg in args) {
+						if (args.hasOwnProperty(arg)) {
+							arg = args[arg]
 
-						for (var arg in args) {
-							if (args.hasOwnProperty(arg)) {
-								arg = args[arg]
+							switch (typeof arg) {
+							case 'string':
+								ret.push(arg)
+								break
 
-								switch (typeof arg) {
-								case 'string':
-									ret.push(arg)
-									break
+							case 'function':
+								ret.push(parseValue(arg(this.res, this.tf, parseValue, _bindVariable))())
+								break
 
-								case 'function':
-									ret.push(parseValue(arg(this.res, this.tf, parseValue, _bindVariable))())
-									break
-
-								case 'object':
-									if (arg instanceof BoundVariable) {
-										ret.push(parseValue(arg.get(this.variables))())
-										break
-									}
-									if (Array.isArray(arg)) {
-										ret.push(parseValue(randomItem(arg))())
-										break
-									}
-									break
-
-								default:
+							case 'object':
+								if (arg instanceof BoundVariable) {
+									ret.push(parseValue(arg.get(this.variables))())
 									break
 								}
+								if (Array.isArray(arg)) {
+									ret.push(parseValue(randomItem(arg))())
+									break
+								}
+								break
+
+							default:
+								break
 							}
 						}
-						return ret.join('')
-					}.bind(this)
+					}
+					return ret.join('')
 				}.bind(this)
+			}.bind(this)
 
-				init(_require, registeredResources, registeredTransforms, this.parseValue, _bindVariable)
-			}
+			init(this.require, registeredResources, registeredTransforms, this.parseValue, _bindVariable)
 		},
 	}
-})()
+
+	Baba.GrammarDefinition.prototype.require = function (grammar) {
+		if (!Baba.__grammars__.hasOwnProperty(grammar)) {
+			throw 'Grammar "' + grammar + '" not available!'
+		}
+		return Baba.__grammars__[grammar]
+	}
+
+	// Export as either CommonJS or AMD module
+	if (module && module.exports) {
+		module.exports = Baba
+	}
+	else if (define && define.amd) {
+		define(function () {
+			return Baba
+		})
+	}
+})(this,
+   typeof module === 'object' && module,
+   typeof define === 'function' && define)
