@@ -1,11 +1,16 @@
 {
 	"name": "baba",
 	"version": "0.0.1a1",
-	"author": "Kim Silkebækken <kim.silkebaekken@gmail.com>",
-	"description": "Garbage gext generator inspired by the Dada Engine.",
+	"description": "Garbage gext generator inspired by the Dada Engine",
+	"homepage": "https://github.com/Lokaltog/baba",
+	"maintainers": [{
+		"name": "Kim Silkebækken",
+		"email": "kim.silkebaekken@gmail.com",
+		"web": "https://github.com/Lokaltog"
+	}],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Lokaltog/baba"
+		"url": "https://github.com/Lokaltog/baba.git"
 	},
 	"dependencies" : {
 		"uglify-js": "*",
