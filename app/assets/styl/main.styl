@@ -176,6 +176,9 @@ footer
 			.group
 				font-weight: bold
 				margin: 0 5px
+			.preview
+				margin: 0 5px
+				display: none // only show after user request
 			&:hover
 				background: rgba(#fff, .3)
 		.postfix
@@ -186,6 +189,11 @@ footer
 			li
 				border-left: 1px solid #fff
 				padding: 0 5px
+	&.preview
+		.prefix, .postfix, .word *, .actions
+			display: none !important
+		.word .preview
+			display: block !important
 
 // Common action popups
 .builder-wordlist,
