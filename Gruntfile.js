@@ -77,12 +77,14 @@ module.exports = function (grunt) {
 				files: jadeFiles,
 				options: {
 					pretty: true,
+					compileDebug: true,
 				},
 			},
 			production: {
 				files: jadeFiles,
 				options: {
 					pretty: false,
+					compileDebug: false,
 				},
 			},
 		},
@@ -97,14 +99,30 @@ module.exports = function (grunt) {
 			},
 		},
 		htmlmin: {
-			all: {
+			development: {
 				options: {
-					collapseWhitespace: true,
-					collapseBooleanAttributes: true,
-					removeAttributeQuotes: true,
-					removeRedundantAttributes: true,
 					removeEmptyAttributes: true,
 					removeOptionalTags: true,
+					removeRedundantAttributes: true,
+					useShortDoctype: true,
+				},
+				files: [{
+					expand: true,
+					cwd: 'webroot/',
+					src: '**/*.html',
+					dest: 'webroot/',
+				}],
+			},
+			production: {
+				options: {
+					collapseBooleanAttributes: true,
+					collapseWhitespace: true,
+					removeAttributeQuotes: true,
+					removeComments: true,
+					removeEmptyAttributes: true,
+					removeOptionalTags: true,
+					removeRedundantAttributes: true,
+					useShortDoctype: true,
 				},
 				files: [{
 					expand: true,
@@ -165,7 +183,7 @@ module.exports = function (grunt) {
 			},
 			jade: {
 				files: ['app/views/**/*.jade'],
-				tasks: ['jade:development'],
+				tasks: ['jade:development', 'htmlmin:development'],
 			},
 			livereload: {
 				files: ['webroot/static/css/**/*.css'],
@@ -205,7 +223,7 @@ module.exports = function (grunt) {
 		'jade:production',
 		'uglify:production',
 		'cssmin:all',
-		'htmlmin:all',
+		'htmlmin:production',
 		'imageEmbed:all',
 		'smoosher:all',
 		'clean:all',
