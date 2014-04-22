@@ -1,0 +1,37 @@
+{
+	"name": "baba",
+	"version": "0.0.1a1",
+	"description": "Garbage gext generator inspired by the Dada Engine",
+	"homepage": "https://github.com/Lokaltog/baba",
+	"maintainers": [{
+		"name": "Kim Silkebækken",
+		"email": "kim.silkebaekken@gmail.com",
+		"web": "https://github.com/Lokaltog"
+	}],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Lokaltog/baba.git"
+	},
+	"dependencies" : {
+		"jade": "*",
+		"nib": "*",
+		"stylus": "*",
+		"uglify-js": "*",
+
+		"grunt": "*",
+		"grunt-contrib-clean": "*",
+		"grunt-contrib-cssmin": "*",
+		"grunt-contrib-htmlmin": "*",
+		"grunt-contrib-jade": "*",
+		"grunt-contrib-stylus": "*",
+		"grunt-contrib-uglify": "*",
+		"grunt-contrib-watch": "*",
+		"grunt-html-smoosher": "*",
+		"grunt-image-embed": "*",
+		"grunt-sync": "*",
+		"matchdep": "*"
+	},
+	"engines": {
+		"node": ">=0.10"
+	}
+}
