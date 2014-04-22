@@ -1,20 +1,22 @@
 doctype html
-html
+html.no-js(lang='en')
 	head
 		meta(charset='utf-8')
 		meta(http-equiv='Content-Type', content='text/html;charset=utf-8')
+		meta(name='viewport', content='width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no')
+
 		title Baba Grammar Creator
+
 		link(rel='stylesheet', href='static/css/main.css', type='text/css')
 
 	body
 		#layout
 			.header-container
 				header
-					.container
-						h1 Baba
-						.slogan Create garbage texts
+					h1 Baba
+					.slogan Create garbage texts
 
-			.contents-container
+			.contents-container.container
 				#contents
 					ul.builder.builder-wordlist
 						li.word
@@ -43,13 +45,13 @@ html
 					.builder.builder-sentence
 						.static lorem ipsum
 						.placeholder.verb.verb-git-term
-							ol.prefix.tf-misc.tf-misc-a-an
+							ol.ph-prefix.tf-misc.tf-misc-a-an
 								li a/an
-							.word
-								.class verb
-								.group git term
-								.preview a reforking
-							ol.postfix.tf-verb-tense.tf-verb-tense-pp
+							.ph-word
+								.ph-class verb
+								.ph-group git term
+								.ph-preview a reforking
+							ol.ph-postfix.tf-verb-tense.tf-verb-tense-pp
 								li ·ing
 								li ·s
 							ul.actions
@@ -58,9 +60,17 @@ html
 								li.delete
 									i.icon.icon-delete
 						.static dolor sit amet
+						div.buttons
+							a.button.dropdown.add(data-dropdown='dropdown-add-1', href='#') Add
+							ul#dropdown-add-1.f-dropdown(dada-dropdown-content)
+								li
+									a(href='#') Phrase
+								li
+									a(href='#') Verb
 
 			.footer-container
 				footer
 					p Baba Grammar Creator
 
+	script(src='http://cdn.jsdelivr.net/g/jquery@2.1.0,foundation@5.2.2(js/foundation.min.js+js/vendor/modernizr.js+js/vendor/fastclick.js+js/vendor/placeholder.js)')
 	script(src='static/js/main.js')

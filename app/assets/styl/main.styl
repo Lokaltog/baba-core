@@ -1,5 +1,6 @@
 // Imports
-@import url('http://fonts.googleapis.com/css?family=Pacifico|Signika:300,600')
+@import url('http://fonts.googleapis.com/css?family=Pacifico')
+@import url('http://cdn.jsdelivr.net/g/foundation@5.2.2(css/foundation.min.css)')
 
 // Web fonts
 @font-face
@@ -10,7 +11,7 @@
 
 // Design settings
 $font-logo = Pacifico, sans-serif
-$font-main = Signika, sans-serif
+$font-main = 'Helvetica Neue', 'Helvetica', Arial, sans-serif
 $font-icon = baba-icons
 $font-size = 14px
 $color-background = #eee
@@ -56,8 +57,6 @@ html, body
 		background: $color-foreground
 		border-bottom: 1px solid #fff
 		box-shadow: 0 0 10px rgba(#000, .25)
-		color: #fff
-		text-shadow: 0 2px 2px #000
 	.contents-container
 		flex: 1 1
 
@@ -71,19 +70,19 @@ html, body
 		color: lighten($color-foreground, 30)
 
 header
-	.container
-		margin: 0 auto
-		padding: ($padding / 2) 0
-		width: $max-width
-		h1
-			font: $header-height/$header-height $font-logo
-			text-transform: lowercase
-			display: inline-block
-		.slogan
-			color: lighten($color-foreground, 40)
-			font: $font-size/$header-height $font-logo
-			text-transform: lowercase
-			float: right
+	margin: 0 auto
+	padding: ($padding / 2) $padding
+	width: $max-width
+	h1
+		font: $header-height/$header-height $font-logo
+		text-transform: lowercase
+		display: inline-block
+		color: #fff
+	.slogan
+		color: lighten($color-foreground, 50)
+		font: $font-size/$header-height $font-logo
+		text-transform: lowercase
+		float: right
 
 #contents
 	width: $max-width
@@ -99,18 +98,21 @@ footer
 // Word list and sentence builder styles
 .builder
 	margin: ($padding / 2) 0
-	border-radius: 3px
 	border: 1px solid #eee
 	padding: ($padding / 4)
 
 .builder-wordlist
+	$line-height = $font-size + 12px
 	display: flex
 	flex-flow: row wrap
 
-	line-height: $font-size + 12px
 	white-space: nowrap
 	cursor: default
 	user-select: none
+	ul
+		margin: 0 !important
+	ul, ol, li, div
+		line-height: $line-height
 	li.word
 		display: inline-flex
 		flex-flow: row
@@ -118,22 +120,28 @@ footer
 		background: #eee
 		text-shadow: 0 1px 0 rgba(#fff, .7)
 		overflow: hidden
-		border-radius: 5px
 		margin: 0 5px 0 0
 		span.word
 			display: inline-block
 			margin: 0 5px
 
 .builder-sentence
-	line-height: $font-size + 12px
+	$line-height = $font-size + 12px
 	white-space: nowrap
 	cursor: default
 	user-select: none
+	.button.add // foundation override
+		height: $line-height
+		line-height: $line-height
+		padding-top: 0
+		padding-bottom: 0
+		margin: 0
+	ul, ol, li, div
+		line-height: $line-height
 	.static
 		display: inline-flex
 		cursor: move
 		padding: 0 5px
-		border-radius: 5px
 		transition: .3s background
 		&:hover
 			background: rgba(#000, .05)
@@ -150,8 +158,7 @@ footer
 		background: #ccc
 		text-shadow: 0 1px 0 rgba(#fff, .7)
 		overflow: hidden
-		border-radius: 5px
-		.prefix
+		.ph-prefix
 			display: inline-flex
 			flex-flow: row
 
@@ -159,29 +166,29 @@ footer
 			li
 				border-right: 1px solid #fff
 				padding: 0 5px
-		.word
+		.ph-word
 			display: inline-flex
 			flex-flow: row
 
 			cursor: move
 			transition: .3s background
-			.class
+			.ph-class
 				padding: 0 5px
 				text-transform: uppercase
 				font-size: $font-size - 4px
 				font-weight: bold
 				background: rgba(#fff, .5)
 				margin: 4px
-				line-height: @line-height - (@margin * 2)
-			.group
+				line-height: $line-height - (@margin * 2)
+			.ph-group
 				font-weight: bold
 				margin: 0 5px
-			.preview
+			.ph-preview
 				margin: 0 5px
 				display: none // only show after user request
 			&:hover
 				background: rgba(#fff, .3)
-		.postfix
+		.ph-postfix
 			display: inline-flex
 			flex-flow: row
 
@@ -190,14 +197,17 @@ footer
 				border-left: 1px solid #fff
 				padding: 0 5px
 	&.preview
-		.prefix, .postfix, .word *, .actions
+		.ph-prefix, .ph-postfix, .ph-word *, .ph-actions
 			display: none !important
-		.word .preview
+		.ph-word .ph-preview
 			display: block !important
 
 // Common action popups
 .builder-wordlist,
 .builder-sentence
+	div.buttons
+		display: inline-flex
+		flex-flow: row
 	ul.actions
 		display: inline-flex
 		flex-flow: row
