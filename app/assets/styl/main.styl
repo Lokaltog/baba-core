@@ -1,0 +1,78 @@
+@import url('http://fonts.googleapis.com/css?family=Pacifico|Signika:300,600')
+
+// Design settings
+$font-logo = Pacifico, sans-serif
+$font-main = Signika, sans-serif
+$font-size = 14px
+$color-background = #eee
+$color-foreground = #2e281f
+$padding = 20px
+$max-width = 1200px
+$header-height = 26px
+
+$color-red = #d32
+$color-yellow = #e92
+$color-green = #7a3
+
+// CSS reset
+global-reset()
+reset-html5()
+
+// Layout
+html, body
+	background: $color-background
+	color: $color-foreground
+	font: $font-size/1.4 $font-main
+
+#layout
+	// Flexbox layout
+	display: flex
+	flex-flow: column
+	align-items: center
+	min-height: 100vh
+	.header-container
+		flex: 0 1
+
+		min-width: 100%
+		background: $color-foreground
+		border-bottom: 1px solid #fff
+		box-shadow: 0 0 10px rgba(#000, .25)
+		color: #fff
+		text-shadow: 0 2px 2px #000
+	.contents-container
+		flex: 1 1
+
+		background: #fff
+	.footer-container
+		flex: 0 1
+
+		min-width: 100%
+		background: lighten($color-background, 3)
+		border-top: 1px solid #fff
+		color: lighten($color-foreground, 30)
+
+header
+	.container
+		margin: 0 auto
+		padding: ($padding / 2) 0
+		width: $max-width
+		h1
+			font: $header-height/$header-height $font-logo
+			text-transform: lowercase
+			display: inline-block
+		.slogan
+			color: lighten($color-foreground, 40)
+			font: $font-size/$header-height $font-logo
+			text-transform: lowercase
+			float: right
+
+#contents
+	width: $max-width
+	padding: $padding
+
+footer
+	margin: 0 auto
+	padding: ($padding / 2) 0
+	width: $max-width
+	text-align: center
+	font-size: $font-size - 3px
