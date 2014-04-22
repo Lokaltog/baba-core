@@ -20,14 +20,12 @@
 
 		"grunt": "*",
 		"grunt-contrib-clean": "*",
-		"grunt-contrib-cssmin": "*",
 		"grunt-contrib-htmlmin": "*",
 		"grunt-contrib-jade": "*",
 		"grunt-contrib-stylus": "*",
 		"grunt-contrib-uglify": "*",
 		"grunt-contrib-watch": "*",
 		"grunt-html-smoosher": "*",
-		"grunt-image-embed": "*",
 		"grunt-sync": "*",
 		"matchdep": "*"
 	},

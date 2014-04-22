@@ -29,6 +29,10 @@ module.exports = function (grunt) {
 		pkg: grunt.file.readJSON('package.json'),
 
 		clean: {
+			smooshed: [
+				'webroot/views',
+				'webroot/static/{css,js}',
+			],
 			all: [
 				'webroot/{static,views}',
 			],
@@ -49,6 +53,9 @@ module.exports = function (grunt) {
 					debug: true,
 					compress: false,
 					'include css': true,
+					define: {
+						ASSETS_PATH: '../',
+					},
 					use: [
 						require('nib'),
 					],
@@ -63,6 +70,10 @@ module.exports = function (grunt) {
 					debug: false,
 					compress: true,
 					'include css': true,
+					'resolve url': true,
+					define: {
+						ASSETS_PATH: 'static/', // required for smoosher
+					},
 					use: [
 						require('nib'),
 					],
@@ -86,16 +97,6 @@ module.exports = function (grunt) {
 					pretty: false,
 					compileDebug: false,
 				},
-			},
-		},
-		cssmin: {
-			all: {
-				files: [{
-					expand: true,
-					cwd: 'webroot/static/css',
-					src: '**/*.css',
-					dest: 'webroot/static/css',
-				}],
 			},
 		},
 		htmlmin: {
@@ -200,16 +201,6 @@ module.exports = function (grunt) {
 				},
 			},
 		},
-		imageEmbed: {
-			all: {
-				src: ['webroot/static/css/main.css'],
-				dest: 'webroot/static/css/main.css',
-				options: {
-					maxImageSize: 0,
-					baseDir: 'webroot',
-				},
-			},
-		},
 	})
 
 	grunt.registerTask('development', [
@@ -222,10 +213,8 @@ module.exports = function (grunt) {
 		'stylus:production',
 		'jade:production',
 		'uglify:production',
-		'cssmin:all',
 		'htmlmin:production',
-		'imageEmbed:all',
 		'smoosher:all',
-		'clean:all',
+		'clean:smooshed',
 	])
 }
