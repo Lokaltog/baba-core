@@ -139,6 +139,8 @@ footer
 	ul, ol, li
 		margin: 0
 		line-height: $line-height
+	& > li
+		margin: 0 5px 0 0
 	.static
 		display: inline-flex
 		cursor: move
@@ -207,7 +209,8 @@ footer
 .builder-wordlist,
 .builder-sentence
 	.ui-sortable-placeholder
-		background: rgba($color-yellow, .2) !important
+		outline: 1px solid rgba($color-yellow, .5)
+		background: rgba($color-yellow, .1) !important
 		visibility: visible !important
 		vertical-align: top
 	li.buttons
