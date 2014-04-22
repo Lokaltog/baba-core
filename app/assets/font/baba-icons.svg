@@ -1,0 +1,13 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg">
+<metadata>Copyright (C) 2014 by original authors @ fontello.com</metadata>
+<defs>
+<font id="baba-icons" horiz-adv-x="1000" >
+<font-face font-family="baba-icons" font-weight="400" font-stretch="normal" units-per-em="1000" ascent="850" descent="-150" />
+<missing-glyph horiz-adv-x="1000" />
+<glyph glyph-name="delete" unicode="&#xe801;" d="m416 767q173 0 295-122t123-295-123-294-295-122-294 122-122 294 122 295 294 122z m194-537l-120 120 120 120q15 15 15 37t-15 36-37 15-37-15l-120-119-118 119q-15 15-37 15t-37-15-15-36 15-37l119-120-119-120q-15-15-15-36t15-36q16-16 36-16 21 0 38 16l118 119 120-119q17-16 37-16 21 0 37 16 15 15 15 36t-15 36z" horiz-adv-x="834" />
+<glyph glyph-name="edit" unicode="&#xe800;" d="m304 310l60 117 226 226c14-8 20-12 34-26s17-20 26-34l-226-226-118-60z m-304-303l113 444 237 236s80 23 165 0l-206-205-150-77-33-178c42-42 64-65 98-97l176 33 78 150 208 209c27-89-2-169-2-169l-236-237-445-113z" horiz-adv-x="697" />
+</font>
+</defs>
+</svg>
