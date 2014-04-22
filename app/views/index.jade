@@ -42,12 +42,13 @@ html.no-js(lang='en')
 									i.icon.icon-delete
 
 					// .builder.builder-sentence.preview
-					.builder.builder-sentence
-						.static lorem ipsum
-						.placeholder.verb.verb-git-term
+					ul.builder.builder-sentence
+						li.static
+							.handle lorem ipsum
+						li.placeholder.verb.verb-git-term
 							ol.ph-prefix.tf-misc.tf-misc-a-an
 								li a/an
-							.ph-word
+							.ph-word.handle
 								.ph-class verb
 								.ph-group git term
 								.ph-preview a reforking
@@ -59,8 +60,9 @@ html.no-js(lang='en')
 									i.icon.icon-edit
 								li.delete
 									i.icon.icon-delete
-						.static dolor sit amet
-						div.buttons
+						li.static
+							.handle dolor sit amet
+						li.buttons
 							a.button.dropdown.add(data-dropdown='dropdown-add-1', href='#') Add
 							ul#dropdown-add-1.f-dropdown(dada-dropdown-content)
 								li
@@ -72,5 +74,5 @@ html.no-js(lang='en')
 				footer
 					p Baba Grammar Creator
 
-	script(src='http://cdn.jsdelivr.net/g/jquery@2.1.0,foundation@5.2.2(js/foundation.min.js+js/vendor/modernizr.js+js/vendor/fastclick.js+js/vendor/placeholder.js)')
+	script(src='http://cdn.jsdelivr.net/g/jquery@2.1.0,jquery.ui@1.10.4(jquery.ui.core.min.js+jquery.ui.widget.min.js+jquery.ui.mouse.min.js+jquery.ui.sortable.min.js),foundation@5.2.2(js/foundation.min.js+js/vendor/modernizr.js+js/vendor/fastclick.js+js/vendor/placeholder.js)')
 	script(src='static/js/main.js')

@@ -136,7 +136,8 @@ footer
 		padding-top: 0
 		padding-bottom: 0
 		margin: 0
-	ul, ol, li, div
+	ul, ol, li
+		margin: 0
 		line-height: $line-height
 	.static
 		display: inline-flex
@@ -205,7 +206,11 @@ footer
 // Common action popups
 .builder-wordlist,
 .builder-sentence
-	div.buttons
+	.ui-sortable-placeholder
+		background: rgba($color-yellow, .2) !important
+		visibility: visible !important
+		vertical-align: top
+	li.buttons
 		display: inline-flex
 		flex-flow: row
 	ul.actions
