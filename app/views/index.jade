@@ -16,7 +16,46 @@ html
 
 			.contents-container
 				#contents
-					p contents
+					ul.builder.builder-wordlist
+						li.word
+							span.word lorem
+							ul.actions
+								li.edit
+									i.icon.icon-edit
+								li.delete
+									i.icon.icon-delete
+						li.word
+							span.word ipsum
+							ul.actions
+								li.edit
+									i.icon.icon-edit
+								li.delete
+									i.icon.icon-delete
+						li.word
+							span.word dolor
+							ul.actions
+								li.edit
+									i.icon.icon-edit
+								li.delete
+									i.icon.icon-delete
+
+					.builder.builder-sentence
+						.static lorem ipsum
+						.placeholder.verb.verb-git-term
+							ol.prefix.tf-misc.tf-misc-a-an
+								li a/an
+							.word
+								.class verb
+								.group git term
+							ol.postfix.tf-verb-tense.tf-verb-tense-pp
+								li ·ing
+								li ·s
+							ul.actions
+								li.edit
+									i.icon.icon-edit
+								li.delete
+									i.icon.icon-delete
+						.static dolor sit amet
 
 			.footer-container
 				footer

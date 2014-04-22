@@ -1,8 +1,17 @@
+// Imports
 @import url('http://fonts.googleapis.com/css?family=Pacifico|Signika:300,600')
+
+// Web fonts
+@font-face
+	src: url('../font/baba-icons.svg') format('svg')
+	font-family: baba-icons
+	font-style: normal
+	font-weight: normal
 
 // Design settings
 $font-logo = Pacifico, sans-serif
 $font-main = Signika, sans-serif
+$font-icon = baba-icons
 $font-size = 14px
 $color-background = #eee
 $color-foreground = #2e281f
@@ -17,6 +26,16 @@ $color-green = #7a3
 // CSS reset
 global-reset()
 reset-html5()
+
+// Icons
+i.icon
+	font: normal $font-size $font-icon
+	&.icon-edit
+		&::before
+			content: '\e800'
+	&.icon-delete
+		&::before
+			content: '\e801'
 
 // Layout
 html, body
@@ -76,3 +95,124 @@ footer
 	width: $max-width
 	text-align: center
 	font-size: $font-size - 3px
+
+// Word list and sentence builder styles
+.builder
+	margin: ($padding / 2) 0
+	border-radius: 3px
+	border: 1px solid #eee
+	padding: ($padding / 4)
+
+.builder-wordlist
+	display: flex
+	flex-flow: row wrap
+
+	line-height: $font-size + 12px
+	white-space: nowrap
+	cursor: default
+	user-select: none
+	li.word
+		display: inline-flex
+		flex-flow: row
+
+		background: #eee
+		text-shadow: 0 1px 0 rgba(#fff, .7)
+		overflow: hidden
+		border-radius: 5px
+		margin: 0 5px 0 0
+		span.word
+			display: inline-block
+			margin: 0 5px
+
+.builder-sentence
+	line-height: $font-size + 12px
+	white-space: nowrap
+	cursor: default
+	user-select: none
+	.static
+		display: inline-flex
+		cursor: move
+		padding: 0 5px
+		border-radius: 5px
+		transition: .3s background
+		&:hover
+			background: rgba(#000, .05)
+	.placeholder
+		display: inline-flex
+		flex-flow: row
+
+		// Word class coloring
+		&.noun
+			background: #dec
+		&.verb
+			background: #ecb
+
+		background: #ccc
+		text-shadow: 0 1px 0 rgba(#fff, .7)
+		overflow: hidden
+		border-radius: 5px
+		.prefix
+			display: inline-flex
+			flex-flow: row
+
+			background: #eee
+			li
+				border-right: 1px solid #fff
+				padding: 0 5px
+		.word
+			display: inline-flex
+			flex-flow: row
+
+			cursor: move
+			transition: .3s background
+			.class
+				padding: 0 5px
+				text-transform: uppercase
+				font-size: $font-size - 4px
+				font-weight: bold
+				background: rgba(#fff, .5)
+				margin: 4px
+				line-height: @line-height - (@margin * 2)
+			.group
+				font-weight: bold
+				margin: 0 5px
+			&:hover
+				background: rgba(#fff, .3)
+		.postfix
+			display: inline-flex
+			flex-flow: row
+
+			background: #eee
+			li
+				border-left: 1px solid #fff
+				padding: 0 5px
+
+// Common action popups
+.builder-wordlist,
+.builder-sentence
+	ul.actions
+		display: inline-flex
+		flex-flow: row
+
+		width: 0
+		transition: .3s width
+		li
+			cursor: pointer
+			flex: 1 1
+			background: #eee
+			font-weight: bold
+			text-align: center
+			border-left: 1px solid #fff
+			&:hover
+				background: #ccc
+			&.delete
+				color: $color-red
+				&:hover
+					color: #fff
+					background: $color-red
+					text-shadow: 0 1px 0 rgba(#000, .7)
+	li.word,
+	.placeholder
+		&:hover
+			.actions
+				width: 44px
