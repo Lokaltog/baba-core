@@ -109,36 +109,38 @@ $builder-gutter = 5px
 	background: desaturate(lighten($color-foreground, 70), 10)
 	box-shadow: inset 0 1px 1px rgba(#000, .2)
 	display: flex
-	padding: $builder-gutter
+	padding: $builder-gutter 0 0 $builder-gutter
 	line-height: 1.5em
 	text-shadow: 0 1px 0 rgba(#fff, .7)
-	ul, ol, div
+	ul,
+	ol,
+	li,
+	div
 		display: flex
 		flex: 0 1 auto
+	& > ul,
+	& > ol,
+	& > li,
+	& > div
+		margin: 0 $builder-gutter $builder-gutter 0
 	li
 		display: flex
 		flex: 0 1 auto
-	&:hover > li
-		opacity: .8
 	& > li
-		margin-right: $builder-gutter
-		padding-left: ($gutter / 4)
-		padding-right: ($gutter / 4)
 		.actions
 			overflow: hidden
 			width: 0
 			li
 				cursor: pointer
-				padding: 0 @padding-left
 				border-left: 1px solid @background
+				padding: 0 ($gutter / 4)
 				&:hover
 					background: $color-foreground
 					color: #fff
+					text-shadow: 0 1px 1px rgba(#000, .5)
 		&:hover
 			padding-right: 0
-			opacity: 1
 			.actions
-				margin-left: @padding-left
 				width: auto
 				.delete:hover
 					background: $color-red
@@ -151,6 +153,22 @@ $builder-gutter = 5px
 		background: rgba($color-yellow, .3) !important
 		visibility: visible !important
 		vertical-align: top
+	.buttons
+		.add
+			cursor: pointer
+			padding: 0 ($gutter / 4)
+			position: relative
+			background: rgba($color-foreground, .7)
+			color: #fff
+			text-shadow: 0 1px 1px #000
+			text-align: center
+			&:hover
+				background: $color-foreground
+	#dropdown
+		position: absolute
+		top: 0
+		left: 0
+		display: none
 
 
 // Word list
@@ -158,19 +176,21 @@ $builder-gutter = 5px
 	li.word
 		box-shadow: 0 1px 1px rgba(#000, .3)
 		background: #fff
-		margin-right: $builder-gutter
+		span.word
+			padding: 0 ($gutter / 4)
 
 // Sentence builder
 .builder-sentence
-	li.static
-		padding-right: ($gutter / 4)
 	li.placeholder
 		box-shadow: 0 1px 1px rgba(#000, .3)
 		background: #fff
-		& > ol,
-		& > div
-			padding: 0 ($gutter / 4)
+		.prefix
+			color: lighten($color-foreground, 40)
+			li
+				border-right: 1px solid #ddd
+				padding: 0 ($gutter / 4)
 		.word
+			padding: 0 ($gutter / 4) 0 0
 			.class, .group
 				text-transform: uppercase
 				font-size: .6em
@@ -180,3 +200,8 @@ $builder-gutter = 5px
 				background: #eea
 			.group
 				margin-right: ($gutter / 4)
+		.postfix
+			color: lighten($color-foreground, 40)
+			li
+				border-left: 1px solid #ddd
+				padding: 0 ($gutter / 4)
