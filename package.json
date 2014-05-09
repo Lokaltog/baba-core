@@ -12,22 +12,28 @@
 		"type": "git",
 		"url": "https://github.com/Lokaltog/baba.git"
 	},
-	"dependencies" : {
+	"devDependencies" : {
 		"jade": "*",
 		"nib": "*",
 		"stylus": "*",
 		"uglify-js": "*",
+		"watchify": "*",
+		"vinyl-source-stream": "*",
 
-		"grunt": "*",
-		"grunt-contrib-clean": "*",
-		"grunt-contrib-htmlmin": "*",
-		"grunt-contrib-jade": "*",
-		"grunt-contrib-stylus": "*",
-		"grunt-contrib-uglify": "*",
-		"grunt-contrib-watch": "*",
-		"grunt-html-smoosher": "*",
-		"grunt-sync": "*",
-		"matchdep": "*"
+		"brfs": "*",
+		"es6ify": "*",
+
+		"gulp": "*",
+		"gulp-clean": "*",
+		"gulp-jade": "*",
+		"gulp-livereload": "*",
+		"gulp-htmlmin": "*",
+		"gulp-imagemin": "*",
+		"gulp-smoosher": "*",
+		"gulp-streamify": "*",
+		"gulp-stylus": "*",
+		"gulp-uglify": "*",
+		"gulp-util": "*"
 	},
 	"engines": {
 		"node": ">=0.10"
