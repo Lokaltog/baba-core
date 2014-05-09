@@ -1,244 +1,174 @@
 // Imports
-@import url('http://fonts.googleapis.com/css?family=Pacifico')
-@import url('http://cdn.jsdelivr.net/g/foundation@5.2.2(css/foundation.min.css)')
+@import url('http://fonts.googleapis.com/css?family=Pacifico|Roboto:300,400,700')
 
 // Web fonts
 @font-face
-	src: url(ASSETS_PATH + 'font/baba-icons.svg') format('svg')
+	src: url('/static/font/baba-icons.svg') format('svg')
 	font-family: baba-icons
 	font-style: normal
 	font-weight: normal
 
 // Design settings
 $font-logo = Pacifico, sans-serif
-$font-main = 'Helvetica Neue', 'Helvetica', Arial, sans-serif
+$font-main = Roboto, sans-serif
 $font-icon = baba-icons
-$font-size = 14px
-$color-background = #eee
 $color-foreground = #2e281f
-$padding = 20px
-$max-width = 1200px
-$header-height = 26px
+$site-width = 70em
+$header-height = 3.5em
+$gutter = 2em
 
+$color-accent = #d32
 $color-red = #d32
 $color-yellow = #e92
 $color-green = #7a3
 
 // CSS reset
 global-reset()
-reset-html5()
 
 // Icons
 i.icon
-	font: normal $font-size $font-icon
+	font: normal 1em $font-icon
 	&.icon-edit
 		&::before
 			content: '\e800'
+	&.icon-add
+		&::before
+			content: '\e802'
 	&.icon-delete
 		&::before
-			content: '\e801'
+			content: '\e804'
+
+// Main elements
+p
+	margin: ($gutter / 2) 0
+
+strong
+	font-weight: 700
+
+a
+	color: $color-accent
+	transition: all .2s ease
+	&:hover
+		color: lighten($color-accent, 15)
 
 // Layout
 html, body
-	background: $color-background
+	font: 300 100%/1.5 $font-main
 	color: $color-foreground
-	font: $font-size/1.4 $font-main
+	background: url('/static/img/background.png')
 
-#layout
-	// Flexbox layout
-	display: flex
-	flex-flow: column
-	align-items: center
-	min-height: 100vh
-	.header-container
-		flex: 0 1
+header, #contents, footer
+	max-width: $site-width
+	margin: 0 auto
+	padding: 0 $gutter
 
-		min-width: 100%
-		background: $color-foreground
-		border-bottom: 1px solid #fff
-		box-shadow: 0 0 10px rgba(#000, .25)
-	.contents-container
-		flex: 1 1
-
-		background: #fff
-	.footer-container
-		flex: 0 1
-
-		min-width: 100%
-		background: lighten($color-background, 3)
-		border-top: 1px solid #fff
-		color: lighten($color-foreground, 30)
+header, #contents
+	box-shadow: 0 10px 40px rgba($color-foreground, .1)
 
 header
-	margin: 0 auto
-	padding: ($padding / 2) $padding
-	width: $max-width
+	display: flex
+	align-items: center
+	background: $color-foreground
+	color: #fff
+	height: $header-height
 	h1
-		font: $header-height/$header-height $font-logo
+		flex: 1 1 auto
+		font: 1.5em $font-logo
 		text-transform: lowercase
-		display: inline-block
 		color: #fff
 	.slogan
+		flex: 0 1 auto
 		color: lighten($color-foreground, 50)
-		font: $font-size/$header-height $font-logo
+		font: 1em $font-logo
 		text-transform: lowercase
-		float: right
 
 #contents
-	width: $max-width
-	padding: $padding
+	background: #fff
+	padding-top: $gutter
+	padding-bottom: $gutter
+	section
+		margin: $gutter 0
+		&:first-child
+			margin-top: 0
+		&:last-child
+			margin-bottom: 0
 
 footer
-	margin: 0 auto
-	padding: ($padding / 2) 0
-	width: $max-width
 	text-align: center
-	font-size: $font-size - 3px
+	color: lighten($color-foreground, 50)
+	text-shadow: 0 1px #fff
+	a
+		color: lighten($color-foreground, 50)
+		&:hover
+			color: lighten($color-foreground, 20)
 
-// Word list and sentence builder styles
+// Builder styles
+$builder-gutter = 5px
 .builder
-	margin: ($padding / 2) 0
-	border: 1px solid #eee
-	padding: ($padding / 4)
-
-.builder-wordlist
-	$line-height = $font-size + 12px
+	background: desaturate(lighten($color-foreground, 70), 10)
+	box-shadow: inset 0 1px 1px rgba(#000, .2)
 	display: flex
-	flex-flow: row wrap
-
-	white-space: nowrap
-	cursor: default
-	user-select: none
-	ul
-		margin: 0 !important
-	ul, ol, li, div
-		line-height: $line-height
-	li.word
-		display: inline-flex
-		flex-flow: row
-
-		background: #eee
-		text-shadow: 0 1px 0 rgba(#fff, .7)
-		overflow: hidden
-		margin: 0 5px 0 0
-		span.word
-			display: inline-block
-			margin: 0 5px
-
-.builder-sentence
-	$line-height = $font-size + 12px
-	white-space: nowrap
-	cursor: default
-	user-select: none
-	.button.add // foundation override
-		height: $line-height
-		line-height: $line-height
-		padding-top: 0
-		padding-bottom: 0
-		margin: 0
-	ul, ol, li
-		margin: 0
-		line-height: $line-height
+	padding: $builder-gutter
+	line-height: 1.5em
+	text-shadow: 0 1px 0 rgba(#fff, .7)
+	ul, ol, div
+		display: flex
+		flex: 0 1 auto
+	li
+		display: flex
+		flex: 0 1 auto
+	&:hover > li
+		opacity: .8
 	& > li
-		margin: 0 5px 0 0
-	.static
-		display: inline-flex
-		cursor: move
-		padding: 0 5px
-		transition: .3s background
-		&:hover
-			background: rgba(#000, .05)
-	.placeholder
-		display: inline-flex
-		flex-flow: row
-
-		// Word class coloring
-		&.noun
-			background: #dec
-		&.verb
-			background: #ecb
-
-		background: #ccc
-		text-shadow: 0 1px 0 rgba(#fff, .7)
-		overflow: hidden
-		.ph-prefix
-			display: inline-flex
-			flex-flow: row
-
-			background: #eee
+		margin-right: $builder-gutter
+		padding-left: ($gutter / 4)
+		padding-right: ($gutter / 4)
+		.actions
+			overflow: hidden
+			width: 0
 			li
-				border-right: 1px solid #fff
-				padding: 0 5px
-		.ph-word
-			display: inline-flex
-			flex-flow: row
-
-			cursor: move
-			transition: .3s background
-			.ph-class
-				padding: 0 5px
-				text-transform: uppercase
-				font-size: $font-size - 4px
-				font-weight: bold
-				background: rgba(#fff, .5)
-				margin: 4px
-				line-height: $line-height - (@margin * 2)
-			.ph-group
-				font-weight: bold
-				margin: 0 5px
-			.ph-preview
-				margin: 0 5px
-				display: none // only show after user request
-			&:hover
-				background: rgba(#fff, .3)
-		.ph-postfix
-			display: inline-flex
-			flex-flow: row
-
-			background: #eee
-			li
-				border-left: 1px solid #fff
-				padding: 0 5px
-	&.preview
-		.ph-prefix, .ph-postfix, .ph-word *, .ph-actions
-			display: none !important
-		.ph-word .ph-preview
-			display: block !important
-
-// Common action popups
-.builder-wordlist,
-.builder-sentence
-	.ui-sortable-placeholder
-		outline: 1px solid rgba($color-yellow, .5)
-		background: rgba($color-yellow, .1) !important
-		visibility: visible !important
-		vertical-align: top
-	li.buttons
-		display: inline-flex
-		flex-flow: row
-	ul.actions
-		display: inline-flex
-		flex-flow: row
-
-		width: 0
-		transition: .3s width
-		li
-			cursor: pointer
-			flex: 1 1
-			background: #eee
-			font-weight: bold
-			text-align: center
-			border-left: 1px solid #fff
-			&:hover
-				background: #ccc
-			&.delete
-				color: $color-red
+				cursor: pointer
+				padding: 0 @padding-left
+				border-left: 1px solid @background
 				&:hover
+					background: $color-foreground
 					color: #fff
-					background: $color-red
-					text-shadow: 0 1px 0 rgba(#000, .7)
-	li.word,
-	.placeholder
 		&:hover
+			padding-right: 0
+			opacity: 1
 			.actions
-				width: 44px
+				margin-left: @padding-left
+				width: auto
+				.delete:hover
+					background: $color-red
+	.icon::before
+		line-height: @line-height
+		font-size: .6em
+
+// Word list
+.builder-wordlist
+	li.word
+		box-shadow: 0 1px 1px rgba(#000, .3)
+		background: #fff
+		margin-right: $builder-gutter
+
+// Sentence builder
+.builder-sentence
+	li.static
+		padding-right: ($gutter / 4)
+	li.placeholder
+		box-shadow: 0 1px 1px rgba(#000, .3)
+		background: #fff
+		& > ol,
+		& > div
+			padding: 0 ($gutter / 4)
+		.word
+			.class, .group
+				text-transform: uppercase
+				font-size: .6em
+				padding: 0 ($gutter / 4)
+			.class
+				font-weight: 700
+				background: #eea
+			.group
+				margin-right: ($gutter / 4)
