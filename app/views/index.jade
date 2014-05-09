@@ -41,9 +41,11 @@ html(lang='en')
 					li.buttons
 						.add.dropdown(href='#')
 							i.icon.icon-add
-							ul#dropdown
-								li Phrase
-								li Verb
+					li.sort
+						.ascending
+							i.icon.icon-sort-ascending
+						.descending
+							i.icon.icon-sort-descending
 
 			section
 				ul.builder.builder-sentence
@@ -55,7 +57,6 @@ html(lang='en')
 						.word.handle
 							.class verb
 							.group git term
-							.preview a reforking
 						ol.postfix.verb-tense.verb-tense-pp
 							li ·ing
 							li ·s
@@ -70,8 +71,11 @@ html(lang='en')
 						.add.dropdown(href='#')
 							i.icon.icon-add
 							ul#dropdown
-								li Phrase
-								li Verb
+								li.phrase Phrase
+
+								li.wc-verb Verb
+								li.wc-adjective Adjective
+								li.wc-noun Noun
 
 		footer
 			p
