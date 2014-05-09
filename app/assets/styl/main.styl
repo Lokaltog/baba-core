@@ -105,6 +105,7 @@ footer
 // Builder styles
 $builder-gutter = 5px
 .builder
+	cursor: default
 	background: desaturate(lighten($color-foreground, 70), 10)
 	box-shadow: inset 0 1px 1px rgba(#000, .2)
 	display: flex
@@ -144,6 +145,13 @@ $builder-gutter = 5px
 	.icon::before
 		line-height: @line-height
 		font-size: .6em
+	.handle
+		cursor: move
+	.ui-sortable-placeholder
+		background: rgba($color-yellow, .3) !important
+		visibility: visible !important
+		vertical-align: top
+
 
 // Word list
 .builder-wordlist
