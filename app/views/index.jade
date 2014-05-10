@@ -28,7 +28,7 @@ html(lang='en')
 								i.icon.icon-delete
 					!='{{/words}}'
 					li.add-textfield
-						input(type='text', data-autosize-input='{space:0}')
+						input(type='text', data-autosize-input)
 					li.buttons
 						.add.dropdown(href='#')
 							i.icon.icon-add
@@ -45,8 +45,7 @@ html(lang='en')
 				ul.builder.builder-sentence
 					!='{{#elements}}'
 					!='{{#static}}'
-					li.static
-						.handle {{phrase}}
+					li.static {{phrase}}
 					!='{{/static}}'
 					!='{{^static}}'
 					li(class='placeholder {{word.class}} {{word.class}}-{{word.group.key}}')
@@ -54,7 +53,7 @@ html(lang='en')
 							!='{{#prefix}}'
 							li(class='{{key}}') {{label}}
 							!='{{/prefix}}'
-						.word.handle
+						.word
 							.class {{word.class}}
 							.group {{word.group.label}}
 						ol.postfix
@@ -93,5 +92,5 @@ html(lang='en')
 				=' · '
 				a(href='https://github.com/Lokaltog/baba') GitHub repo
 
-	script(src='//cdn.jsdelivr.net/g/jquery@2.1.0,jquery.ui@1.10.4(jquery.ui.core.min.js+jquery.ui.widget.min.js+jquery.ui.mouse.min.js+jquery.ui.sortable.min.js),ractive@0.4.0')
+	script(src='//cdn.jsdelivr.net/g/jquery@2.1.0,ractive@0.4.0')
 	script(src='/static/js/main.js')

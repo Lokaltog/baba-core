@@ -60,8 +60,3 @@ var contents = new Ractive({
 		],
 	},
 })
-
-// handle sentence builder
-$('.builder-sentence').sortable({
-	handle: '.handle',
-})
