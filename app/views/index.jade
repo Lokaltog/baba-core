@@ -24,14 +24,14 @@ html(lang='en')
 
 	script(id='wordlist-template', type='text/ractive')
 		section.wordlists
-			!='{{#wordlists}}'
+			!='{{#wordlists:idx}}'
 			ul.builder.builder-wordlist
-				!='{{#words}}'
+				!='{{#sortWords(words, sortOrder)}}'
 				li.word
 					span.word {{word}}
 					ul.actions
-						li.delete
-							i.icon.icon-delete(on-click='wordlist-delete-word')
+						li.delete(on-click='wordlist-delete-word:{{words}}')
+							i.icon.icon-delete
 				!='{{/words}}'
 				li.add-textfield
 					input(type='text', placeholder='add word', data-autosize-input, on-change='wordlist-add-word')
@@ -40,10 +40,14 @@ html(lang='en')
 						i.icon.icon-add
 				li.actions
 					.ascending
-						i.icon.icon-sort-ascending
+						input(type='radio', name='{{.sortOrder}}', value='asc', id='wordlist-sort-asc-{{idx}}', checked)
+						label(for='wordlist-sort-asc-{{idx}}')
+							i.icon.icon-sort-ascending
 					.descending
-						i.icon.icon-sort-descending
-			!='{{/wordlist}}'
+						input(type='radio', name='{{.sortOrder}}', value='desc', id='wordlist-sort-desc-{{idx}}')
+						label(for='wordlist-sort-desc-{{idx}}')
+							i.icon.icon-sort-descending
+			!='{{/wordlists}}'
 
 	script(id='sentence-template', type='text/ractive')
 		section.sentences
@@ -94,9 +98,9 @@ html(lang='en')
 						ul#dropdown
 							li.static-phrase Phrase
 
-							!='{{#wordlist}}'
+							!='{{#wordlists}}'
 							li(class='{{class}}') {{group}}
-							!='{{/wordlist}}'
+							!='{{/wordlists}}'
 					!='{{/preview}}'
 
 				li.actions
