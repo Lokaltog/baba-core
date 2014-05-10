@@ -5,7 +5,7 @@ html(lang='en')
 		meta(http-equiv='Content-Type', content='text/html;charset=utf-8')
 		meta(name='viewport', content='width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no')
 
-		title Baba
+		title Baba Grammar Creator
 
 		link(rel='stylesheet', href='/static/css/main.css', type='text/css')
 
@@ -14,90 +14,6 @@ html(lang='en')
 			h1 Baba
 			.slogan Create garbage texts
 
-		script(id='wordlist-template', type='text/ractive')
-			section.wordlist
-				!='{{#wordlist}}'
-				ul.builder.builder-wordlist
-					!='{{#words}}'
-					li.word
-						span.word {{word}}
-						ul.actions
-							li.edit
-								i.icon.icon-edit
-							li.delete
-								i.icon.icon-delete
-					!='{{/words}}'
-					li.add-textfield
-						input(type='text', data-autosize-input)
-					li.buttons
-						.add.dropdown(href='#')
-							i.icon.icon-add
-					li.actions
-						.ascending
-							i.icon.icon-sort-ascending
-						.descending
-							i.icon.icon-sort-descending
-				!='{{/wordlist}}'
-
-		script(id='sentence-template', type='text/ractive')
-			section.sentence
-				!='{{#sentences:idx}}'
-				ul.builder.builder-sentence
-					!='{{#elements}}'
-					!='{{#static}}'
-					// static phrase
-					li.static {{phrase}}
-					!='{{/static}}'
-					!='{{^static}}'
-					!='{{#preview}}'
-					// preview word
-					li(class='preview {{word.class}} {{word.class}}-{{word.group.key}}')
-						| [preview]
-					!='{{/preview}}'
-					!='{{^preview}}'
-					// display placeholder with edit functionality
-					li(class='placeholder {{word.class}} {{word.class}}-{{word.group.key}}')
-						ol.prefix
-							!='{{#prefix}}'
-							li(class='{{key}}') {{label}}
-							!='{{/prefix}}'
-						.word
-							.class {{word.class}}
-							.group {{word.group.label}}
-						ol.postfix
-							!='{{#postfix}}'
-							li(class='{{key}}') {{label}}
-							!='{{/postfix}}'
-						ul.actions
-							li.edit
-								i.icon.icon-edit
-							li.delete
-								i.icon.icon-delete
-					!='{{/preview}}'
-					!='{{/static}}'
-					!='{{/elements}}'
-					li.buttons
-						// hide add button on preview
-						!='{{^preview}}'
-						.add.dropdown(href='#')
-							i.icon.icon-add
-							ul#dropdown
-								li.static-phrase Phrase
-
-								!='{{#wordlist}}'
-								li(class='{{class}}') {{group}}
-								!='{{/wordlist}}'
-						!='{{/preview}}'
-					li.actions
-						.preview
-							input(type='checkbox', checked='{{preview}}', id='sentence-preview-{{idx}}')
-							label(for='sentence-preview-{{idx}}') Preview
-				!='{{/sentences}}'
-
-		script(id='contents-template', type='text/ractive')
-			!='{{>wordlists}}'
-			!='{{>sentences}}'
-
 		#contents
 
 		footer
@@ -105,6 +21,93 @@ html(lang='en')
 				| Baba Grammar Creator by Kim Silkebækken
 				=' · '
 				a(href='https://github.com/Lokaltog/baba') GitHub repo
+
+	script(id='wordlist-template', type='text/ractive')
+		section.wordlists
+			!='{{#wordlists}}'
+			ul.builder.builder-wordlist
+				!='{{#words}}'
+				li.word
+					span.word {{word}}
+					ul.actions
+						li.delete
+							i.icon.icon-delete(on-click='wordlist-delete-word')
+				!='{{/words}}'
+				li.add-textfield
+					input(type='text', placeholder='add word', data-autosize-input, on-change='wordlist-add-word')
+				li.buttons
+					.add.dropdown(href='#')
+						i.icon.icon-add
+				li.actions
+					.ascending
+						i.icon.icon-sort-ascending
+					.descending
+						i.icon.icon-sort-descending
+			!='{{/wordlist}}'
+
+	script(id='sentence-template', type='text/ractive')
+		section.sentences
+			!='{{#sentences:idx}}'
+			ul.builder.builder-sentence
+				!='{{#elements}}'
+
+				!='{{#static}}'
+				// static phrase
+				li.static {{phrase}}
+				!='{{/static}}'
+
+				!='{{^static}}'
+				!='{{#preview}}'
+				// preview word
+				li(class='preview {{word.class}} {{word.class}}-{{word.group.key}}')
+					| [preview]
+				!='{{/preview}}'
+
+				!='{{^preview}}'
+				// display placeholder with edit functionality
+				li(class='placeholder {{word.class}} {{word.class}}-{{word.group.key}}')
+					ol.prefix
+						!='{{#prefix}}'
+						li(class='{{key}}') {{label}}
+						!='{{/prefix}}'
+					.word
+						.class {{word.class}}
+						.group {{word.group.label}}
+					ol.postfix
+						!='{{#postfix}}'
+						li(class='{{key}}') {{label}}
+						!='{{/postfix}}'
+					ul.actions
+						li.edit
+							i.icon.icon-edit
+						li.delete
+							i.icon.icon-delete
+				!='{{/preview}}'
+				!='{{/static}}'
+				!='{{/elements}}'
+
+				li.buttons
+					// hide add button on preview
+					!='{{^preview}}'
+					.add.dropdown(href='#')
+						i.icon.icon-add
+						ul#dropdown
+							li.static-phrase Phrase
+
+							!='{{#wordlist}}'
+							li(class='{{class}}') {{group}}
+							!='{{/wordlist}}'
+					!='{{/preview}}'
+
+				li.actions
+					.preview
+						input(type='checkbox', checked='{{preview}}', id='sentence-preview-{{idx}}')
+						label(for='sentence-preview-{{idx}}') Preview
+			!='{{/sentences}}'
+
+	script(id='contents-template', type='text/ractive')
+		!='{{>wordlists}}'
+		!='{{>sentences}}'
 
 	script(src='//cdn.jsdelivr.net/g/jquery@2.1.0,ractive@0.4.0')
 	script(src='/static/js/main.js')

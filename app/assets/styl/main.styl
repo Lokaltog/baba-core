@@ -57,6 +57,13 @@ a
 	&:hover
 		color: lighten($color-accent, 15)
 
+// Form elements
+input
+	font: 300 1em/1.5 $font-main
+	box-sizing: border-box
+	margin: 0
+	padding: 0 ($gutter / 4)
+
 // Layout
 html, body
 	font: 300 100%/1.5 $font-main
@@ -220,6 +227,15 @@ $builder-gutter = 5px
 		background: #fff
 		span.word
 			padding: 0 ($gutter / 4)
+	li.add-textfield
+		input
+			border: 0
+			background: transparent
+			border-bottom: 1px dotted rgba(#000, .3)
+			transition: width .2s
+			&::-webkit-input-placeholder
+				color: rgba(#000, .3)
+				text-shadow: 0 1px 0 rgba(#fff, 1)
 
 // Sentence builder
 .builder-sentence

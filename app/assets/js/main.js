@@ -1,5 +1,8 @@
 require('./lib/jquery.autosize.input')
 
+var dummyWordlists = require('./dummy/wordlist')
+var dummySentences = require('./dummy/sentence')
+
 var contents = new Ractive({
 	el: $('#contents'),
 	template: '#contents-template',
@@ -8,55 +11,33 @@ var contents = new Ractive({
 		sentences: $('#sentence-template').text(),
 	},
 	data: {
-		// Word lists
-		wordlist: [
-			{
-				'class': 'noun',
-				group: 'git term',
-				words: [
-					{ word: 'lorem' },
-					{ word: 'ipsum' },
-				]
-			},
-			{
-				'class': 'verb',
-				group: 'something else',
-				words: [
-					{ word: 'dolor' },
-				]
-			},
-		],
-		// Sentences
-		sentences: [
-			{
-				elements: [
-					{
-						static: true,
-						phrase: 'lorem ipsum',
-					},
-					{
-						static: false,
-						prefix: [
-							{ key: 'a-an', label: 'a/an' },
-						],
-						word: {
-							'class': 'verb',
-							group: {
-								key: 'git-term',
-								label: 'Git term',
-							},
-						},
-						postfix: [
-							{ key: 'verb-tense-pp', label: '·ing' },
-							{ key: 'pluralize', label: '·s' },
-						],
-					},
-					{
-						static: true,
-						phrase: 'dolor sit amet',
-					},
-				]
-			},
-		],
+		wordlists: dummyWordlists,
+		sentences: dummySentences,
+	},
+})
+
+contents.on({
+	'wordlist-add-word': function(ev) {
+		var value = ev.node.value.trim().toLowerCase()
+		var doPush = true
+
+		// check for duplicates
+        ev.context.words.forEach(function(el) {
+            if (el.word === value) {
+                doPush = false
+            }
+        })
+		if (doPush) {
+            ev.context.words.push({
+                word: value,
+            })
+		}
+		ev.node.value = ''
+	},
+	'wordlist-delete-word': function(ev) {
+		var kp = ev.keypath.split('.')
+		var idx = kp.splice(-1)
+		kp = kp.join('.')
+		this.get(kp).splice(idx, 1)
 	},
 })
