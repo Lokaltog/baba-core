@@ -41,13 +41,21 @@ html(lang='en')
 
 		script(id='sentence-template', type='text/ractive')
 			section.sentence
-				!='{{#sentences}}'
+				!='{{#sentences:idx}}'
 				ul.builder.builder-sentence
 					!='{{#elements}}'
 					!='{{#static}}'
+					// static phrase
 					li.static {{phrase}}
 					!='{{/static}}'
 					!='{{^static}}'
+					!='{{#preview}}'
+					// preview word
+					li(class='preview {{word.class}} {{word.class}}-{{word.group.key}}')
+						| [preview]
+					!='{{/preview}}'
+					!='{{^preview}}'
+					// display placeholder with edit functionality
 					li(class='placeholder {{word.class}} {{word.class}}-{{word.group.key}}')
 						ol.prefix
 							!='{{#prefix}}'
@@ -65,9 +73,12 @@ html(lang='en')
 								i.icon.icon-edit
 							li.delete
 								i.icon.icon-delete
+					!='{{/preview}}'
 					!='{{/static}}'
 					!='{{/elements}}'
 					li.buttons
+						// hide add button on preview
+						!='{{^preview}}'
 						.add.dropdown(href='#')
 							i.icon.icon-add
 							ul#dropdown
@@ -76,8 +87,11 @@ html(lang='en')
 								!='{{#wordlist}}'
 								li(class='{{class}}') {{group}}
 								!='{{/wordlist}}'
+						!='{{/preview}}'
 					li.actions
-						.preview Preview
+						.preview
+							input(type='checkbox', checked='{{preview}}', id='sentence-preview-{{idx}}')
+							label(for='sentence-preview-{{idx}}') Preview
 				!='{{/sentences}}'
 
 		script(id='contents-template', type='text/ractive')

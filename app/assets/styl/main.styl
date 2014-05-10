@@ -192,7 +192,7 @@ $builder-gutter = 5px
 	.actions
 		.ascending,
 		.descending,
-		.preview
+		.preview label
 			box-shadow: 0 1px 1px rgba(#000, .2)
 			cursor: pointer
 			padding: 0 ($gutter / 4)
@@ -206,6 +206,12 @@ $builder-gutter = 5px
 				font-size: .9em
 			&:hover
 				background: $color-foreground
+		.preview input
+			display: none
+			&:checked + label
+				background: $color-green
+				&:hover
+					background: darken($color-green, 10)
 
 // Word list
 .builder-wordlist
