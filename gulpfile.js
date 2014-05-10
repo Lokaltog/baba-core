@@ -42,7 +42,7 @@ gulp.task('jade', function() {
 	return gulp
 		.src(__views_src + '**.jade')
 		.pipe(jade({
-			pretty: true,
+			pretty: false,
 			compileDebug: true,
 		}))
 		.pipe(htmlmin({
@@ -54,6 +54,7 @@ gulp.task('jade', function() {
 			removeOptionalTags: true,
 			removeRedundantAttributes: true,
 			useShortDoctype: true,
+			processScripts: ['text/ractive'],
 		}))
 		.pipe(gulp.dest(__views_dest))
 		.pipe(livereload())

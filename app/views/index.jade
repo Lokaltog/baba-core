@@ -14,30 +14,21 @@ html(lang='en')
 			h1 Baba
 			.slogan Create garbage texts
 
-		#contents
-			section
+		script(id='wordlist-template', type='text/ractive')
+			section.wordlist
+				!='{{#wordlist}}'
 				ul.builder.builder-wordlist
+					!='{{#words}}'
 					li.word
-						span.word lorem
+						span.word {{word}}
 						ul.actions
 							li.edit
 								i.icon.icon-edit
 							li.delete
 								i.icon.icon-delete
-					li.word
-						span.word ipsum
-						ul.actions
-							li.edit
-								i.icon.icon-edit
-							li.delete
-								i.icon.icon-delete
-					li.word
-						span.word dolor
-						ul.actions
-							li.edit
-								i.icon.icon-edit
-							li.delete
-								i.icon.icon-delete
+					!='{{/words}}'
+					li.add-textfield
+						input(type='text', data-autosize-input='{space:0}')
 					li.buttons
 						.add.dropdown(href='#')
 							i.icon.icon-add
@@ -46,38 +37,55 @@ html(lang='en')
 							i.icon.icon-sort-ascending
 						.descending
 							i.icon.icon-sort-descending
+				!='{{/wordlist}}'
 
-			section
+		script(id='sentence-template', type='text/ractive')
+			section.sentence
+				!='{{#sentences}}'
 				ul.builder.builder-sentence
+					!='{{#elements}}'
+					!='{{#static}}'
 					li.static
-						.handle lorem ipsum
-					li.placeholder.verb.verb-git-term
-						ol.prefix.misc.misc-a-an
-							li a/an
+						.handle {{phrase}}
+					!='{{/static}}'
+					!='{{^static}}'
+					li(class='placeholder {{word.class}} {{word.class}}-{{word.group.key}}')
+						ol.prefix
+							!='{{#prefix}}'
+							li(class='{{key}}') {{label}}
+							!='{{/prefix}}'
 						.word.handle
-							.class verb
-							.group git term
-						ol.postfix.verb-tense.verb-tense-pp
-							li ·ing
-							li ·s
+							.class {{word.class}}
+							.group {{word.group.label}}
+						ol.postfix
+							!='{{#postfix}}'
+							li(class='{{key}}') {{label}}
+							!='{{/postfix}}'
 						ul.actions
 							li.edit
 								i.icon.icon-edit
 							li.delete
 								i.icon.icon-delete
-					li.static
-						.handle dolor sit amet
+					!='{{/static}}'
+					!='{{/elements}}'
 					li.buttons
 						.add.dropdown(href='#')
 							i.icon.icon-add
 							ul#dropdown
-								li.phrase Phrase
+								li.static-phrase Phrase
 
-								li.wc-verb Verb
-								li.wc-adjective Adjective
-								li.wc-noun Noun
+								!='{{#wordlist}}'
+								li(class='{{class}}') {{group}}
+								!='{{/wordlist}}'
 					li.actions
 						.preview Preview
+				!='{{/sentences}}'
+
+		script(id='contents-template', type='text/ractive')
+			!='{{>wordlists}}'
+			!='{{>sentences}}'
+
+		#contents
 
 		footer
 			p
@@ -85,5 +93,5 @@ html(lang='en')
 				=' · '
 				a(href='https://github.com/Lokaltog/baba') GitHub repo
 
-	script(src='//cdn.jsdelivr.net/g/jquery@2.1.0,jquery.ui@1.10.4(jquery.ui.core.min.js+jquery.ui.widget.min.js+jquery.ui.mouse.min.js+jquery.ui.sortable.min.js)')
+	script(src='//cdn.jsdelivr.net/g/jquery@2.1.0,jquery.ui@1.10.4(jquery.ui.core.min.js+jquery.ui.widget.min.js+jquery.ui.mouse.min.js+jquery.ui.sortable.min.js),ractive@0.4.0')
 	script(src='/static/js/main.js')
