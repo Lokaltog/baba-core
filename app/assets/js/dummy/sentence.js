@@ -2,11 +2,19 @@ module.exports = [
 	{
 		elements: [
 			{
+				static: true,
+				phrase: 'the',
+			},
+			{
+				classIdx: 2,
+				groupIdx: 0,
+				prefix: [],
+				postfix: [],
+			},
+			{
 				classIdx: 0,
 				groupIdx: 0,
-				prefix: [
-					'transforms.common.a-an',
-				],
+				prefix: [],
 				postfix: [],
 			},
 			{

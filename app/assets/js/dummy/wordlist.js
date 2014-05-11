@@ -34,4 +34,21 @@ module.exports = [
 			},
 		],
 	},
+	{
+		class: 'adjective',
+		label: 'Adjective',
+		groups: [
+			{
+				class: 'descriptor',
+				label: 'Descriptor',
+				words: [
+					{ word: 'ugly' },
+					{ word: 'angry' },
+					{ word: 'pathetic' },
+					{ word: 'weird' },
+					{ word: 'funny' },
+				],
+			},
+		],
+	},
 ]
