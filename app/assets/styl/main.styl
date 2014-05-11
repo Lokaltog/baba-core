@@ -84,9 +84,10 @@ header, #contents
 header
 	display: flex
 	align-items: center
-	background: $color-foreground
+	background: linear-gradient(top, lighten($color-foreground, 15), $color-foreground)
 	color: #fff
 	height: $header-height
+	text-shadow: 0 2px 1px rgba(#000, .4)
 	h1
 		flex: 1 1 auto
 		font: 1.5em $font-logo
