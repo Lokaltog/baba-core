@@ -1,27 +1,35 @@
 module.exports = [
 	{
-		'class': 'noun',
+		class: 'noun',
+		label: 'Noun',
 		groups: [
 			{
-				name: 'git term',
+				class: 'subject',
+				label: 'Subject',
 				words: [
-					{ word: 'lorem' },
-					{ word: 'ipsum' },
-					{ word: 'dolor' },
-					{ word: 'sit' },
+					{ word: 'cat' },
+					{ word: 'dog' },
+					{ word: 'boy' },
+					{ word: 'girl' },
+					{ word: 'antelope' },
+					{ word: 'banana' },
 				],
 			},
 		],
 	},
 	{
-		'class': 'verb',
+		class: 'verb',
+		label: 'Verb',
 		groups: [
 			{
-				name: 'action',
+				class: 'action',
+				label: 'Action',
 				words: [
-					{ word: 'amet' },
-					{ word: 'consectetur' },
-					{ word: 'adipiscing' },
+					{ word: 'eat' },
+					{ word: 'push' },
+					{ word: 'beat' },
+					{ word: 'flog' },
+					{ word: 'shun' },
 				],
 			},
 		],

@@ -1,5 +1,6 @@
 require('./lib/jquery.autosize.input')
 
+var utils = require('./utils')
 var dummyWordlists = require('./dummy/wordlist')
 var dummySentences = require('./dummy/sentence')
 
@@ -13,6 +14,15 @@ var contents = new Ractive({
 	data: {
 		wordlists: dummyWordlists,
 		sentences: dummySentences,
+		transforms: {
+			// TODO allow users to add external transforms
+			common: require('./transforms/common'),
+			verb: require('./transforms/verb'),
+		},
+
+		getKeypath: function(keypath) {
+			return this.get(keypath)
+		},
 		sortWords: function(words, order) {
 			words = words.slice() // clone array
 			order = order || 'asc'
@@ -28,6 +38,19 @@ var contents = new Ractive({
 		},
 		groupFromIdx: function(classIdx, groupIdx) {
 			return this.get(['wordlists', classIdx, 'groups', groupIdx].join('.'))
+		},
+		previewWord: function(group, raw) {
+			var word = utils.randomItem(group.words).word
+
+			raw.prefix.forEach(function(pf) {
+				word = this.get(pf).fn(word)
+			}.bind(this))
+
+			raw.postfix.forEach(function(pf) {
+				word = this.get(pf).fn(word)
+			}.bind(this))
+
+			return word
 		},
 	},
 })
@@ -57,4 +80,7 @@ contents.on({
 		}
 		words.splice(idx, 1)
 	},
+	'update-keypath': function(ev) {
+		this.update(ev.keypath)
+    },
 })

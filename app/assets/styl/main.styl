@@ -134,6 +134,7 @@ $builder-gutter = 5px
 	li,
 	div
 		display: flex
+		align-items: center
 		flex: 0 1 auto
 	& > ul,
 	& > ol,
@@ -167,14 +168,6 @@ $builder-gutter = 5px
 	.buttons
 		flex: 1 1 auto
 		.add
-			box-shadow: 0 1px 2px rgba(#000, .1)
-			cursor: pointer
-			padding: 0 ($gutter / 4)
-			position: relative
-			background: rgba($color-foreground, .7)
-			color: #fff
-			text-shadow: 0 1px 1px #000
-			text-align: center
 			&:hover
 				background: $color-foreground
 				#dropdown
@@ -201,26 +194,29 @@ $builder-gutter = 5px
 				text-shadow: 0 1px 0 #000
 	.actions
 		label, button
-			border: 0
-			box-shadow: inset 0 -1px 1px rgba(#000, .3)
-			cursor: pointer
-			padding: 0 ($gutter / 4)
-			position: relative
-			background: rgba($color-foreground, .5)
-			color: #fff
-			text-shadow: 0 1px 1px rgba(#000, .5)
-			text-align: center
-			margin: 0 0 0 $builder-gutter
 			i::before
 				font-size: .9em
-			&:hover
-				background: $color-foreground
 		input
 			display: none
 			&:checked + label
 				background: $color-green
 				&:hover
 					background: darken($color-green, 10)
+	.btn
+		border: 0
+		box-shadow: inset 0 -1px 1px rgba(#000, .3)
+		cursor: pointer
+		padding: 0 ($gutter / 4)
+		position: relative
+		background: rgba($color-foreground, .5)
+		color: #fff
+		text-shadow: 0 1px 1px rgba(#000, .5)
+		text-align: center
+		margin: 0 0 0 $builder-gutter
+		height: 1.5em
+		line-height: 1.5em
+		&:hover
+			background: $color-foreground
 
 // Word list
 .builder-wordlist
@@ -235,6 +231,8 @@ $builder-gutter = 5px
 			box-shadow: 0 1px 2px rgba(#000, .1)
 			background: rgba(#fff, .4)
 			transition: width .2s
+			&:focus
+				background: rgba(#fff, .8)
 			&::-webkit-input-placeholder
 				color: rgba(#000, .3)
 				text-shadow: 0 1px 0 rgba(#fff, 1)
@@ -242,26 +240,39 @@ $builder-gutter = 5px
 // Sentence builder
 .builder-sentence
 	li.placeholder
-		box-shadow: 0 1px 2px rgba(#000, .1)
-		background: #fff
-		.prefix
-			color: lighten($color-foreground, 40)
-			li
-				border-right: 1px solid #ddd
-				padding: 0 ($gutter / 4)
-		.word
-			.class, .group
-				text-transform: uppercase
-				font-size: .6em
-				padding: 0 ($gutter / 4)
-			.class
-				font-weight: 700
-				background: #eea
-			.group
-				font-weight: 400
-				margin-right: ($gutter / 4)
-		.postfix
-			color: lighten($color-foreground, 40)
-			li
-				border-left: 1px solid #ddd
+		&:not(.preview)
+			box-shadow: 0 1px 2px rgba(#000, .1)
+			background: #fff
+			.prefix
+				color: lighten($color-foreground, 40)
+				li
+					border-right: 1px solid #ddd
+					padding: 0 ($gutter / 4)
+			.word
+				.class, .group
+					text-transform: uppercase
+					font-size: .7em
+					padding: 0 ($gutter / 4)
+				.class
+					line-height: 1.4em
+					margin: 0 0 0 ($gutter / 4)
+				.group
+					font-weight: 700
+					margin-right: ($gutter / 4)
+			.postfix
+				color: lighten($color-foreground, 40)
+				li
+					border-left: 1px solid #ddd
+					padding: 0 ($gutter / 4)
+		.class
+			&.verb
+				background: #dec
+			&.noun
+				background: #edc
+	li.static
+		&:not(.preview)
+			box-shadow: 0 1px 2px rgba(#000, .1)
+			background: rgba(#fff, .5)
+			font-weight: 400
+			.word
 				padding: 0 ($gutter / 4)

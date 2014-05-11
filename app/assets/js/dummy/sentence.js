@@ -2,24 +2,32 @@ module.exports = [
 	{
 		elements: [
 			{
-				static: true,
-				phrase: 'lorem ipsum',
-			},
-			{
-				static: false,
-				prefix: [
-					{ key: 'a-an', label: 'a/an' },
-				],
 				classIdx: 0,
 				groupIdx: 0,
-				postfix: [
-					{ key: 'verb-tense-pp', label: '·ing' },
-					{ key: 'pluralize', label: '·s' },
+				prefix: [
+					'transforms.common.a-an',
 				],
+				postfix: [],
 			},
 			{
 				static: true,
-				phrase: 'dolor sit amet',
+				phrase: 'is',
+			},
+			{
+				classIdx: 1,
+				groupIdx: 0,
+				prefix: [],
+				postfix: [
+					'transforms.verb.tense-pp',
+				],
+			},
+			{
+				classIdx: 0,
+				groupIdx: 0,
+				prefix: [
+					'transforms.common.a-an',
+				],
+				postfix: [],
 			},
 		]
 	},
