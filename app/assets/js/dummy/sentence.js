@@ -10,13 +10,8 @@ module.exports = [
 				prefix: [
 					{ key: 'a-an', label: 'a/an' },
 				],
-				word: {
-					'class': 'verb',
-					group: {
-						key: 'git-term',
-						label: 'Git term',
-					},
-				},
+				classIdx: 0,
+				groupIdx: 0,
 				postfix: [
 					{ key: 'verb-tense-pp', label: '·ing' },
 					{ key: 'pluralize', label: '·s' },

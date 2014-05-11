@@ -23,6 +23,12 @@ var contents = new Ractive({
 				return a.word > b.word ? -1 : 1
 			})
 		},
+		classFromIdx: function(classIdx) {
+			return this.get(['wordlists', classIdx].join('.'))
+		},
+		groupFromIdx: function(classIdx, groupIdx) {
+			return this.get(['wordlists', classIdx, 'groups', groupIdx].join('.'))
+		},
 	},
 })
 

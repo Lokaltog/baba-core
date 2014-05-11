@@ -24,7 +24,10 @@ html(lang='en')
 
 	script(id='wordlist-template', type='text/ractive')
 		section.wordlists
-			!='{{#wordlists:idx}}'
+			!='{{#wordlists:classIdx}}'
+			h1 {{class}}
+			!='{{#groups:groupIdx}}'
+			h1 {{name}}
 			ul.builder.builder-wordlist
 				!='{{#sortWords(words, sortOrder)}}'
 				li.word
@@ -40,13 +43,14 @@ html(lang='en')
 						i.icon.icon-add
 				li.actions
 					.ascending
-						input(type='radio', name='{{.sortOrder}}', value='asc', id='wordlist-sort-asc-{{idx}}', checked)
-						label(for='wordlist-sort-asc-{{idx}}')
+						input(type='radio', name='{{.sortOrder}}', value='asc', id='wordlist-sort-asc-{{classIdx}}-{{groupIdx}}', checked)
+						label(for='wordlist-sort-asc-{{classIdx}}-{{groupIdx}}')
 							i.icon.icon-sort-ascending
 					.descending
-						input(type='radio', name='{{.sortOrder}}', value='desc', id='wordlist-sort-desc-{{idx}}')
-						label(for='wordlist-sort-desc-{{idx}}')
+						input(type='radio', name='{{.sortOrder}}', value='desc', id='wordlist-sort-desc-{{classIdx}}-{{groupIdx}}')
+						label(for='wordlist-sort-desc-{{classIdx}}-{{groupIdx}}')
 							i.icon.icon-sort-descending
+			!='{{/groups}}'
 			!='{{/wordlists}}'
 
 	script(id='sentence-template', type='text/ractive')
@@ -75,8 +79,8 @@ html(lang='en')
 						li(class='{{key}}') {{label}}
 						!='{{/prefix}}'
 					.word
-						.class {{word.class}}
-						.group {{word.group.label}}
+						.class {{classFromIdx(classIdx).class}}
+						.group {{groupFromIdx(classIdx, groupIdx).name}}
 					ol.postfix
 						!='{{#postfix}}'
 						li(class='{{key}}') {{label}}
