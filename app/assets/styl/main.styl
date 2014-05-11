@@ -27,25 +27,25 @@ global-reset()
 
 // Icons
 i.icon
-	font: normal 1em/1.3em $font-icon
-	&.icon-edit
-		&::before
-			content: '\e800'
+	font: normal 1em/1em $font-icon
 	&.icon-add
 		&::before
-			content: '\e802'
+			content: '\e800'
 	&.icon-delete
 		&::before
-			content: '\e804'
-	&.icon-sort-ascending
+			content: '\e801'
+	&.icon-edit
 		&::before
-			content: '\e808'
-	&.icon-sort-descending
-		&::before
-			content: '\e809'
+			content: '\e802'
 	&.icon-refresh
 		&::before
-			content: '\e80c'
+			content: '\e803'
+	&.icon-sort-ascending
+		&::before
+			content: '\e804'
+	&.icon-sort-descending
+		&::before
+			content: '\e805'
 
 // Main elements
 p
@@ -126,7 +126,6 @@ $builder-gutter = 5px
 	box-shadow: inset 0 1px 2px rgba(#000, .1)
 	display: flex
 	padding: $builder-gutter 0 0 $builder-gutter
-	line-height: 1.5em
 	text-shadow: 0 1px 0 rgba(#fff, .7)
 	user-select: none
 	ul,
@@ -164,7 +163,6 @@ $builder-gutter = 5px
 					background: $color-red
 	.icon::before
 		line-height: @line-height
-		font-size: .6em
 	.buttons
 		flex: 1 1 auto
 		.add
@@ -193,9 +191,6 @@ $builder-gutter = 5px
 				color: #fff
 				text-shadow: 0 1px 0 #000
 	.actions
-		label, button
-			i::before
-				font-size: .9em
 		input
 			display: none
 			&:checked + label
