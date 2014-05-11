@@ -3,7 +3,7 @@ var utils = require('../utils')
 module.exports = {
 	'tense-pp': {
 		type: 'postfix',
-		class: 'postfix-verb-tense-pp',
+		class: 'postfixVerbTensePP',
 		label: '·ing',
 		fn: function(str) {
 			return utils.replaceRegexp([

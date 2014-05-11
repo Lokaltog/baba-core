@@ -1,8 +1,14 @@
 require('./lib/jquery.autosize.input')
 
 var utils = require('./utils')
+var exportGrammar = require('./export')
 var dummyWordlists = require('./dummy/wordlist')
 var dummySentences = require('./dummy/sentence')
+var transforms = {
+	// TODO allow users to add external transforms
+	common: require('./transforms/common'),
+	verb: require('./transforms/verb'),
+}
 
 var contents = new Ractive({
 	el: $('#contents'),
@@ -14,11 +20,7 @@ var contents = new Ractive({
 	data: {
 		wordlists: dummyWordlists,
 		sentences: dummySentences,
-		transforms: {
-			// TODO allow users to add external transforms
-			common: require('./transforms/common'),
-			verb: require('./transforms/verb'),
-		},
+        transforms: transforms,
 
 		getKeypath: function(keypath) {
 			return this.get(keypath)
