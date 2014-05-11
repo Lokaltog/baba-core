@@ -46,6 +46,12 @@ i.icon
 	&.icon-sort-descending
 		&::before
 			content: '\e805'
+	&.icon-minus
+		&::before
+			content: '\e806'
+	&.icon-plus
+		&::before
+			content: '\e807'
 
 // Main elements
 p
@@ -217,6 +223,20 @@ $builder-gutter = 5px
 			background: $color-foreground
 
 // Word list
+.wordlist-label
+	margin: $gutter 0 0 0
+	display: flex
+	&:first-child
+		margin: 0
+	li
+		flex: 0 1 auto
+		text-transform: uppercase
+		&.group
+			font-weight: 700
+			flex: 1 1 auto
+		&.class
+			margin: 0 ($gutter / 4) 0 0
+
 .builder-wordlist
 	li.word
 		box-shadow: 0 1px 2px rgba(#000, .1)
@@ -236,6 +256,18 @@ $builder-gutter = 5px
 				text-shadow: 0 1px 0 rgba(#fff, 1)
 
 // Sentence builder
+.sentence-label
+	margin: $gutter 0 0 0
+	display: flex
+	&:first-child
+		margin: 0
+	li
+		flex: 0 1 auto
+		text-transform: uppercase
+		&.label
+			font-weight: 700
+			flex: 1 1 auto
+
 .builder-sentence
 	li.placeholder
 		&:not(.preview)

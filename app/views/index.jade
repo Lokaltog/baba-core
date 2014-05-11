@@ -25,9 +25,12 @@ html(lang='en')
 	script(id='wordlist-template', type='text/ractive')
 		section.wordlists
 			!='{{#wordlists:classIdx}}'
-			h1 {{label}}
 			!='{{#groups:groupIdx}}'
-			h2 {{label}}
+			ul.wordlist-label
+				li.group {{label}}
+				li.class {{../../label}}
+				li.toggle
+					i.icon.icon-minus
 			ul.builder.builder-wordlist
 				!='{{#sortWords(words, sortOrder)}}'
 				li.word
@@ -56,6 +59,10 @@ html(lang='en')
 	script(id='sentence-template', type='text/ractive')
 		section.sentences
 			!='{{#sentences:idx}}'
+			ul.sentence-label
+				li.label {{label}}
+				li.toggle
+					i.icon.icon-minus
 			ul.builder.builder-sentence
 				!='{{#elements}}'
 

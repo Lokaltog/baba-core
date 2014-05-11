@@ -1,5 +1,7 @@
 module.exports = [
 	{
+		key: 'test',
+		label: 'Test sentence',
 		elements: [
 			{
 				static: true,
