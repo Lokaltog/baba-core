@@ -67,7 +67,7 @@ gulp.task('watchify', function() {
 		return bundler
 			.transform('brfs')
 			.transform(es6ify)
-			.bundle({ debug: true }, function () { gutil.log('Watchify rebundling done') })
+			.bundle({}, function () { gutil.log('Watchify rebundling done') })
 			.pipe(source('js/main.js'))
 			.pipe(streamify(uglify({
 				mangle: true,
@@ -80,6 +80,14 @@ gulp.task('watchify', function() {
 	return rebundle()
 })
 
+gulp.task('uglify-static', function() {
+	// libraries that don't need to be watched
+	return gulp
+		.src(__assets_src + 'js/lib/uglifyjs.min.js')
+		.pipe(uglify())
+		.pipe(gulp.dest(__assets_dest + 'js'))
+})
+
 gulp.task('sync', function() {
 	return gulp
 		.src(__assets_src + '{img,font}/**')
@@ -87,7 +95,7 @@ gulp.task('sync', function() {
 		.pipe(livereload())
 })
 
-gulp.task('development', ['stylus', 'jade', 'watchify', 'sync'], function() {
+gulp.task('development', ['stylus', 'jade', 'watchify', 'uglify-static', 'sync'], function() {
 	gulp.watch(__assets_src + 'styl/**.styl', ['stylus'])
 	gulp.watch(__views_src + '**.jade', ['jade'])
 })
