@@ -27,7 +27,7 @@ global-reset()
 
 // Icons
 i.icon
-	font: normal 1em $font-icon
+	font: normal 1em/1.3em $font-icon
 	&.icon-edit
 		&::before
 			content: '\e800'
@@ -43,6 +43,9 @@ i.icon
 	&.icon-sort-descending
 		&::before
 			content: '\e809'
+	&.icon-refresh
+		&::before
+			content: '\e80c'
 
 // Main elements
 p
@@ -197,29 +200,27 @@ $builder-gutter = 5px
 				color: #fff
 				text-shadow: 0 1px 0 #000
 	.actions
-		.ascending,
-		.descending,
-		.preview
-			label
-				box-shadow: 0 1px 1px rgba(#000, .2)
-				cursor: pointer
-				padding: 0 ($gutter / 4)
-				position: relative
-				background: rgba($color-foreground, .5)
-				color: #fff
-				text-shadow: 0 1px 1px #000
-				text-align: center
-				margin: 0 0 0 $builder-gutter
-				i::before
-					font-size: .9em
+		label, button
+			border: 0
+			box-shadow: inset 0 -1px 1px rgba(#000, .3)
+			cursor: pointer
+			padding: 0 ($gutter / 4)
+			position: relative
+			background: rgba($color-foreground, .5)
+			color: #fff
+			text-shadow: 0 1px 1px rgba(#000, .5)
+			text-align: center
+			margin: 0 0 0 $builder-gutter
+			i::before
+				font-size: .9em
+			&:hover
+				background: $color-foreground
+		input
+			display: none
+			&:checked + label
+				background: $color-green
 				&:hover
-					background: $color-foreground
-			input
-				display: none
-				&:checked + label
-					background: $color-green
-					&:hover
-						background: darken($color-green, 10)
+					background: darken($color-green, 10)
 
 // Word list
 .builder-wordlist

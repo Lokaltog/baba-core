@@ -104,6 +104,11 @@ html(lang='en')
 					!='{{/preview}}'
 
 				li.actions
+					!='{{#preview}}'
+					.refresh
+						button
+							i.icon.icon-refresh
+					!='{{/preview}}'
 					.preview
 						input(type='checkbox', checked='{{preview}}', id='sentence-preview-{{idx}}')
 						label(for='sentence-preview-{{idx}}') Preview
