@@ -54,11 +54,57 @@ module.exports = {
 			],
 		},
 		{
+			label: 'Adverb',
+			children: [
+				{
+					label: 'Alignment',
+					children: [
+						{
+							label: 'Prefix',
+							type: 'wordlist',
+							elements: [
+								{ expr: 'andro' },
+								{ expr: 'demi' },
+								{ expr: 'gender' },
+								{ expr: 'gray' },
+								{ expr: 'pomo' },
+							],
+						},
+						{
+							label: 'Postfix',
+							type: 'wordlist',
+							elements: [
+								{ expr: 'amorous' },
+								{ expr: 'romantic' },
+								{ expr: 'platonic' },
+								{ expr: 'sensual' },
+								{ expr: 'sexual' },
+							],
+						},
+						{
+							label: 'Alignment (generated sentence)',
+							type: 'sentence',
+							export: true,
+							elements: [
+								{
+									path: [3, 0, 0],
+								},
+								{
+									path: [3, 0, 1],
+								},
+							],
+						},
+					],
+				},
+			],
+		},
+		{
 			label: 'Statements (public)',
 			children: [
 				{
 					label: 'Test sentence',
 					type: 'sentence',
+					export: true,
 					elements: [
 						{
 							path: [2],
