@@ -78,7 +78,11 @@ var vm = new Vue({
 		},
 		getGrammarPreview: function(searchPath, prefix, postfix) {
 			var elements = this.getGrammarNode(searchPath).splice(-1)[0].elements
-			var expr = utils.randomItem(elements).expr
+			var expr = utils.randomItem(elements)
+			if (typeof expr === 'undefined') {
+				return '<<<empty word list>>>'
+			}
+			expr = expr.expr
 			var p
 
 			for (p in prefix) {
