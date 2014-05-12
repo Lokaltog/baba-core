@@ -50,7 +50,7 @@ html(lang='en')
 
 		li.actions
 			.refresh.btn(v-if='preview')
-				i.icon.icon-refresh
+				i.icon.icon-refresh(v-on='click: preview = preview')
 
 			.preview.btn(v-class='active: preview', v-on='click: preview = !preview') Preview
 
@@ -65,19 +65,20 @@ html(lang='en')
 	script(id='container-sentence-path-template', type='text/x-template')
 		.display(v-if='!preview')
 			ol.prefix(v-if='prefix')
-				li(v-repeat='prefix') pre
-			.word
-				.class class
-				.group {{path}}
+				li(v-repeat='prefix') {{this.$get($value).label}}
+			ol.components
+				li(v-repeat='getGrammarComponents(path)', v-class='key') {{label}}
 			ol.postfix(v-if='postfix')
-				li(v-repeat='postfix') post
+				li(v-repeat='postfix') {{this.$get($value).label}}
 			ul.actions(v-if='!preview')
 				li.edit
 					i.icon.icon-edit
 				li.delete
 					i.icon.icon-delete
 		.preview(v-if='preview')
-			.word.class {{path}}
+			ol.components
+				li(v-class='getGrammarComponents(path)[0].key')
+					| {{getGrammarPreview(path, prefix, postfix)}}
 
 	script(src='/static/js/lib/vue.js')
 	script(src='/static/js/lib/jquery-2.1.1.js')

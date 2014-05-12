@@ -252,35 +252,37 @@ section.grammar
 			&:not(.preview)
 				box-shadow: 0 1px 2px rgba(#000, .1)
 				background: #fff
-				.prefix
-					color: lighten($color-foreground, 40)
-					li
-						border-right: 1px solid lighten($color-foreground, 70)
-						padding: 0 ($gutter / 4)
-				.word
-					.class, .group
+				.components
+					margin: 0 $builder-gutter 0 0
+					& > li
+						margin: 0 0 0 $builder-gutter
 						text-transform: uppercase
 						font-size: .7em
-						padding: 0 ($gutter / 4)
-					.class
-						line-height: 1.4em
-						margin: 0 0 0 ($gutter / 4)
-					.group
-						font-weight: 700
-						margin-right: ($gutter / 4)
-				.postfix
+						&:first-child
+							padding: 0 $builder-gutter
+							line-height: 1.4em
+						&:nth-child(2)
+							font-weight: 700
+				.prefix, .postfix
 					color: lighten($color-foreground, 40)
 					li
+						padding: 0 $builder-gutter
+				.prefix
+					li
+						border-right: 1px solid lighten($color-foreground, 70)
+				.postfix
+					li
 						border-left: 1px solid lighten($color-foreground, 70)
-						padding: 0 ($gutter / 4)
-			.class
-				background: lighten($color-foreground, 70)
-				&.adjective
-					background: #dee
-				&.noun
-					background: #edc
-				&.verb
-					background: #dec
+			.components
+				& > li
+					&:first-child
+						background: lighten($color-foreground, 70)
+						&.adjective
+							background: #dee
+						&.noun
+							background: #edc
+						&.verb
+							background: #dec
 		li.expr
 			&:not(.preview)
 				box-shadow: 0 1px 2px rgba(#000, .1)

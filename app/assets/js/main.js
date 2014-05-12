@@ -1,5 +1,3 @@
-require('./lib/jquery.autosize.input')
-
 var utils = require('./utils')
 var exportGrammar = require('./export')
 var grammar = require('./grammar/dummy')
@@ -52,8 +50,49 @@ var vm = new Vue({
 	el: '#contents',
 	data: {
 		grammar: grammar,
+		transforms: transforms,
 	},
 	methods: {
-		transforms: transforms,
+		getGrammarNode: function(searchPath) {
+			var path = searchPath.slice(0) // clone path array
+
+			function getComponents(node) {
+				var idx = path.shift()
+				var currentNode = node[idx]
+				var components = [currentNode]
+				if (currentNode.children) {
+					components = components.concat(getComponents(currentNode.children))
+				}
+				return components
+			}
+
+			return getComponents(this.$root.grammar.children)
+		},
+		getGrammarComponents: function(searchPath) {
+			return this.getGrammarNode(searchPath).map(function(el) {
+				return {
+					label: el.label,
+					key: S(el.label).slugify().toString(),
+				}
+			})
+		},
+		getGrammarPreview: function(searchPath, prefix, postfix) {
+			var elements = this.getGrammarNode(searchPath).splice(-1)[0].elements
+			var expr = utils.randomItem(elements).expr
+			var p
+
+			for (p in prefix) {
+				if (prefix.hasOwnProperty(p)) {
+					expr = this.$get(prefix[p]).fn(expr)
+				}
+			}
+			for (p in postfix) {
+				if (postfix.hasOwnProperty(p)) {
+					expr = this.$get(postfix[p]).fn(expr)
+				}
+			}
+
+			return expr
+		},
 	},
 })
