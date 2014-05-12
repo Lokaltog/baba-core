@@ -1,96 +1,97 @@
 // functions to include in the exported JS code
-function export__randomWord(word) {
-	console.log(word)
-}
-
-function export__globalBaba(sentence) {
-	console.log(sentence)
+var exportFunctions = {
+	randomElements: function() {
+		// return random elements from items in a list (arguments)
+		'randomElements'
+	},
+	globalBaba: function(key) {
+		// export global baba object (generate based on keypath)
+		'globalBaba'
+	},
+	exportSentence: function(key) {
+		// export sentence for usage via the global Baba object
+		'exportSentence'
+	},
 }
 
 // export grammar
-function exportGrammar(grammar) {
+function exportGrammar(vm) {
 	var ret = []
-	var wordlists = grammar.get('wordlists')
-	var sentences = grammar.get('sentences')
-	var transforms = grammar.get('transforms')
 
-	var exportTransforms = {}
-	var exportSentences = []
-
-	// include global functions
-	ret.push('var randomWord = ' + export__randomWord)
-
-	// export word lists
-	wordlists.forEach(function(wordlistClass) {
-		wordlistClass.groups.forEach(function(wordlistGroup) {
-			var wordlistGroupWords = []
-			wordlistGroup.words.forEach(function(word) {
-				wordlistGroupWords.push(word.word)
-			})
-			ret.push([
-				'var',
-				[wordlistClass.class, wordlistGroup.class].join('__'),
-				'=',
-				JSON.stringify(wordlistGroupWords),
-			].join(' '))
-		})
-	})
-
-	// export sentences
-	sentences.forEach(function(sentence) {
-		var sentenceElement = []
-		sentence.elements.forEach(function(element) {
-			if (element.static) {
-				sentenceElement.push(JSON.stringify(element.phrase))
-			}
-			else {
-				var sentenceFunctions = ['randomWord']
-				// initial function name to be transformed
-				var sentenceStr = [
-					wordlists[element.classIdx].class,
-					wordlists[element.classIdx].groups[element.groupIdx].class,
-				].join('__')
-
-				element.prefix.forEach(function(prefix) {
-					var grammarPrefix = grammar.get(prefix)
-					if (!exportTransforms.hasOwnProperty(grammarPrefix.class)) {
-						exportTransforms[grammarPrefix.class] = grammarPrefix.fn
-					}
-					sentenceFunctions.push(grammarPrefix.class)
-				})
-				element.postfix.forEach(function(postfix) {
-					var grammarPostfix = grammar.get(postfix)
-					if (!exportTransforms.hasOwnProperty(grammarPostfix.class)) {
-						exportTransforms[grammarPostfix.class] = grammarPostfix.fn
-					}
-					sentenceFunctions.push(grammarPostfix.class)
-				})
-
-				sentenceFunctions.forEach(function(fn) {
-					sentenceStr = fn + '(' + sentenceStr + ')'
-				})
-
-				sentenceElement.push(sentenceStr)
-			}
-		})
-		exportSentences.push(sentenceElement.join(' + '))
-	})
-
-	// export transforms
-	for (var transform in exportTransforms) {
-		if (exportTransforms.hasOwnProperty(transform)) {
-			ret.push('var ' + transform + ' = ' + exportTransforms[transform])
+	for (var fn in exportFunctions) {
+		if (exportFunctions.hasOwnProperty(fn)) {
+			ret.push('var ' + fn + ' = ' + exportFunctions[fn])
 		}
 	}
 
-	ret.push('var sentences = [' + exportSentences.join(',') + ']')
+	// traverse grammar tree
+	function getGrammarVariables(node, parentIndex) {
+		var ret = []
+		parentIndex = parentIndex || []
+		if (node.children) {
+			var index = 0
+			node.children.forEach(function(el) {
+				ret = ret.concat(getGrammarVariables(el, parentIndex.concat([index++])))
+			})
+		}
+		if (node.elements) {
+            var nodeName = 'grammarNode_' + parentIndex.join('_')
+			if (node.type === 'wordlist') {
+				ret.push([
+					'var ',
+					nodeName,
+					' = ',
+					JSON.stringify(node.elements.map(function(el) {
+						return el.expr
+					})),
+				].join(''))
+			}
+			else if (node.type === 'sentence') {
+					// ,
+				ret.push([
+					'var ',
+					nodeName,
+					' = randomElements(',
+					node.elements.map(function(el) {
+						if (el.expr) {
+							return JSON.stringify(el.expr)
+						}
+						if (el.path) {
+							// TODO handle prefix/postfix
+							// TODO handle whitespace
+							// TODO handle transforms
+							return 'grammarNode_' + el.path.join('_')
+						}
+					}),
+					')',
+				].join(''))
+
+				if (node.export) {
+					// export sentence for usage via the global baba object
+					ret.push([
+						'exportSentence(',
+						JSON.stringify(S(node.label).slugify().toString()),
+						', ',
+						nodeName,
+						')',
+					].join(''))
+				}
+			}
+		}
+		return ret
+	}
+
+	ret = ret.concat(getGrammarVariables(vm.$data.grammar))
 
 	return ret.join('\n')
 }
 
 function compress(code) {
 	var ast = UglifyJS.parse(code)
-	var compressor = UglifyJS.Compressor()
+	var compressor = UglifyJS.Compressor({
+		unsafe: true,
+		pure_getters: true,
+	})
 	ast.figure_out_scope()
 	var compressed_ast = ast.transform(compressor)
 	compressed_ast.figure_out_scope()
@@ -107,7 +108,7 @@ module.exports = {
 
 		// wrap with browser-specific stuff
 		exported.push('(function (global) {')
-		exported.push('global.baba = ' + export__globalBaba)
+		exported.push('global.Baba = globalBaba')
 		exported.push(exportGrammar(grammar))
 		exported.push('})(this)')
 
