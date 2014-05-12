@@ -29,7 +29,7 @@ html(lang='en')
 		ul.builder(v-class='model.type', v-with='model', v-component='container-{{model.type || "wordlist"}}', v-if='model.elements && model.type')
 
 	script(id='container-wordlist-template', type='text/x-template')
-		li.expr(v-repeat='elements')
+		li.expr(v-repeat='elements | orderBy "expr"')
 			.word {{expr}}
 			ul.actions
 				li.delete(v-on='click:deletePhrase(this)')
