@@ -54,7 +54,7 @@ gulp.task('jade', function() {
 			removeOptionalTags: true,
 			removeRedundantAttributes: true,
 			useShortDoctype: true,
-			processScripts: ['text/ractive'],
+			processScripts: ['text/x-template'],
 		}))
 		.pipe(gulp.dest(__views_dest))
 		.pipe(livereload())
