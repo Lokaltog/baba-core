@@ -83,9 +83,9 @@ gulp.task('watchify', function() {
 gulp.task('uglify-static', function() {
 	// libraries that don't need to be watched
 	return gulp
-		.src(__assets_src + 'js/lib/uglifyjs.min.js')
+		.src(__assets_src + 'js/lib/**.js')
 		.pipe(uglify())
-		.pipe(gulp.dest(__assets_dest + 'js'))
+		.pipe(gulp.dest(__assets_dest + 'js/lib'))
 })
 
 gulp.task('sync', function() {
