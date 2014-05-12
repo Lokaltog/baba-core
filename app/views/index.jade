@@ -26,20 +26,20 @@ html(lang='en')
 	script(id='grammar-template', type='text/x-template')
 		h1(v-show='model.label') {{model.label}}
 		section(v-repeat='model: model.children', v-component='grammar')
-		ul.builder(v-class='model.type', v-with='model: model.elements', v-component='container-{{model.type || "wordlist"}}', v-if='model.elements && model.type')
+		ul.builder(v-class='model.type', v-with='model', v-component='container-{{model.type || "wordlist"}}', v-if='model.elements && model.type')
 
 	script(id='container-wordlist-template', type='text/x-template')
-		li.expr(v-repeat='model')
+		li.expr(v-repeat='elements')
 			.word {{expr}}
 			ul.actions
-				li.delete
+				li.delete(v-on='click:deletePhrase(this)')
 					i.icon.icon-delete
 
 		li.add-textfield
-			input(type='text', placeholder='add phrase', data-autosize-input)
+			input(type='text', placeholder='add phrase', data-autosize-input, v-on='keydown:addPhrase | key enter')
 
 	script(id='container-sentence-template', type='text/x-template')
-		li(v-repeat='model', v-component='container-sentence-{{expr ? "expr" : "path"}}', v-class='expr: expr, path: path, preview: preview')
+		li(v-repeat='elements', v-component='container-sentence-{{expr ? "expr" : "path"}}', v-class='expr: expr, path: path, preview: preview')
 
 		li.buttons
 			.dropdown-menu.btn(v-if='!preview')

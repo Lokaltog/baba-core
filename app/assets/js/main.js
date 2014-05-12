@@ -15,6 +15,25 @@ Vue.component('grammar', {
 
 Vue.component('container-wordlist', {
 	template: '#container-wordlist-template',
+	methods: {
+		addPhrase: function(ev) {
+			var value = ev.target.value.trim().toLowerCase()
+
+			// check for duplicates
+			if (!this.$data.elements.some(function(el) {
+				return el.expr === value
+			})) {
+				this.$data.elements.push({
+					expr: value,
+				})
+			}
+
+			ev.target.value = ''
+		},
+		deletePhrase: function(obj) {
+			this.$data.elements.$remove(obj.$data)
+		},
+	},
 })
 
 Vue.component('container-sentence', {
