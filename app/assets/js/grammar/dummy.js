@@ -18,7 +18,7 @@ module.exports = {
 					label: 'Object',
 					type: 'wordlist',
 					elements: [
-						{ expr: 'food' },
+						{ expr: 'foot' },
 						{ expr: 'stick' },
 						{ expr: 'lamp' },
 						{ expr: 'phone' },
@@ -61,25 +61,25 @@ module.exports = {
 					type: 'sentence',
 					elements: [
 						{
-							expr: 'the',
+							path: [2],
+							prefix: [
+								'transforms.common.a-an',
+							],
 						},
 						{
-							path: 'adjective',
-						},
-						{
-							path: 'noun.subject',
+							path: [0, 0],
 						},
 						{
 							expr: 'is',
 						},
 						{
-							path: 'verb.action',
+							path: [1, 0],
 							postfix: [
 								'transforms.verb.tense-pp',
 							],
 						},
 						{
-							path: 'noun.object',
+							path: [0, 1],
 							prefix: [
 								'transforms.common.a-an',
 							],
