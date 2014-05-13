@@ -35,13 +35,13 @@ var exportFunctions = {
 // export grammar
 function exportGrammar(vm) {
 	var ret = []
+	var exports = []
 
 	for (var fn in exportFunctions) {
 		if (exportFunctions.hasOwnProperty(fn)) {
 			ret.push('var ' + fn + ' = ' + exportFunctions[fn])
 		}
 	}
-	ret.push('var exported = {}')
 
 	// traverse grammar tree
 	function getGrammarVariables(node, parentIndex) {
@@ -86,12 +86,7 @@ function exportGrammar(vm) {
 				].join(''))
 
 				if (node.export) {
-					// export sentence for usage via the global baba object
-					ret.push([
-						'exported[',
-						JSON.stringify(S(node.label).slugify().camelize().toString()),
-						'] = ', nodeName,
-					].join(''))
+					exports.push([JSON.stringify(S(node.label).slugify().camelize().toString()), nodeName])
 				}
 			}
 		}
@@ -99,6 +94,12 @@ function exportGrammar(vm) {
 	}
 
 	ret = ret.concat(getGrammarVariables(vm.$data.grammar))
+
+	ret.push('return {')
+	exports.forEach(function(el) {
+		ret.push(el[0] + ':' + el[1] + ',')
+	})
+	ret.push('}')
 
 	return ret.join('\n')
 }
@@ -130,7 +131,6 @@ module.exports = {
 		exported.push('else { root.' + moduleName + ' = factory() }')
 		exported.push('}(this, function() {')
 		exported.push(exportGrammar(grammar))
-		exported.push('return exported')
 		exported.push('}))')
 
 		exported = exported.join('\n')
