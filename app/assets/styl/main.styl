@@ -84,6 +84,7 @@ input
 	padding: 0 $quarter-gutter
 	outline: none !important
 	display: inline-block
+	transition: all .2s
 	&.input-text
 		border: none
 		background: #fff
@@ -213,17 +214,14 @@ section.grammar
 				font-size: .9em
 			input
 				border: 0
-				transition: width .2s
 				text-align: right
 				background: transparent
 				&::-webkit-input-placeholder
 					color: rgba(#fff, 0)
-					transition: color .2s
 			&:hover
 				input
 					&::-webkit-input-placeholder
 						color: rgba(#000, .3)
-						transition: color .1s
 		.node-wrapper
 			border-left: 1px solid $color-foreground-3
 			padding-left: $quarter-gutter
@@ -290,7 +288,6 @@ section.grammar
 				border: 0
 				box-shadow: 0 1px 2px rgba(#000, .1)
 				background: rgba(#fff, .4)
-				transition: width .2s
 				&:focus
 					background: rgba(#fff, .8)
 				&::-webkit-input-placeholder
