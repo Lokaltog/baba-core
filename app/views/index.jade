@@ -13,6 +13,7 @@ html(lang='en')
 		header
 			h1 Baba
 			.slogan Garbage text generator
+			.import [import from gist]
 
 		#contents
 			section.step.name-grammar
@@ -25,8 +26,6 @@ html(lang='en')
 				.number 2
 				.contents
 					h1 Create your grammar
-					div import from gist
-					div import from text field
 					section.grammar(v-component='grammar', v-with='model: grammar')
 
 			section.step.save-grammar
