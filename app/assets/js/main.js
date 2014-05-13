@@ -106,7 +106,7 @@ var vm = new Vue({
 })
 
 // handle dropdown menus
-$('.dropdown-menu').on('click', function(ev) {
+$('#contents').on('click', '.dropdown-menu', function(ev) {
 	ev.stopPropagation()
 
 	$(this)
