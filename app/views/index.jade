@@ -15,7 +15,28 @@ html(lang='en')
 			.slogan Garbage text generator
 
 		#contents
-			section.grammar(v-component='grammar', v-with='model: grammar')
+			section.step.name-grammar
+				.number 1
+				.contents
+					h1 Name your grammar
+					div input field for name
+
+			section.step.create-grammar
+				.number 2
+				.contents
+					h1 Create your grammar
+					div import from gist
+					div import from text field
+					section.grammar(v-component='grammar', v-with='model: grammar')
+
+			section.step.save-grammar
+				.number 3
+				.contents
+					h1 Save and export your grammar
+					div save as gist
+					div export as JS module
+					div preview exported sentences
+					div tweet, share
 
 		footer
 			p

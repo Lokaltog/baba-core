@@ -127,6 +127,32 @@ footer
 		&:hover
 			color: $color-foreground-1
 
+// Section styles
+section.step
+	border: 1px solid $color-foreground-3
+	position: relative
+	padding: 0 $half-gutter $half-gutter $gutter
+	margin: 0 0 $half-gutter 0
+	$header-height = 50px
+	$header-padding = 20px
+	.number
+		position: absolute
+		background: $color-foreground
+		font-weight: 700
+		color: #fff
+		width: $header-height - $header-padding
+		height: @width
+		line-height: @height
+		text-align: center
+		border-radius: 50%
+		top: ($header-padding / 2)
+		left: -(@width / 2)
+	.contents
+		& > h1
+			font-weight: 700
+			font-size: 1.1em
+			line-height: $header-height
+
 // Builder styles
 $builder-gutter = 5px
 section.grammar
