@@ -50,8 +50,8 @@ html(lang='en')
 					li(v-repeat='model: $root.grammar.children', v-component='add-dropdown')
 
 		li.actions
-			.refresh.btn(v-if='preview')
-				i.icon.icon-refresh(v-on='click: preview = preview')
+			.refresh.btn(v-if='preview', v-on='click: preview = preview')
+				i.icon.icon-refresh
 
 			.preview.btn(v-class='active: preview', v-on='click: preview = !preview') Preview
 
