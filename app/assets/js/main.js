@@ -105,6 +105,18 @@ var vm = new Vue({
 
 			return expr
 		},
+		exportRawGrammar: function() {
+			var data = JSON.stringify(this.$root.grammar)
+			window.open('data:application/json;' +
+			            (window.btoa ? 'base64,' + btoa(data)
+			             : data))
+		},
+		exportGrammarGenerator: function() {
+			var data = exportGrammar(this.$root.grammar)
+			window.open('data:application/json;' +
+			            (window.btoa ? 'base64,' + btoa(data)
+			             : data))
+		},
 	},
 })
 

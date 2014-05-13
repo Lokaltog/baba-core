@@ -31,8 +31,11 @@ html(lang='en')
 				.number 3
 				.contents
 					h1 Save and export your grammar
+					div
+						span.btn(v-on='click: exportRawGrammar') Export raw grammar
+					div
+						span.btn(v-on='click: exportGrammarGenerator') Get garbage text generator
 					div save as gist
-					div export as JS module
 					div preview exported sentences
 					div tweet, share
 

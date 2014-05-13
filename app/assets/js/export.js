@@ -30,9 +30,11 @@ var exportFunctions = {
 			return ret.join('')
 		}
 	},
+	splitString: function(str, divider) {
+		return str.split(divider || '|')
+	},
 }
 
-// export grammar
 function exportGrammar(grammarObject) {
 	var ret = []
 	var exports = []
@@ -56,13 +58,25 @@ function exportGrammar(grammarObject) {
 		if (node.elements) {
             var nodeName = 'grammarNode_' + parentIndex.join('_')
 			if (node.type === 'wordlist') {
+				var data = node.elements.map(function(el) {
+					return el.expr
+				})
+				var stringify = data.some(function(el) {
+					return el.indexOf('|') !== -1
+				})
+				if (stringify) {
+					// export as JSON object as '|' is present in one or more words
+					data = JSON.stringify(data)
+				}
+				else {
+					// join string with '|' to save space
+					data = 'splitString(' + JSON.stringify(data.join('|')) + ')'
+				}
 				ret.push([
 					'var ',
 					nodeName,
 					' = ',
-					JSON.stringify(node.elements.map(function(el) {
-						return el.expr
-					})),
+					data,
 				].join(''))
 			}
 			else if (node.type === 'sentence') {
@@ -93,7 +107,7 @@ function exportGrammar(grammarObject) {
 		return ret
 	}
 
-	ret = ret.concat(getGrammarVariables(grammarObject.grammar))
+	ret = ret.concat(getGrammarVariables(grammarObject))
 
 	ret.push('return {')
 	exports.forEach(function(el) {
