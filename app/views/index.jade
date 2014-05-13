@@ -46,12 +46,14 @@ html(lang='en')
 
 	script(id='grammar-template', type='text/x-template')
 		h1(v-if='model !== $root.grammar', v-show='model.label')
-			.toggle
-				i.icon.icon-minus
-			.label {{model.label}}
+			.toggle-wrap(v-on='click: open = !open')
+				.toggle
+					i.icon.icon-minus(v-if='open')
+					i.icon.icon-plus(v-if='!open')
+				.label {{model.label}}
 			.comment
 				input(placeholder='comment', data-autosize-input)
-		.node-wrapper
+		.node-wrapper(v-show='(model === $root.grammar) || open')
 			section(v-repeat='model: model.children', v-component='grammar')
 			ul.builder(v-class='model.type', v-with='model', v-component='container-{{model.type || "wordlist"}}', v-if='model.elements && model.type')
 

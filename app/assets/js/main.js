@@ -9,6 +9,9 @@ var transforms = {
 
 Vue.component('grammar', {
 	template: '#grammar-template',
+	data: {
+		open: false,
+	},
 })
 
 Vue.component('container-wordlist', {

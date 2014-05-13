@@ -131,7 +131,7 @@ footer
 // Section styles
 section.step
 	background: lighten($color-foreground-3, 12)
-	border-left: 2px solid $color-foreground-2
+	border-left: 2px solid $color-foreground
 	position: relative
 	padding: 0 $half-gutter $half-gutter $gutter
 	margin: 0 0 $half-gutter 0
@@ -161,6 +161,7 @@ $builder-gutter = 5px
 section.grammar
 	margin-left: -($half-gutter)
 	margin-top: $half-gutter
+	user-select: none
 	section
 		padding: $quarter-gutter $quarter-gutter $quarter-gutter $half-gutter
 		section
@@ -168,6 +169,13 @@ section.grammar
 		background: #fff
 		h1
 			display: flex
+			.toggle-wrap
+				cursor: pointer
+				display: flex
+				flex: 1 1 auto
+				&:hover
+					.toggle
+						color: $color-foreground-2
 			.toggle
 				line-height: 1.2em
 				width: $half-gutter
@@ -175,7 +183,6 @@ section.grammar
 				i::before
 					font-size: .8em
 			.label
-				flex: 1 1 auto
 				text-transform: uppercase
 				font-weight: 700
 				font-size: .9em
