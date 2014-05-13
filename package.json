@@ -1,11 +1,11 @@
 {
 	"name": "baba",
 	"version": "0.0.1a1",
-	"description": "Garbage gext generator inspired by the Dada Engine",
+	"description": "Grammar designer application for garbage gext generators",
 	"homepage": "https://github.com/Lokaltog/baba",
 	"maintainers": [{
 		"name": "Kim Silkebækken",
-		"email": "kim.silkebaekken@gmail.com",
+		"email": "kim@silkebaekken.net",
 		"web": "https://github.com/Lokaltog"
 	}],
 	"repository": {
@@ -17,13 +17,12 @@
 		"nib": "*",
 		"stylus": "*",
 		"uglify-js": "*",
-		"watchify": "*",
-		"vinyl-source-stream": "*",
 
 		"brfs": "*",
 		"es6ify": "*",
 
 		"gulp": "*",
+		"gulp-browserify": "*",
 		"gulp-clean": "*",
 		"gulp-jade": "*",
 		"gulp-livereload": "*",
