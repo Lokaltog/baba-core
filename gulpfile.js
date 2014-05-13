@@ -2,12 +2,13 @@ var gulp = require('gulp')
 var stylus = require('gulp-stylus')
 var nib = require('nib')
 var streamify = require('gulp-streamify')
-var browserify = require('gulp-browserify')
 var uglify = require('gulp-uglify')
 var livereload = require('gulp-livereload')
 var jade = require('gulp-jade')
 var htmlmin = require('gulp-htmlmin')
 var imagemin = require('gulp-imagemin')
+var source = require('vinyl-source-stream')
+var browserify = require('browserify')
 
 var __assets_src = './app/assets/'
 var __assets_dest = './webroot/static/'
@@ -58,9 +59,9 @@ gulp.task('jade', function() {
 })
 
 gulp.task('browserify', function() {
-	return gulp
-		.src(__assets_src + 'js/main.js')
-		.pipe(browserify({}))
+	return browserify(__assets_src + 'js/main.js')
+		.bundle()
+		.pipe(source('main.js'))
 		.pipe(streamify(uglify({
 			mangle: true,
 			compress: true,

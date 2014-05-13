@@ -17,12 +17,13 @@
 		"nib": "*",
 		"stylus": "*",
 		"uglify-js": "*",
+		"browserify": "*",
+		"vinyl-source-stream": "*",
 
 		"brfs": "*",
 		"es6ify": "*",
 
 		"gulp": "*",
-		"gulp-browserify": "*",
 		"gulp-clean": "*",
 		"gulp-jade": "*",
 		"gulp-livereload": "*",
