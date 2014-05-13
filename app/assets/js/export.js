@@ -1,6 +1,8 @@
 // functions to include in the exported JS code
+var utils = require('./utils')
 var moduleName = 'Baba'
 var exportFunctions = {
+	replaceRegexp: utils.replaceRegexp,
 	randomItem: function(items) {
 		return items[Math.floor(Math.random() * items.length)]
 	},
@@ -19,7 +21,7 @@ var exportFunctions = {
 					ret.push(el)
 				}
 				else if (type === 'function') {
-					ret.push(parseElements(el()))
+					ret.push(parseElements(el())())
 				}
 				else if (type === 'object') {
 					if (Array.isArray(el)) {
@@ -33,26 +35,39 @@ var exportFunctions = {
 	splitString: function(str, divider) {
 		return str.split(divider || '|')
 	},
+	applyTransforms: function() {
+		var elements = arguments[0]
+		var transforms = Array.prototype.slice.call(arguments, 1, arguments.length)
+		return function() {
+			// we need to transform a string, so handle any arrays or functions first
+			var parsed = parseElements(elements)()
+			transforms.forEach(function(fn) {
+				parsed = fn(parsed)
+			})
+			return parsed
+		}
+	},
 }
 
-function exportGrammar(grammarObject) {
+function exportGrammar(grammarObject, transforms) {
 	var ret = []
-	var exports = []
+	var grammarFunctions = {}
+	var grammarVariables = {}
+	var grammarExports = {}
 
 	for (var fn in exportFunctions) {
 		if (exportFunctions.hasOwnProperty(fn)) {
-			ret.push('var ' + fn + ' = ' + exportFunctions[fn])
+			grammarFunctions[fn] = exportFunctions[fn]
 		}
 	}
 
 	// traverse grammar tree
-	function getGrammarVariables(node, parentIndex) {
-		var ret = []
+	function initGrammarData(node, parentIndex) {
 		parentIndex = parentIndex || []
 		if (node.children) {
 			var index = 0
 			node.children.forEach(function(el) {
-				ret = ret.concat(getGrammarVariables(el, parentIndex.concat([index++])))
+				initGrammarData(el, parentIndex.concat([index++]))
 			})
 		}
 		if (node.elements) {
@@ -72,47 +87,64 @@ function exportGrammar(grammarObject) {
 					// join string with '|' to save space
 					data = 'splitString(' + JSON.stringify(data.join('|')) + ')'
 				}
-				ret.push([
-					'var ',
-					nodeName,
-					' = ',
-					data,
-				].join(''))
+				grammarVariables[nodeName] = data
 			}
 			else if (node.type === 'sentence') {
-					// ,
-				ret.push([
-					'var ',
-					nodeName,
-					' = parseElements(',
+				grammarVariables[nodeName] =
+					'parseElements(' +
 					node.elements.map(function(el) {
 						if (el.expr) {
 							return JSON.stringify(el.expr)
 						}
 						if (el.path) {
-							// TODO handle prefix/postfix
 							// TODO handle whitespace
-							// TODO handle transforms
-							return 'grammarNode_' + el.path.join('_')
+							var grammarNode = 'grammarNode_' + el.path.join('_')
+							var grammarNodeTransforms = []
+
+							;(el.transform || []).forEach(function(tfPath) {
+								var tf = utils.objPropertyPath(transforms, tfPath)
+								var tfKey = 'transform_' + S(tfPath).replace('.', '_').slugify().camelize().toString()
+								grammarNodeTransforms.push(tfKey)
+								grammarFunctions[tfKey] = tf.fn
+							})
+
+							if (grammarNodeTransforms.length) {
+								grammarNode = 'applyTransforms(' + grammarNode + ', '
+								grammarNode += grammarNodeTransforms.join(', ')
+								grammarNode += ')'
+							}
+
+							return grammarNode
 						}
-					}),
-					')',
-				].join(''))
+					}) + ')'
 
 				if (node.export) {
-					exports.push([JSON.stringify(S(node.label).slugify().camelize().toString()), nodeName])
+					grammarExports[JSON.stringify(S(node.label).slugify().camelize().toString())] = nodeName
 				}
 			}
 		}
-		return ret
 	}
 
-	ret = ret.concat(getGrammarVariables(grammarObject))
+	initGrammarData(grammarObject)
+
+	var key
+	for (key in grammarFunctions) {
+		if (grammarFunctions.hasOwnProperty(key)) {
+			ret.push('var ' + key + ' = ' + grammarFunctions[key])
+		}
+	}
+	for (key in grammarVariables) {
+		if (grammarVariables.hasOwnProperty(key)) {
+			ret.push('var ' + key + ' = ' + grammarVariables[key])
+		}
+	}
 
 	ret.push('return {')
-	exports.forEach(function(el) {
-		ret.push(el[0] + ':' + el[1] + ',')
-	})
+	for (key in grammarExports) {
+		if (grammarExports.hasOwnProperty(key)) {
+			ret.push(key + ': ' + grammarExports[key] + ',')
+		}
+	}
 	ret.push('}')
 
 	return ret.join('\n')
@@ -133,7 +165,7 @@ function compress(code) {
 	return compressed_ast.print_to_string()
 }
 
-module.exports = function (grammar) {
+module.exports = function (grammar, transforms) {
 	// create raw JS code to be exported
 	var exported = []
 
@@ -143,7 +175,7 @@ module.exports = function (grammar) {
 	exported.push('else if (typeof exports === "object") { module.exports = factory() }')
 	exported.push('else { root.' + moduleName + ' = factory() }')
 	exported.push('}(this, function() {')
-	exported.push(exportGrammar(grammar))
+	exported.push(exportGrammar(grammar, transforms))
 	exported.push('}))')
 
 	exported = exported.join('\n')

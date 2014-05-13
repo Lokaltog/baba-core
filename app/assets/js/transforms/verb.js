@@ -1,11 +1,12 @@
 var utils = require('../utils')
+var replaceRegexp = utils.replaceRegexp
 
 module.exports = {
 	'tense-pp': {
 		type: 'postfix',
 		label: '·ing',
 		fn: function(str) {
-			return utils.replaceRegexp([
+			return replaceRegexp([
 				// exceptions
 				[/^(checkout)$/i, 'checking out'],
 				// general rules
