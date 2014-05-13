@@ -119,22 +119,20 @@ function compress(code) {
 	return compressed_ast.print_to_string()
 }
 
-module.exports = {
-	exportToBrowser: function (grammar) {
-		// create raw JS code to be exported
-		var exported = []
+module.exports = function (grammar) {
+	// create raw JS code to be exported
+	var exported = []
 
-		// wrap in UMD, compatible with AMD/CommonJS/browser
-		exported.push('(function (root, factory) {')
-		exported.push('if (typeof define === "function" && define.amd) { define([], factory) }')
-		exported.push('else if (typeof exports === "object") { module.exports = factory() }')
-		exported.push('else { root.' + moduleName + ' = factory() }')
-		exported.push('}(this, function() {')
-		exported.push(exportGrammar(grammar))
-		exported.push('}))')
+	// wrap in UMD, compatible with AMD/CommonJS/browser
+	exported.push('(function (root, factory) {')
+	exported.push('if (typeof define === "function" && define.amd) { define([], factory) }')
+	exported.push('else if (typeof exports === "object") { module.exports = factory() }')
+	exported.push('else { root.' + moduleName + ' = factory() }')
+	exported.push('}(this, function() {')
+	exported.push(exportGrammar(grammar))
+	exported.push('}))')
 
-		exported = exported.join('\n')
+	exported = exported.join('\n')
 
-		return compress(exported)
-	},
+	return compress(exported)
 }
