@@ -33,7 +33,7 @@ var exportFunctions = {
 }
 
 // export grammar
-function exportGrammar(vm) {
+function exportGrammar(grammarObject) {
 	var ret = []
 	var exports = []
 
@@ -93,7 +93,7 @@ function exportGrammar(vm) {
 		return ret
 	}
 
-	ret = ret.concat(getGrammarVariables(vm.$data.grammar))
+	ret = ret.concat(getGrammarVariables(grammarObject.grammar))
 
 	ret.push('return {')
 	exports.forEach(function(el) {
