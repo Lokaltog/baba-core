@@ -29,7 +29,7 @@ var exportFunctions = {
 					}
 				}
 			}
-			return ret.join('')
+			return ret.join('').trim()
 		}
 	},
 	splitString: function(str, divider) {
@@ -54,6 +54,8 @@ function exportGrammar(grammarObject, transforms) {
 	var grammarFunctions = {}
 	var grammarVariables = {}
 	var grammarExports = {}
+
+	grammarVariables.SPACE = '" "'
 
 	for (var fn in exportFunctions) {
 		if (exportFunctions.hasOwnProperty(fn)) {
@@ -93,8 +95,9 @@ function exportGrammar(grammarObject, transforms) {
 				grammarVariables[nodeName] =
 					'parseElements(' +
 					node.elements.map(function(el) {
+						var ret = ''
 						if (el.expr) {
-							return JSON.stringify(el.expr)
+							ret = JSON.stringify(el.expr)
 						}
 						if (el.path) {
 							// TODO handle whitespace
@@ -114,8 +117,13 @@ function exportGrammar(grammarObject, transforms) {
 								grammarNode += ')'
 							}
 
-							return grammarNode
+							ret = grammarNode
 						}
+
+						if (el.whitespace !== false) {
+							ret += ',SPACE'
+						}
+						return ret
 					}) + ')'
 
 				if (node.export) {
