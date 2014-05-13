@@ -218,7 +218,27 @@ section.grammar
 				background: transparent
 				&::-webkit-input-placeholder
 					color: rgba(#fff, 0)
+			.export
+				text-transform: uppercase
+				font-size: .9em
+				.unexported
+					line-height: 2.1em
+					height: @line-height
+					display: none
+				.exported
+					line-height: 1.9em
+					color: $color-green
+					cursor: pointer
+					&:hover
+						color: darken($color-green, 20)
+					&::before
+						font: normal 1em $font-icon
+						content: '\e80a'
+						padding: 0 $quarter-gutter 0 0
 			&:hover
+				.export
+					.unexported
+						display: block
 				input
 					&::-webkit-input-placeholder
 						color: rgba(#000, .3)

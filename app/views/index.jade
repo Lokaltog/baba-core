@@ -12,7 +12,8 @@ html(lang='en')
 	body
 		header
 			h1 Baba Grammar Designer
-			.import [import from gist]
+			.import
+				.btn Import from gist
 
 		#contents
 			section.step.name-grammar
@@ -55,6 +56,9 @@ html(lang='en')
 				.label {{model.label}}
 			.comment
 				input(placeholder='comment', v-model='model.comment', data-autosize-input)
+			.export(v-if='model.type === "sentence"', v-on='click: model.export= !model.export')
+				.exported(v-show='model.export') Exported
+				.unexported.btn(v-show='!model.export') Export
 		.node-wrapper(v-show='(model === $root.grammar) || open')
 			section(v-repeat='model: model.children', v-component='grammar')
 			ul.builder(v-class='model.type', v-with='model', v-component='container-{{model.type || "wordlist"}}', v-if='model.elements && model.type')
