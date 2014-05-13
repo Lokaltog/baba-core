@@ -47,6 +47,18 @@ Vue.component('container-sentence-expr', {
 
 Vue.component('container-sentence-path', {
 	template: '#container-sentence-path-template',
+	methods: {
+		filterTransforms: function(transforms, type) {
+			var ret = []
+			transforms.forEach(function(value) {
+				var tf = this.$get('transforms.' + value)
+				if (tf.type === type) {
+					ret.push(tf)
+				}
+			}.bind(this))
+			return ret
+		},
+	},
 })
 
 Vue.component('add-dropdown', {
@@ -83,7 +95,7 @@ var vm = new Vue({
 				}
 			})
 		},
-		getGrammarPreview: function(searchPath, prefix, postfix) {
+		getGrammarPreview: function(searchPath, transforms) {
 			var elements = this.getGrammarNode(searchPath).splice(-1)[0].elements
 			var expr = utils.randomItem(elements)
 			if (typeof expr === 'undefined') {
@@ -92,14 +104,9 @@ var vm = new Vue({
 			expr = expr.expr
 			var p
 
-			for (p in prefix) {
-				if (prefix.hasOwnProperty(p)) {
-					expr = this.$get(prefix[p]).fn(expr)
-				}
-			}
-			for (p in postfix) {
-				if (postfix.hasOwnProperty(p)) {
-					expr = this.$get(postfix[p]).fn(expr)
+			for (p in transforms) {
+				if (transforms.hasOwnProperty(p)) {
+					expr = this.$get('transforms.' + transforms[p]).fn(expr)
 				}
 			}
 

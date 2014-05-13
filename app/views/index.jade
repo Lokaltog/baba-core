@@ -95,12 +95,12 @@ html(lang='en')
 
 	script(id='container-sentence-path-template', type='text/x-template')
 		.display(v-if='!preview')
-			ol.prefix(v-if='prefix')
-				li(v-repeat='prefix') {{this.$get($value).label}}
+			ol.prefix(v-if='transform && filterTransforms(transform, "prefix")')
+				li(v-repeat='filterTransforms(transform, "prefix")') {{label}}
 			ol.components
 				li(v-repeat='getGrammarComponents(path)', v-class='key') {{label}}
-			ol.postfix(v-if='postfix')
-				li(v-repeat='postfix') {{this.$get($value).label}}
+			ol.postfix(v-if='transform && filterTransforms(transform, "postfix")')
+				li(v-repeat='filterTransforms(transform, "postfix")') {{label}}
 			ul.actions(v-if='!preview')
 				li.edit
 					i.icon.icon-edit
@@ -109,7 +109,7 @@ html(lang='en')
 		.preview(v-if='preview')
 			ol.components
 				li(v-class='getGrammarComponents(path)[0].key')
-					| {{getGrammarPreview(path, prefix, postfix)}}
+					| {{getGrammarPreview(path, transform)}}
 
 	script(id='add-dropdown-template', type='text/x-template')
 		.dropdown-menu(v-class='has-children: model.children')
