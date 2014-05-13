@@ -82,7 +82,7 @@ html(lang='en')
 				ul.dropdown
 					li.static-phrase
 						.label Phrase
-					li(v-repeat='model: $root.grammar.children', v-component='add-dropdown')
+					li(v-repeat='model: $root.grammar.children, elements: elements', v-component='add-dropdown')
 
 		li.actions
 			.refresh.btn(v-if='preview', v-on='click: preview = preview')
@@ -118,9 +118,9 @@ html(lang='en')
 
 	script(id='add-dropdown-template', type='text/x-template')
 		.dropdown-menu(v-class='has-children: model.children')
-			.label {{model.label}}
-			ul.dropdown(v-repeat='model: model.children')
-				li(v-component='add-dropdown', v-with='model: model')
+			.label(v-on='click: addElement(model, elements)') {{$index}} {{model.label}}
+			ul.dropdown(v-if='model.children')
+				li(v-repeat='model: model.children', v-component='add-dropdown')
 
 	script(src='/static/js/lib/vue.js')
 	script(src='/static/js/lib/jquery-2.1.1.js')
