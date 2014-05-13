@@ -80,6 +80,7 @@ input
 	box-sizing: border-box
 	margin: 0
 	padding: 0 $quarter-gutter
+	outline: none !important
 
 // Layout
 html, body
@@ -129,12 +130,14 @@ footer
 
 // Section styles
 section.step
-	border: 1px solid $color-foreground-3
+	background: lighten($color-foreground-3, 12)
+	border-left: 2px solid $color-foreground-2
 	position: relative
 	padding: 0 $half-gutter $half-gutter $gutter
 	margin: 0 0 $half-gutter 0
-	$header-height = 50px
-	$header-padding = 20px
+	text-shadow: 0 1px 0 rgba(#fff, .8)
+	$header-height = 60px
+	$header-padding = 25px
 	.number
 		position: absolute
 		background: $color-foreground
@@ -156,14 +159,43 @@ section.step
 // Builder styles
 $builder-gutter = 5px
 section.grammar
-	& > h1
-		font-weight: 700
-		text-transform: uppercase
+	margin-left: -($half-gutter)
+	margin-top: $half-gutter
 	section
-		h1
-			border-bottom: 1px solid $color-foreground-3
+		padding: $quarter-gutter $quarter-gutter $quarter-gutter $half-gutter
 		section
-			padding: $quarter-gutter 0 $quarter-gutter $half-gutter
+			padding: $quarter-gutter 0 0 $quarter-gutter
+		background: #fff
+		h1
+			display: flex
+			.toggle
+				line-height: 1.2em
+				width: $half-gutter
+				color: $color-foreground-3
+				i::before
+					font-size: .8em
+			.label
+				flex: 1 1 auto
+				text-transform: uppercase
+				font-weight: 700
+				font-size: .9em
+			input
+				border: 0
+				transition: width .2s
+				text-align: right
+				background: transparent
+				&::-webkit-input-placeholder
+					color: rgba(#fff, 0)
+					transition: color .2s
+			&:hover
+				input
+					&::-webkit-input-placeholder
+						color: rgba(#000, .3)
+						transition: color .1s
+		.node-wrapper
+			border-left: 1px solid $color-foreground-3
+			padding-left: $quarter-gutter
+			margin-left: ($quarter-gutter / 2)
 
 .btn
 	border: 0

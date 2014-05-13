@@ -45,9 +45,15 @@ html(lang='en')
 				a(href='https://github.com/Lokaltog/baba') GitHub repo
 
 	script(id='grammar-template', type='text/x-template')
-		h1(v-show='model.label') {{model.label}}
-		section(v-repeat='model: model.children', v-component='grammar')
-		ul.builder(v-class='model.type', v-with='model', v-component='container-{{model.type || "wordlist"}}', v-if='model.elements && model.type')
+		h1(v-if='model !== $root.grammar', v-show='model.label')
+			.toggle
+				i.icon.icon-minus
+			.label {{model.label}}
+			.comment
+				input(placeholder='comment', data-autosize-input)
+		.node-wrapper
+			section(v-repeat='model: model.children', v-component='grammar')
+			ul.builder(v-class='model.type', v-with='model', v-component='container-{{model.type || "wordlist"}}', v-if='model.elements && model.type')
 
 	script(id='container-wordlist-template', type='text/x-template')
 		li.expr(v-repeat='elements | orderBy "expr"')
