@@ -19,7 +19,8 @@ html(lang='en')
 				.number 1
 				.contents
 					h1 Name your grammar
-					div input field for name
+					div
+						input.input-text(type='text', v-model='grammar.label', placeholder='Grammar name', data-autosize-input)
 
 			section.step.create-grammar
 				.number 2
@@ -53,7 +54,7 @@ html(lang='en')
 					i.icon.icon-plus(v-if='!open')
 				.label {{model.label}}
 			.comment
-				input(placeholder='comment', data-autosize-input)
+				input(placeholder='comment', v-model='model.comment', data-autosize-input)
 		.node-wrapper(v-show='(model === $root.grammar) || open')
 			section(v-repeat='model: model.children', v-component='grammar')
 			ul.builder(v-class='model.type', v-with='model', v-component='container-{{model.type || "wordlist"}}', v-if='model.elements && model.type')
