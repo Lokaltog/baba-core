@@ -88,9 +88,11 @@ module.exports = {
 							elements: [
 								{
 									path: [3, 0, 0],
+									whitespace: false,
 								},
 								{
 									path: [3, 0, 1],
+									whitespace: false,
 								},
 							],
 						},
@@ -108,8 +110,8 @@ module.exports = {
 					elements: [
 						{
 							path: [2],
-							prefix: [
-								'transforms.common.a-an',
+							transform: [
+								'common.a-an',
 							],
 						},
 						{
@@ -120,14 +122,14 @@ module.exports = {
 						},
 						{
 							path: [1, 0],
-							postfix: [
-								'transforms.verb.tense-pp',
+							transform: [
+								'verb.tense-pp',
 							],
 						},
 						{
 							path: [0, 1],
-							prefix: [
-								'transforms.common.a-an',
+							transform: [
+								'common.a-an',
 							],
 						},
 					],
