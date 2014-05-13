@@ -46,6 +46,10 @@ Vue.component('container-sentence-path', {
 	template: '#container-sentence-path-template',
 })
 
+Vue.component('add-dropdown', {
+	template: '#add-dropdown-template',
+})
+
 var vm = new Vue({
 	el: '#contents',
 	data: {
@@ -99,4 +103,20 @@ var vm = new Vue({
 			return expr
 		},
 	},
+})
+
+// handle dropdown menus
+$('.dropdown-menu').on('click', function(ev) {
+	ev.stopPropagation()
+
+	$(this)
+		.parents('.dropdown-menu')
+		.first()
+		.find('.active')
+		.removeClass('active')
+
+	$(this).addClass('active')
+})
+$('body').on('click', function() {
+	$('.dropdown-menu').removeClass('active')
 })

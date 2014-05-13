@@ -45,8 +45,9 @@ html(lang='en')
 			.dropdown-menu.btn(v-if='!preview')
 				i.icon.icon-add
 				ul.dropdown
-					li.static-phrase Phrase
-					// recursive menu here
+					li.static-phrase
+						.label Phrase
+					li(v-repeat='model: $root.grammar.children', v-component='add-dropdown')
 
 		li.actions
 			.refresh.btn(v-if='preview')
@@ -79,6 +80,12 @@ html(lang='en')
 			ol.components
 				li(v-class='getGrammarComponents(path)[0].key')
 					| {{getGrammarPreview(path, prefix, postfix)}}
+
+	script(id='add-dropdown-template', type='text/x-template')
+		.dropdown-menu(v-class='has-children: model.children')
+			.label {{model.label}}
+			ul.dropdown(v-repeat='model: model.children')
+				li(v-component='add-dropdown', v-with='model: model')
 
 	script(src='/static/js/lib/vue.js')
 	script(src='/static/js/lib/jquery-2.1.1.js')
