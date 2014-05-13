@@ -1,16 +1,34 @@
 // functions to include in the exported JS code
+var moduleName = 'Baba'
 var exportFunctions = {
-	randomElements: function() {
-		// return random elements from items in a list (arguments)
-		'randomElements'
+	randomItem: function(items) {
+		return items[Math.floor(Math.random() * items.length)]
 	},
-	globalBaba: function(key) {
-		// export global baba object (generate based on keypath)
-		'globalBaba'
-	},
-	exportSentence: function(key) {
-		// export sentence for usage via the global Baba object
-		'exportSentence'
+	parseElements: function() {
+		var elements = arguments
+		return function() {
+			var ret = []
+			for (var el in elements) {
+				if (!elements.hasOwnProperty(el)) {
+					continue
+				}
+				el = elements[el]
+				var type = typeof el
+
+				if (type === 'string') {
+					ret.push(el)
+				}
+				else if (type === 'function') {
+					ret.push(parseElements(el()))
+				}
+				else if (type === 'object') {
+					if (Array.isArray(el)) {
+						ret.push(parseElements(randomItem(el))())
+					}
+				}
+			}
+			return ret.join('')
+		}
 	},
 }
 
@@ -23,6 +41,7 @@ function exportGrammar(vm) {
 			ret.push('var ' + fn + ' = ' + exportFunctions[fn])
 		}
 	}
+	ret.push('var exported = {}')
 
 	// traverse grammar tree
 	function getGrammarVariables(node, parentIndex) {
@@ -51,7 +70,7 @@ function exportGrammar(vm) {
 				ret.push([
 					'var ',
 					nodeName,
-					' = randomElements(',
+					' = parseElements(',
 					node.elements.map(function(el) {
 						if (el.expr) {
 							return JSON.stringify(el.expr)
@@ -69,11 +88,9 @@ function exportGrammar(vm) {
 				if (node.export) {
 					// export sentence for usage via the global baba object
 					ret.push([
-						'exportSentence(',
-						JSON.stringify(S(node.label).slugify().toString()),
-						', ',
-						nodeName,
-						')',
+						'exported[',
+						JSON.stringify(S(node.label).slugify().camelize().toString()),
+						'] = ', nodeName,
 					].join(''))
 				}
 			}
@@ -106,11 +123,15 @@ module.exports = {
 		// create raw JS code to be exported
 		var exported = []
 
-		// wrap with browser-specific stuff
-		exported.push('(function (global) {')
-		exported.push('global.Baba = globalBaba')
+		// wrap in UMD, compatible with AMD/CommonJS/browser
+		exported.push('(function (root, factory) {')
+		exported.push('if (typeof define === "function" && define.amd) { define([], factory) }')
+		exported.push('else if (typeof exports === "object") { module.exports = factory() }')
+		exported.push('else { root.' + moduleName + ' = factory() }')
+		exported.push('}(this, function() {')
 		exported.push(exportGrammar(grammar))
-		exported.push('})(this)')
+		exported.push('return exported')
+		exported.push('}))')
 
 		exported = exported.join('\n')
 
