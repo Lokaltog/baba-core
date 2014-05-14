@@ -86,7 +86,7 @@ gulp.task('sync', function() {
 })
 
 gulp.task('development', ['stylus', 'jade', 'browserify', 'uglify-lib', 'sync'], function() {
-	gulp.watch(__assets_src + 'js/*.js', ['browserify'])
+	gulp.watch(__assets_src + 'js/**.js', ['browserify'])
 	gulp.watch(__assets_src + 'styl/**.styl', ['stylus'])
 	gulp.watch(__views_src + '**.jade', ['jade'])
 })

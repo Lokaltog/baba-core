@@ -20,23 +20,34 @@ html(lang='en')
 				.number 1
 				.contents
 					h1 Name your grammar
-					div
-						input.input-text(type='text', v-model='grammar.label', placeholder='Grammar name', data-autosize-input)
+					div.name
+						input.input-text(type='text', v-model='grammar.name', placeholder='Grammar name', data-autosize-input)
+						span.by by
+						input.input-text(type='text', v-model='grammar.author', placeholder='Author', data-autosize-input)
 
 			section.step.create-grammar
 				.number 2
 				.contents
-					h1 Create your grammar
+					h1 Create the rules
 					section.grammar(v-component='grammar', v-with='model: grammar')
 
-			section.step.save-grammar
+			section.step.preview-grammar
 				.number 3
 				.contents
-					h1 Save and export your grammar
+					h1 Preview your grammar
+					p(v-if='!exported.length') You need to export at least one sentence. Toggle the export button to the right of any sentence above.
+					ul(v-if='exported.length')
+						li(v-repeat='exported')
+							.label {{label}}
+
+			section.step.save-grammar
+				.number 4
+				.contents
+					h1 Save, export and share
 					div
-						span.btn(v-on='click: exportRawGrammar') Export raw grammar
+						.btn(v-on='click: exportRawGrammar') Export raw grammar
 					div
-						span.btn(v-on='click: exportGrammarGenerator') Get garbage text generator
+						.btn(v-on='click: exportGrammarGenerator') Get garbage text generator
 					div save as gist
 					div preview exported sentences
 					div tweet, share
@@ -48,33 +59,35 @@ html(lang='en')
 				a(href='https://github.com/Lokaltog/baba') GitHub repo
 
 	script(id='grammar-template', type='text/x-template')
-		h1(v-if='model !== $root.grammar', v-show='model.label')
-			.toggle-wrap(v-on='click: open = !open')
-				.toggle
-					i.icon.icon-minus(v-if='open')
-					i.icon.icon-plus(v-if='!open')
-				.label {{model.label}}
+		h1(v-if='model !== $root.grammar')
+			.toggle(v-on='click: open = !open')
+				i.icon.icon-minus(v-if='open')
+				i.icon.icon-plus(v-if='!open')
+			.label
+				input(placeholder='section name', v-model='model.label', data-autosize-input)
 			.comment
 				input(placeholder='comment', v-model='model.comment', data-autosize-input)
-			.export(v-if='model.type === "sentence"', v-on='click: model.export= !model.export')
+			.export(v-if='model.type === "sentence"', v-on='click: model.export = !model.export')
 				.exported(v-show='model.export') Exported
-				.unexported.btn(v-show='!model.export') Export
+				.unexported
+					.btn(v-show='!model.export') Export
+
 		.node-wrapper(v-show='(model === $root.grammar) || open')
-			section(v-repeat='model: model.children', v-component='grammar')
+			section(v-repeat='model: model.children | orderBy "label"', v-component='grammar')
 			ul.builder(v-class='model.type', v-with='model', v-component='container-{{model.type || "wordlist"}}', v-if='model.elements && model.type')
 
 	script(id='container-wordlist-template', type='text/x-template')
-		li.expr(v-repeat='elements | orderBy "expr"')
-			.word {{expr}}
+		li.expr(v-repeat='element: elements | orderBy "expr"')
+			.word {{element.expr}}
 			ul.actions
-				li.delete(v-on='click:deletePhrase(this)')
+				li.delete(v-on='click:removeElement(element)')
 					i.icon.icon-delete
 
 		li.add-textfield
 			input(type='text', placeholder='add phrase', data-autosize-input, v-on='keydown:addPhrase | key enter')
 
 	script(id='container-sentence-template', type='text/x-template')
-		li(v-repeat='elements', v-component='container-sentence-{{expr ? "expr" : "path"}}', v-class='expr: expr, path: path, preview: preview')
+		li(v-repeat='element: elements', v-component='container-sentence-{{element.expr ? "expr" : "path"}}', v-class='expr: element.expr, path: element.path, preview: preview')
 
 		li.buttons
 			.dropdown-menu.btn(v-if='!preview')
@@ -82,7 +95,7 @@ html(lang='en')
 				ul.dropdown
 					li.static-phrase
 						.label Phrase
-					li(v-repeat='model: $root.grammar.children, elements: elements', v-component='add-dropdown')
+					li(v-repeat='model: $root.grammar.children | orderBy "label"', v-component='add-dropdown', v-with='elements: elements')
 
 		li.actions
 			.refresh.btn(v-if='preview', v-on='click: preview = preview')
@@ -91,36 +104,36 @@ html(lang='en')
 			.preview.btn(v-class='active: preview', v-on='click: preview = !preview') Preview
 
 	script(id='container-sentence-expr-template', type='text/x-template')
-		.word {{expr}}
+		.word {{element.expr}}
 		ul.actions(v-if='!preview')
 			li.edit
 				i.icon.icon-edit
-			li.delete
+			li.delete(v-on='click: removeElement(element)')
 				i.icon.icon-delete
 
 	script(id='container-sentence-path-template', type='text/x-template')
 		.display(v-if='!preview')
-			ol.prefix(v-if='transform && filterTransforms(transform, "prefix")')
-				li(v-repeat='filterTransforms(transform, "prefix")') {{label}}
+			ol.prefix(v-if='element.transform && filterTransforms(element.transform, "prefix")')
+				li(v-repeat='filterTransforms(element.transform, "prefix")') {{label}}
 			ol.components
-				li(v-repeat='getGrammarComponents(path)', v-class='key') {{label}}
-			ol.postfix(v-if='transform && filterTransforms(transform, "postfix")')
-				li(v-repeat='filterTransforms(transform, "postfix")') {{label}}
+				li(v-repeat='getGrammarComponents(element.path)', v-class='key') {{label}}
+			ol.postfix(v-if='element.transform && filterTransforms(element.transform, "postfix")')
+				li(v-repeat='filterTransforms(element.transform, "postfix")') {{label}}
 			ul.actions(v-if='!preview')
 				li.edit
 					i.icon.icon-edit
-				li.delete
+				li.delete(v-on='click: removeElement(element)')
 					i.icon.icon-delete
 		.preview(v-if='preview')
 			ol.components
-				li(v-class='getGrammarComponents(path)[0].key')
-					| {{getGrammarPreview(path, transform)}}
+				li(v-class='getGrammarComponents(element.path)[0].key')
+					| {{getGrammarPreview(element.path, element.transform)}}
 
 	script(id='add-dropdown-template', type='text/x-template')
 		.dropdown-menu(v-class='has-children: model.children')
-			.label(v-on='click: addElement(model, elements)') {{$index}} {{model.label}}
+			.label(v-on='click: addElement(elements, getKeypath(model))') {{model.label}}
 			ul.dropdown(v-if='model.children')
-				li(v-repeat='model: model.children', v-component='add-dropdown')
+				li(v-repeat='model: model.children | orderBy "label"', v-component='add-dropdown')
 
 	script(src='/static/js/lib/vue.js')
 	script(src='/static/js/lib/jquery-2.1.1.js')

@@ -31,14 +31,19 @@ Vue.component('container-wordlist', {
 
 			ev.target.value = ''
 		},
-		deletePhrase: function(obj) {
-			this.$data.elements.$remove(obj.$data)
+		removeElement: function(element) {
+			this.elements.$remove(element)
 		},
 	},
 })
 
 Vue.component('container-sentence', {
 	template: '#container-sentence-template',
+	methods: {
+		removeElement: function(element) {
+			this.elements.$remove(element)
+		},
+	},
 })
 
 Vue.component('container-sentence-expr', {
@@ -63,15 +68,84 @@ Vue.component('container-sentence-path', {
 
 Vue.component('add-dropdown', {
 	template: '#add-dropdown-template',
+	methods: {
+		addElement: function(elements, keypath) {
+			if (!this.model.type) {
+				return
+			}
+			elements.push({
+				path: keypath,
+			})
+			$('.dropdown-menu').removeClass('active')
+		},
+	},
 })
+
+function getExportedNodes(node) {
+	var ret = []
+	if (node.children) {
+		node.children.forEach(function(child) {
+			ret = ret.concat(getExportedNodes(child))
+		})
+	}
+	if (node.export === true) {
+		ret.push(node)
+	}
+	return ret
+}
+
+function getKeypaths(node, keypath) {
+	var ret = []
+	keypath = keypath || []
+	if (node.children) {
+		var index = 0
+		node.children.forEach(function(child) {
+			ret = ret.concat(getKeypaths(child, keypath.concat([index++])))
+		})
+	}
+	if (keypath && node.label) {
+		ret.push([node, keypath])
+	}
+	return ret
+}
 
 var vm = new Vue({
 	el: '#contents',
 	data: {
 		grammar: grammar,
 		transforms: transforms,
+		exported: [],
+		keypaths: {},
+	},
+	created: function() {
+		this.$watch('grammar', function() {
+			// walk the grammar tree and detect any exported nodes
+			this.exported = getExportedNodes(this.grammar)
+
+			// store keypaths for all nodes
+			// we can't store keypaths in the grammar, as any updates done here
+			// will trigger the watcher again and end up in an infinite loop
+			this.keypaths = getKeypaths(this.grammar)
+		})
 	},
 	methods: {
+		getKeypath: function(node) {
+			// search for a keypath for a node
+			// not particularily effective as we have to examine each element in the keypath array
+			// TODO improve keypath storage
+			if (!Array.isArray(this.keypaths)) {
+				// keypaths may not have been initialized yet
+				return ''
+			}
+			var foundKp
+			this.keypaths.some(function(kp) {
+				if (kp[0] === node) {
+					foundKp = kp[1]
+					return true
+				}
+			})
+			return foundKp
+		},
 		getGrammarNode: function(searchPath) {
 			var path = searchPath.slice(0) // clone path array
 
@@ -99,7 +173,7 @@ var vm = new Vue({
 			var elements = this.getGrammarNode(searchPath).splice(-1)[0].elements
 			var expr = utils.randomItem(elements)
 			if (typeof expr === 'undefined') {
-				return '<<<empty word list>>>'
+				return '<<empty word list>>'
 			}
 			expr = expr.expr
 			var p
@@ -130,6 +204,11 @@ var vm = new Vue({
 // handle dropdown menus
 $('#contents').on('click', '.dropdown-menu', function(ev) {
 	ev.stopPropagation()
+
+	if ($(this).hasClass('active') && $(this).hasClass('btn')) {
+		$('.dropdown-menu').removeClass('active')
+		return
+	}
 
 	$(this)
 		.parents('.dropdown-menu')

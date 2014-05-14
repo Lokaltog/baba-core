@@ -92,7 +92,7 @@ input
 
 .btn
 	font: 400 .9em/1.9em $font-main
-	height: 1.9em
+	height: 1.85em
 	border: 0
 	box-shadow: inset 0 1px 0 rgba(#fff, .2), inset 0 -1px 0 rgba(#000, .3)
 	cursor: pointer
@@ -105,6 +105,7 @@ input
 	box-sizing: border-box
 	border: 1px solid $color-foreground
 	transition: all .1s
+	display: inline-block
 	&:hover
 		background: $color-foreground
 	&.active
@@ -182,6 +183,10 @@ section.step
 			font-size: 1.1em
 			line-height: $header-height
 
+.name-grammar
+	.name .by
+		margin: 0 $quarter-gutter
+
 // Builder styles
 $builder-gutter = 5px
 section.grammar
@@ -195,36 +200,38 @@ section.grammar
 			padding: 0 0 0 $quarter-gutter
 		h1
 			display: flex
-			.toggle-wrap
-				cursor: pointer
-				display: flex
-				flex: 1 1 auto
-				&:hover
-					.toggle
-						color: $color-foreground-2
 			.toggle
 				line-height: 1.5em
 				width: $half-gutter
 				color: $color-foreground-3
+				cursor: pointer
+				&:hover
+					color: $color-foreground-2
 				i::before
 					font-size: .8em
 			.label
-				text-transform: uppercase
-				font-weight: 700
-				font-size: .9em
-			input
-				border: 0
-				text-align: right
-				background: transparent
-				&::-webkit-input-placeholder
-					color: rgba(#fff, 0)
+				flex: 1 1 auto
+				input
+					text-transform: uppercase
+					font-weight: 700
+					border: 0
+					text-align: left
+					background: transparent
+			.comment
+				input
+					border: 0
+					text-align: right
+					background: transparent
+					&::-webkit-input-placeholder
+						color: rgba(#fff, 0)
 			.export
 				text-transform: uppercase
 				font-size: .9em
 				.unexported
-					line-height: 2.1em
-					height: @line-height
-					display: none
+					opacity: .3
+					.btn
+						line-height: 1.5em
+						height: @line-height
 				.exported
 					line-height: 1.9em
 					color: $color-green
@@ -238,7 +245,7 @@ section.grammar
 			&:hover
 				.export
 					.unexported
-						display: block
+						opacity: 1
 				input
 					&::-webkit-input-placeholder
 						color: rgba(#000, .3)
@@ -280,6 +287,8 @@ section.grammar
 				border-left: 1px solid #ddd
 				padding: 0 $quarter-gutter
 				height: $line-height
+				line-height: $line-height
+				font-size: .95em
 				&:hover
 					background: $color-foreground
 					color: #fff
@@ -308,6 +317,7 @@ section.grammar
 				border: 0
 				box-shadow: 0 1px 2px rgba(#000, .1)
 				background: rgba(#fff, .4)
+				height: $line-height
 				&:focus
 					background: rgba(#fff, .8)
 				&::-webkit-input-placeholder

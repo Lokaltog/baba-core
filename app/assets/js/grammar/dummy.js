@@ -1,5 +1,6 @@
 module.exports = {
-	label: 'Test grammar',
+	name: 'Test grammar',
+	author: 'Kim Silkebækken',
 	children: [
 		{
 			label: 'Noun',
