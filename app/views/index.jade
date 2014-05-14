@@ -80,7 +80,7 @@ html(lang='en')
 		li.expr(v-repeat='element: elements | orderBy "expr"')
 			.word {{element.expr}}
 			ul.actions
-				li.delete(v-on='click:removeElement(element)')
+				li.delete(v-on='click: removeElement(element)')
 					i.icon.icon-delete
 
 		li.add-textfield
@@ -109,7 +109,7 @@ html(lang='en')
 			li.divider-after
 				.label Edit
 			li(v-repeat='model: $root.grammar.children | orderBy "label"', v-component='update-element-contextmenu', v-with='elements: elements')
-			li.divider-before.remove
+			li.divider-before.remove(v-on='click: removeElement(element)')
 				.label Remove
 
 	script(id='container-sentence-path-template', type='text/x-template')
@@ -128,7 +128,7 @@ html(lang='en')
 					.label Convert to phrase
 				li.divider-before
 					.label Clear transforms
-				li.remove
+				li.remove(v-on='click: removeElement(element)')
 					.label Remove
 
 			ol.postfix(v-if='element.transform && filterTransforms(element.transform, "postfix")')
