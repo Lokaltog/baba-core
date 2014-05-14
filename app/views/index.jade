@@ -28,14 +28,16 @@ html(lang='en')
 			section.step.create-grammar
 				.number 2
 				.contents
-					h1 Create the rules
+					h1
+						| Create the rules
+						span.add(v-on='click: grammar.children.push({})') Add section
 					section.grammar(v-component='grammar', v-with='model: grammar')
 
 			section.step.preview-grammar
 				.number 3
 				.contents
 					h1 Preview your grammar
-					p(v-if='!exported.length') You need to export at least one sentence. Toggle the export button to the right of any sentence above.
+					p(v-if='!exported.length') You need to export at least one sentence collection. Toggle the export button to the right of any sentence collection above.
 					ul(v-if='exported.length')
 						li(v-repeat='exported')
 							.label {{label}}
@@ -54,7 +56,9 @@ html(lang='en')
 
 		footer
 			p
-				| Baba Grammar Designer by Kim Silkebækken
+				| Baba Grammar Designer by
+				=' '
+				a(href='https://github.com/Lokaltog') Lokaltog
 				=' · '
 				a(href='https://github.com/Lokaltog/baba') GitHub repo
 
@@ -74,7 +78,14 @@ html(lang='en')
 
 		.node-wrapper(v-show='(model === $root.grammar) || open')
 			section(v-repeat='model: model.children | orderBy "label"', v-component='grammar')
-			ul.builder(v-class='model.type', v-with='model', v-component='container-{{model.type || "wordlist"}}', v-if='model.elements && model.type')
+			.add-section(v-if='typeof model.children !== "undefined"', v-on='click: model.children.push({})') Add section
+			ul.builder(v-class='model.type', v-with='model', v-component='container-{{model.type || "wordlist"}}', v-if='model.type')
+
+		.section-init-wrapper(v-if='!model.type && typeof model.children === "undefined"', v-show='open')
+			p What should this section contain?
+			div(v-on='click: model.children = []') [Subsections]
+			div(v-on='click: model.type = "wordlist"') [A word list]
+			div(v-on='click: model.type = "sentence"') [A sentence collection]
 
 	script(id='container-wordlist-template', type='text/x-template')
 		li.expr(v-repeat='element: elements | orderBy "expr"')
