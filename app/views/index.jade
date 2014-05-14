@@ -90,50 +90,65 @@ html(lang='en')
 		li(v-repeat='element: elements', v-component='container-sentence-{{element.expr ? "expr" : "path"}}', v-class='expr: element.expr, path: element.path, preview: preview')
 
 		li.buttons
-			.dropdown-menu.btn(v-if='!preview')
+			.contextmenu-trigger.btn(v-show='!preview')
 				i.icon.icon-add
-				ul.dropdown
-					li.static-phrase
-						.label Phrase
-					li(v-repeat='model: $root.grammar.children | orderBy "label"', v-component='add-dropdown', v-with='elements: elements')
+			ul.contextmenu(v-show='!preview')
+				li.divider-after
+					.label Static phrase
+				li(v-repeat='model: $root.grammar.children | orderBy "label"', v-component='add-element-contextmenu', v-with='elements: elements')
 
 		li.actions
-			.refresh.btn(v-if='preview', v-on='click: preview = preview')
+			.refresh.btn(v-show='preview', v-on='click: preview = preview')
 				i.icon.icon-refresh
 
 			.preview.btn(v-class='active: preview', v-on='click: preview = !preview') Preview
 
 	script(id='container-sentence-expr-template', type='text/x-template')
-		.word {{element.expr}}
-		ul.actions(v-if='!preview')
-			li.edit
-				i.icon.icon-edit
-			li.delete(v-on='click: removeElement(element)')
-				i.icon.icon-delete
+		.word.contextmenu-trigger {{element.expr}}
+		ul.contextmenu
+			li.divider-after
+				.label Edit
+			li(v-repeat='model: $root.grammar.children | orderBy "label"', v-component='update-element-contextmenu', v-with='elements: elements')
+			li.divider-before.remove
+				.label Remove
 
 	script(id='container-sentence-path-template', type='text/x-template')
-		.display(v-if='!preview')
+		.display(v-show='!preview')
 			ol.prefix(v-if='element.transform && filterTransforms(element.transform, "prefix")')
 				li(v-repeat='filterTransforms(element.transform, "prefix")') {{label}}
-			ol.components
+
+			ol.components.contextmenu-trigger
 				li(v-repeat='getGrammarComponents(element.path)', v-class='key') {{label}}
+			ul.contextmenu(v-show='!preview')
+				li.divider-after
+					.label Transform
+				li(v-repeat='model: $root.grammar.children | orderBy "label"', v-component='update-element-contextmenu', v-with='elements: elements')
+
+				li.divider-before
+					.label Convert to phrase
+				li.divider-before
+					.label Clear transforms
+				li.remove
+					.label Remove
+
 			ol.postfix(v-if='element.transform && filterTransforms(element.transform, "postfix")')
 				li(v-repeat='filterTransforms(element.transform, "postfix")') {{label}}
-			ul.actions(v-if='!preview')
-				li.edit
-					i.icon.icon-edit
-				li.delete(v-on='click: removeElement(element)')
-					i.icon.icon-delete
-		.preview(v-if='preview')
+		.preview(v-show='preview')
 			ol.components
 				li(v-class='getGrammarComponents(element.path)[0].key')
 					| {{getGrammarPreview(element.path, element.transform)}}
 
-	script(id='add-dropdown-template', type='text/x-template')
-		.dropdown-menu(v-class='has-children: model.children')
-			.label(v-on='click: addElement(elements, getKeypath(model))') {{model.label}}
-			ul.dropdown(v-if='model.children')
-				li(v-repeat='model: model.children | orderBy "label"', v-component='add-dropdown')
+	script(id='add-element-contextmenu-template', type='text/x-template')
+		.item(v-class='has-children: model.children')
+			.label(v-on='click: addElement($event, elements, getKeypath(model))') {{model.label}}
+			ul.contextmenu(v-if='model.children')
+				li(v-repeat='model: model.children | orderBy "label"', v-component='add-element-contextmenu')
+
+	script(id='update-element-contextmenu-template', type='text/x-template')
+		.item(v-class='has-children: model.children')
+			.label(v-on='click: updateElement(elements, getKeypath(model))') {{model.label}}
+			ul.contextmenu(v-if='model.children')
+				li(v-repeat='model: model.children | orderBy "label"', v-component='update-element-contextmenu')
 
 	script(src='/static/js/lib/vue.js')
 	script(src='/static/js/lib/jquery-2.1.1.js')

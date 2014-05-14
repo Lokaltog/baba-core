@@ -66,17 +66,24 @@ Vue.component('container-sentence-path', {
 	},
 })
 
-Vue.component('add-dropdown', {
-	template: '#add-dropdown-template',
+Vue.component('update-element-contextmenu', {
+	template: '#update-element-contextmenu-template',
 	methods: {
-		addElement: function(elements, keypath) {
+		updateElement: function() {
+		},
+	},
+})
+
+Vue.component('add-element-contextmenu', {
+	template: '#add-element-contextmenu-template',
+	methods: {
+		addElement: function(ev, elements, keypath) {
 			if (!this.model.type) {
 				return
 			}
 			elements.push({
 				path: keypath,
 			})
-			$('.dropdown-menu').removeClass('active')
 		},
 	},
 })
@@ -201,23 +208,25 @@ var vm = new Vue({
 	},
 })
 
-// handle dropdown menus
-$('#contents').on('click', '.dropdown-menu', function(ev) {
+// handle context menus
+$('#contents').on('click', '.contextmenu-trigger', function(ev) {
 	ev.stopPropagation()
 
-	if ($(this).hasClass('active') && $(this).hasClass('btn')) {
-		$('.dropdown-menu').removeClass('active')
+	if ($(this).siblings('.contextmenu').hasClass('active')) {
+        $('.contextmenu').removeClass('active')
 		return
 	}
 
-	$(this)
-		.parents('.dropdown-menu')
-		.first()
-		.find('.active')
-		.removeClass('active')
+	$('.contextmenu').removeClass('active')
+	$(this).siblings('.contextmenu').addClass('active')
+})
+$('#contents').on('click', '.contextmenu .label', function(ev) {
+	ev.stopPropagation()
 
-	$(this).addClass('active')
+	$(this).parents('.contextmenu').first().find('.contextmenu').removeClass('active')
+	$(this).parents('.contextmenu').addClass('active')
+	$(this).siblings('.contextmenu').addClass('active')
 })
 $('body').on('click', function() {
-	$('.dropdown-menu').removeClass('active')
+	$('.contextmenu').removeClass('active')
 })
