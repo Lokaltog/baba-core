@@ -79,7 +79,7 @@ html(lang='en')
 		.node-wrapper(v-show='(model === $root.grammar) || open')
 			section(v-repeat='model: model.children | orderBy "label"', v-component='grammar')
 			.add-section(v-if='typeof model.children !== "undefined"', v-on='click: model.children.push({})') Add section
-			ul.builder(v-class='model.type', v-with='model', v-component='container-{{model.type || "wordlist"}}', v-if='model.type')
+			.container-wrapper(v-class='model.type', v-with='model', v-component='container-{{model.type || "wordlist"}}', v-if='model.type')
 
 		.section-init-wrapper(v-if='!model.type && typeof model.children === "undefined"', v-show='open')
 			p What should this section contain?
@@ -88,31 +88,34 @@ html(lang='en')
 			div(v-on='click: model.type = "sentence"') [A sentence collection]
 
 	script(id='container-wordlist-template', type='text/x-template')
-		li.expr(v-repeat='element: elements | orderBy "expr"')
-			.word {{element.expr}}
-			ul.actions
-				li.delete(v-on='click: removeElement(element)')
-					i.icon.icon-delete
+		ul.builder.wordlist
+			li.expr(v-repeat='element: elements | orderBy "expr"')
+				.word {{element.expr}}
+				ul.actions
+					li.delete(v-on='click: removeElement(element)')
+						i.icon.icon-delete
 
-		li.add-textfield
-			input(type='text', placeholder='add phrase', data-autosize-input, v-on='keydown:addPhrase | key enter')
+			li.add-textfield
+				input(type='text', placeholder='add phrase', data-autosize-input, v-on='keydown:addPhrase | key enter')
 
 	script(id='container-sentence-template', type='text/x-template')
-		li(v-repeat='element: elements', v-component='container-sentence-{{element.expr ? "expr" : "path"}}', v-class='expr: element.expr, path: element.path, preview: preview')
+		ul.builder.sentence(v-repeat='sentence: elements')
+			li(v-repeat='element: sentence', v-component='container-sentence-{{element.expr ? "expr" : "path"}}', v-class='expr: element.expr, path: element.path, preview: preview')
 
-		li.buttons
-			.contextmenu-trigger.btn(v-show='!preview')
-				i.icon.icon-add
-			ul.contextmenu(v-show='!preview')
-				li.divider-after
-					.label Static phrase
-				li(v-repeat='model: $root.grammar.children | orderBy "label"', v-component='add-element-contextmenu', v-with='elements: elements')
+			li.buttons
+				.contextmenu-trigger.btn(v-show='!preview')
+					i.icon.icon-add
+				ul.contextmenu(v-show='!preview')
+					li.divider-after
+						.label Static phrase
+					li(v-repeat='model: $root.grammar.children | orderBy "label"', v-component='add-element-contextmenu', v-with='elements: sentence')
 
-		li.actions
-			.refresh.btn(v-show='preview', v-on='click: preview = preview')
-				i.icon.icon-refresh
+			li.actions
+				.refresh.btn(v-show='preview', v-on='click: preview = preview')
+					i.icon.icon-refresh
 
-			.preview.btn(v-class='active: preview', v-on='click: preview = !preview') Preview
+				.preview.btn(v-class='active: preview', v-on='click: preview = !preview') Preview
+		div(v-on='click: elements.push({})') Add sentence
 
 	script(id='container-sentence-expr-template', type='text/x-template')
 		.word.contextmenu-trigger {{element.expr}}
@@ -133,7 +136,7 @@ html(lang='en')
 			ul.contextmenu(v-show='!preview')
 				li.divider-after
 					.label Transform
-				li(v-repeat='model: $root.grammar.children | orderBy "label"', v-component='update-element-contextmenu', v-with='elements: elements')
+				li(v-repeat='model: $root.grammar.children | orderBy "label"', v-component='update-element-contextmenu', v-with='elements: sentence')
 
 				li.divider-before
 					.label Convert to phrase
