@@ -1,11 +1,10 @@
 var utils = require('./utils')
 var exportGrammar = require('./export')
 var grammar = require('./grammar/dummy')
-var transforms = {
-	// TODO allow users to add external transforms
-	common: require('./transforms/common'),
-	verb: require('./transforms/verb'),
-}
+var transforms = [
+	require('./transforms/common'),
+	require('./transforms/verb'),
+]
 
 Vue.component('grammar', {
 	template: '#grammar-template',
