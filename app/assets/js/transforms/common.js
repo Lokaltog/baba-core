@@ -1,7 +1,7 @@
 module.exports = {
 	id: 'ko327t9xuk',
 	label: 'Common',
-	transforms: [
+	children: [
 		{
 			id: '5np6vh8gzd',
 			label: 'a/an',

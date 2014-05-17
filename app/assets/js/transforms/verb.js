@@ -4,7 +4,7 @@ var replaceRegexp = utils.replaceRegexp
 module.exports = {
 	id: '1nbdszqqro',
 	label: 'Verb',
-	transforms: [
+	children: [
 		{
 			id: '8ikx0opb7j',
 			label: '·ing',

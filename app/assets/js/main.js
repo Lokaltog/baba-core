@@ -44,14 +44,14 @@ Vue.component('container-sentence-expr', {
 Vue.component('container-sentence-path', {
 	template: '#container-sentence-path-template',
 	methods: {
-		filterTransforms: function(transforms, type) {
+		filterTransforms: function(transformList, type) {
 			var ret = []
-			transforms.forEach(function(value) {
-				var tf = this.$get('transforms.' + value)
+			transformList.forEach(function(path) {
+				var tf = findNode(transforms, path)
 				if (tf.type === type) {
 					ret.push(tf)
 				}
-			}.bind(this))
+			})
 			return ret
 		},
 	},
@@ -109,6 +109,25 @@ function getKeypaths(node, keypath) {
 	return ret
 }
 
+function generateId() {
+	return Math.random().toString(36).substr(2, 10)
+}
+
+function findNode(obj, path) {
+	path = path.slice(0) // duplicate search path array
+	var key = path.shift()
+	for (var node in obj) {
+		if (obj.hasOwnProperty(node)) {
+			if (obj[node].id === key) {
+				if (!path.length) {
+					return obj[node]
+				}
+				return findNode(obj[node].children, path)
+			}
+		}
+	}
+}
+
 var vm = new Vue({
 	el: '#contents',
 	data: {
@@ -129,6 +148,8 @@ var vm = new Vue({
 		})
 	},
 	methods: {
+		generateId: generateId,
+		findNode: findNode,
 		getKeypath: function(node) {
 			// search for a keypath for a node
 			// not particularily effective as we have to examine each element in the keypath array
@@ -149,12 +170,18 @@ var vm = new Vue({
 		getGrammarNode: function(searchPath) {
 			var path = searchPath.slice(0) // clone path array
 
-			function getComponents(node) {
-				var idx = path.shift()
-				var currentNode = node[idx]
-				var components = [currentNode]
-				if (currentNode.children) {
-					components = components.concat(getComponents(currentNode.children))
+			function getComponents(obj) {
+				var id = path.shift()
+				var components = []
+				for (var node in obj) {
+					if (obj.hasOwnProperty(node)) {
+						if (obj[node].id === id) {
+							components = [obj[node]]
+							if (obj[node].children) {
+								components = components.concat(getComponents(obj[node].children))
+							}
+						}
+					}
 				}
 				return components
 			}
@@ -169,19 +196,20 @@ var vm = new Vue({
 				}
 			})
 		},
-		getGrammarComponentPreview: function(searchPath, transforms) {
-			var elements = this.getGrammarNode(searchPath).splice(-1)[0].elements
-			var expr = utils.randomItem(elements)
-			if (typeof expr === 'undefined') {
+		getGrammarComponentPreview: function(element) {
+			var elements = this.getGrammarNode(element.path).splice(-1)[0].elements
+			var item = utils.randomItem(elements)
+			if (typeof item === 'undefined') {
 				return '<<empty word list>>'
 			}
-			expr = expr.expr
-			var p
+			expr = item.expr
 
-			for (p in transforms) {
-				if (transforms.hasOwnProperty(p)) {
-					expr = this.$get('transforms.' + transforms[p]).fn(expr)
-				}
+			// apply transforms
+			if (element.transform) {
+				element.transform.forEach(function(path) {
+					var tf = findNode(transforms, path)
+					expr = tf.fn(expr)
+				})
 			}
 
 			return expr
