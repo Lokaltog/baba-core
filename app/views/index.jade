@@ -108,7 +108,7 @@ html(lang='en')
 				ul.contextmenu(v-show='!preview')
 					li.divider-after
 						.label Static phrase
-					li(v-repeat='model: $root.grammar.children | orderBy "label"', v-component='add-element-contextmenu', v-with='elements: sentence')
+					li(v-repeat='model: $root.grammar.children | orderBy "label"', v-component='add-element-contextmenu', v-with='elements: sentence.sentence')
 
 			li.actions
 				.refresh.btn(v-show='preview', v-on='click: model = model')
@@ -136,7 +136,7 @@ html(lang='en')
 			ul.contextmenu(v-show='!preview')
 				li.divider-after
 					.label Transform
-				li(v-repeat='model: $root.grammar.children | orderBy "label"', v-component='update-element-contextmenu', v-with='elements: sentence')
+				li(v-repeat='model: $root.grammar.children | orderBy "label"', v-component='update-element-contextmenu', v-with='elements: sentence.sentence')
 
 				li.divider-before
 					.label Convert to phrase
