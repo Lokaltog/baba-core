@@ -112,6 +112,8 @@ Vue.component('update-element-contextmenu', {
 		updateElement: function(element) {
 			element.transform = []
 			element.path = this.$root.keypaths[this.model.id]
+
+			setTimeout(function(){ $('.contextmenu').removeClass('active') }, 0)
 		},
 	},
 })
@@ -126,6 +128,8 @@ Vue.component('add-element-contextmenu', {
 			elements.push({
 				path: this.$root.keypaths[this.model.id],
 			})
+
+			setTimeout(function(){ $('.contextmenu').removeClass('active') }, 0)
 		},
 	},
 })

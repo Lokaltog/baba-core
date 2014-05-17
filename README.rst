@@ -14,3 +14,20 @@ browser and allows you to easily design your very own garbage text generator.
 
 Baba exports compressed garbage text generator scripts which can be run in the
 browser or on the command line (with node.js).
+
+TODO:
+
+Create variable references
+
+Create toggle button for padding elements with whitespace!
+
+Create toggle button for optional phrases
+
+Export as C code! - this could be difficult with transforms, maybe limit to regex-based transforms.
+
+Add context menu to preview, to be able to directly change words, transforms, etc.
+
+IDEAS:
+
+Wine bottle generator (with taste notes)
+Snobbery generator (cigars, coffee, whiskey, etc)
