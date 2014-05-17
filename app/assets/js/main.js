@@ -69,7 +69,9 @@ Vue.component('container-sentence-path', {
 Vue.component('update-element-contextmenu', {
 	template: '#update-element-contextmenu-template',
 	methods: {
-		updateElement: function() {
+		updateElement: function(element, keypath) {
+			element.transform = []
+			element.path = keypath
 		},
 	},
 })
@@ -77,7 +79,7 @@ Vue.component('update-element-contextmenu', {
 Vue.component('add-element-contextmenu', {
 	template: '#add-element-contextmenu-template',
 	methods: {
-		addElement: function(ev, elements, keypath) {
+		addElement: function(elements, keypath) {
 			if (!this.model.type) {
 				return
 			}
