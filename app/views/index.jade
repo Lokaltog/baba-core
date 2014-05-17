@@ -108,7 +108,7 @@ html(lang='en')
 					i.icon.icon-add
 				ul.contextmenu(v-show='!preview')
 					li.divider-after
-						.label Static phrase
+						.label.dismiss Static phrase
 					li(v-repeat='model: $root.grammar.children | orderBy "label"', v-component='add-element-contextmenu', v-with='elements: sentence.sentence')
 
 			li.actions
@@ -145,13 +145,13 @@ html(lang='en')
 
 				li(v-repeat='model: $root.grammar.children | orderBy "label"', v-component='update-element-contextmenu', v-with='elements: elements, element: element')
 				li.divider-before
-					.label Convert to phrase
+					.label.dismiss Convert to phrase
 				li
-					.label Assign variable
-				li.divider-before
-					.label Clear transforms
+					.label.dismiss Assign variable
+				li.divider-before(v-on='click: element.transform = []')
+					.label.dismiss Clear transforms
 				li.remove(v-on='click: sentence.sentence.$remove(element)')
-					.label Remove
+					.label.dismiss Remove
 
 			ol.postfix(v-if='element.transform && filterTransforms(element.transform, "postfix")')
 				li(v-repeat='filterTransforms(element.transform, "postfix")') {{label}}
@@ -163,13 +163,13 @@ html(lang='en')
 
 	script(id='add-element-contextmenu-template', type='text/x-template')
 		.item(v-class='has-children: model.children')
-			.label(v-on='click: addElement(elements)') {{model.label}}
+			.label(v-on='click: addElement(elements)', v-class='dismiss: !model.children') {{model.label}}
 			ul.contextmenu(v-if='model.children')
 				li(v-repeat='model: model.children | orderBy "label"', v-component='add-element-contextmenu')
 
 	script(id='update-element-contextmenu-template', type='text/x-template')
 		.item(v-class='has-children: model.children')
-			.label(v-on='click: !model.children ? updateElement(element) : []') {{model.label}}
+			.label(v-on='click: !model.children ? updateElement(element) : []', v-class='dismiss: !model.children') {{model.label}}
 			ul.contextmenu(v-if='model.children')
 				li(v-repeat='model: model.children | orderBy "label"', v-component='update-element-contextmenu')
 

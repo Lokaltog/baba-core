@@ -110,10 +110,10 @@ Vue.component('update-element-contextmenu', {
 	template: '#update-element-contextmenu-template',
 	methods: {
 		updateElement: function(element) {
+			element.expr = undefined
 			element.transform = []
 			element.path = this.$root.keypaths[this.model.id]
-
-			setTimeout(function(){ $('.contextmenu').removeClass('active') }, 0)
+			element.variable = ''
 		},
 	},
 })
@@ -128,8 +128,6 @@ Vue.component('add-element-contextmenu', {
 			elements.push({
 				path: this.$root.keypaths[this.model.id],
 			})
-
-			setTimeout(function(){ $('.contextmenu').removeClass('active') }, 0)
 		},
 	},
 })
@@ -246,6 +244,10 @@ $('#contents').on('click', '.contextmenu .label', function(ev) {
 	$(this).parents('.contextmenu').first().find('.contextmenu').removeClass('active')
 	$(this).parents('.contextmenu').addClass('active')
 	$(this).siblings('.contextmenu').addClass('active')
+
+	if ($(this).hasClass('dismiss')) {
+		$('.contextmenu').removeClass('active')
+	}
 })
 $('body').on('click', function() {
 	$('.contextmenu').removeClass('active')
