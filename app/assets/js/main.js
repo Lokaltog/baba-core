@@ -6,6 +6,55 @@ var transforms = [
 	require('./transforms/verb'),
 ]
 
+function getExportedNodes(node) {
+	var ret = []
+	if (node.children) {
+		node.children.forEach(function(child) {
+			ret = ret.concat(getExportedNodes(child))
+		})
+	}
+	if (node.export === true) {
+		ret.push(node)
+	}
+	return ret
+}
+
+function getKeypaths(node, keypath) {
+	var ret = {}
+	function getKeypath(node, keypath) {
+		keypath = keypath || []
+		if (node.children) {
+			node.children.forEach(function(child) {
+				ret[node.id] = getKeypath(child, keypath.concat([child.id]))
+			})
+		}
+		if (keypath && node.label) {
+			ret[node.id] = keypath
+		}
+	}
+	getKeypath(node, keypath)
+	return ret
+}
+
+function generateId() {
+	return Math.random().toString(36).substr(2, 10)
+}
+
+function findNode(obj, path) {
+	path = path.slice(0) // duplicate search path array
+	var key = path.shift()
+	for (var node in obj) {
+		if (obj.hasOwnProperty(node)) {
+			if (obj[node].id === key) {
+				if (!path.length) {
+					return obj[node]
+				}
+				return findNode(obj[node].children, path)
+			}
+		}
+	}
+}
+
 Vue.component('grammar', {
 	template: '#grammar-template',
 	data: {
@@ -60,9 +109,9 @@ Vue.component('container-sentence-path', {
 Vue.component('update-element-contextmenu', {
 	template: '#update-element-contextmenu-template',
 	methods: {
-		updateElement: function(element, keypath) {
+		updateElement: function(element) {
 			element.transform = []
-			element.path = keypath
+			element.path = this.$root.keypaths[this.model.id]
 		},
 	},
 })
@@ -70,63 +119,16 @@ Vue.component('update-element-contextmenu', {
 Vue.component('add-element-contextmenu', {
 	template: '#add-element-contextmenu-template',
 	methods: {
-		addElement: function(elements, keypath) {
+		addElement: function(elements) {
 			if (!this.model.type) {
 				return
 			}
 			elements.push({
-				path: keypath,
+				path: this.$root.keypaths[this.model.id],
 			})
 		},
 	},
 })
-
-function getExportedNodes(node) {
-	var ret = []
-	if (node.children) {
-		node.children.forEach(function(child) {
-			ret = ret.concat(getExportedNodes(child))
-		})
-	}
-	if (node.export === true) {
-		ret.push(node)
-	}
-	return ret
-}
-
-function getKeypaths(node, keypath) {
-	var ret = []
-	keypath = keypath || []
-	if (node.children) {
-		var index = 0
-		node.children.forEach(function(child) {
-			ret = ret.concat(getKeypaths(child, keypath.concat([index++])))
-		})
-	}
-	if (keypath && node.label) {
-		ret.push([node, keypath])
-	}
-	return ret
-}
-
-function generateId() {
-	return Math.random().toString(36).substr(2, 10)
-}
-
-function findNode(obj, path) {
-	path = path.slice(0) // duplicate search path array
-	var key = path.shift()
-	for (var node in obj) {
-		if (obj.hasOwnProperty(node)) {
-			if (obj[node].id === key) {
-				if (!path.length) {
-					return obj[node]
-				}
-				return findNode(obj[node].children, path)
-			}
-		}
-	}
-}
 
 var vm = new Vue({
 	el: '#contents',
@@ -150,23 +152,6 @@ var vm = new Vue({
 	methods: {
 		generateId: generateId,
 		findNode: findNode,
-		getKeypath: function(node) {
-			// search for a keypath for a node
-			// not particularily effective as we have to examine each element in the keypath array
-			// TODO improve keypath storage
-			if (!Array.isArray(this.keypaths)) {
-				// keypaths may not have been initialized yet
-				return ''
-			}
-			var foundKp
-			this.keypaths.some(function(kp) {
-				if (kp[0] === node) {
-					foundKp = kp[1]
-					return true
-				}
-			})
-			return foundKp
-		},
 		getGrammarNode: function(searchPath) {
 			var path = searchPath.slice(0) // clone path array
 
@@ -202,7 +187,7 @@ var vm = new Vue({
 			if (typeof item === 'undefined') {
 				return '<<empty word list>>'
 			}
-			expr = item.expr
+			var expr = item.expr
 
 			// apply transforms
 			if (element.transform) {

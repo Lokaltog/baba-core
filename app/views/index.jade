@@ -135,9 +135,14 @@ html(lang='en')
 				li(v-repeat='getGrammarComponents(element.path)', v-class='key') {{label}}
 			ul.contextmenu(v-show='!preview')
 				li.divider-after
-					.label Transform
-				li(v-repeat='model: $root.grammar.children | orderBy "label"', v-component='update-element-contextmenu', v-with='elements: sentence.sentence')
+					.item.has-children
+						.label Transform
+						ul.contextmenu
+							li
+								.item.has-children
+									.label Group
 
+				li(v-repeat='model: $root.grammar.children | orderBy "label"', v-component='update-element-contextmenu', v-with='elements: elements, element: element')
 				li.divider-before
 					.label Convert to phrase
 				li
@@ -157,13 +162,13 @@ html(lang='en')
 
 	script(id='add-element-contextmenu-template', type='text/x-template')
 		.item(v-class='has-children: model.children')
-			.label(v-on='click: addElement(elements, getKeypath(model))') {{model.label}}
+			.label(v-on='click: addElement(elements)') {{model.label}}
 			ul.contextmenu(v-if='model.children')
 				li(v-repeat='model: model.children | orderBy "label"', v-component='add-element-contextmenu')
 
 	script(id='update-element-contextmenu-template', type='text/x-template')
 		.item(v-class='has-children: model.children')
-			.label(v-on='click: !model.children ? updateElement(element, getKeypath(model)) : []') {{model.label}}
+			.label(v-on='click: !model.children ? updateElement(element) : []') {{model.label}}
 			ul.contextmenu(v-if='model.children')
 				li(v-repeat='model: model.children | orderBy "label"', v-component='update-element-contextmenu')
 
