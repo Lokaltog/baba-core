@@ -87,16 +87,18 @@ module.exports = {
 							type: 'sentence',
 							export: true,
 							elements: [
-								[
-									{
-										path: [3, 0, 0],
-										whitespace: false,
-									},
-									{
-										path: [3, 0, 1],
-										whitespace: false,
-									},
-								],
+								{
+									sentence: [
+										{
+											path: [3, 0, 0],
+											whitespace: false,
+										},
+										{
+											path: [3, 0, 1],
+											whitespace: false,
+										},
+									],
+								},
 							],
 						},
 					],
@@ -108,32 +110,35 @@ module.exports = {
 			type: 'sentence',
 			export: true,
 			elements: [
-				[
-					{
-						path: [2],
-						transform: [
-							'common.a-an',
-						],
-					},
-					{
-						path: [0, 0],
-					},
-					{
-						expr: 'is',
-					},
-					{
-						path: [1, 0],
-						transform: [
-							'verb.tense-pp',
-						],
-					},
-					{
-						path: [0, 1],
-						transform: [
-							'common.a-an',
-						],
-					},
-				],
+				{
+					sentence: [
+						{
+							path: [2],
+							transform: [
+								'common.a-an',
+							],
+						},
+						{
+							path: [0, 0],
+							variable: 'subject',
+						},
+						{
+							expr: 'is',
+						},
+						{
+							path: [1, 0],
+							transform: [
+								'verb.tense-pp',
+							],
+						},
+						{
+							path: [0, 1],
+							transform: [
+								'common.a-an',
+							],
+						},
+					],
+				},
 			],
 		},
 	],

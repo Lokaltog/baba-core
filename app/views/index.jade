@@ -100,7 +100,7 @@ html(lang='en')
 
 	script(id='container-sentence-template', type='text/x-template')
 		ul.builder.sentence(v-repeat='sentence: elements')
-			li(v-repeat='element: sentence', v-component='container-sentence-{{element.expr ? "expr" : "path"}}', v-class='expr: element.expr, path: element.path, preview: preview')
+			li(v-repeat='element: sentence.sentence', v-component='container-sentence-{{element.expr ? "expr" : "path"}}', v-class='expr: element.expr, path: element.path, preview: preview')
 
 			li.buttons
 				.contextmenu-trigger.btn(v-show='!preview')
@@ -111,7 +111,7 @@ html(lang='en')
 					li(v-repeat='model: $root.grammar.children | orderBy "label"', v-component='add-element-contextmenu', v-with='elements: sentence')
 
 			li.actions
-				.refresh.btn(v-show='preview', v-on='click: preview = preview')
+				.refresh.btn(v-show='preview', v-on='click: model = model')
 					i.icon.icon-refresh
 
 				.preview.btn(v-class='active: preview', v-on='click: preview = !preview') Preview
@@ -147,10 +147,11 @@ html(lang='en')
 
 			ol.postfix(v-if='element.transform && filterTransforms(element.transform, "postfix")')
 				li(v-repeat='filterTransforms(element.transform, "postfix")') {{label}}
+
 		.preview(v-show='preview')
 			ol.components
 				li(v-class='getGrammarComponents(element.path)[0].key')
-					| {{getGrammarPreview(element.path, element.transform)}}
+					| {{getGrammarComponentPreview(element.path, element.transform)}}
 
 	script(id='add-element-contextmenu-template', type='text/x-template')
 		.item(v-class='has-children: model.children')

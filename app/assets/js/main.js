@@ -176,7 +176,7 @@ var vm = new Vue({
 				}
 			})
 		},
-		getGrammarPreview: function(searchPath, transforms) {
+		getGrammarComponentPreview: function(searchPath, transforms) {
 			var elements = this.getGrammarNode(searchPath).splice(-1)[0].elements
 			var expr = utils.randomItem(elements)
 			if (typeof expr === 'undefined') {
