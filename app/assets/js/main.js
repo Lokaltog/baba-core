@@ -31,19 +31,11 @@ Vue.component('container-wordlist', {
 
 			ev.target.value = ''
 		},
-		removeElement: function(element) {
-			this.elements.$remove(element)
-		},
 	},
 })
 
 Vue.component('container-sentence', {
 	template: '#container-sentence-template',
-	methods: {
-		removeElement: function(element) {
-			this.elements.$remove(element)
-		},
-	},
 })
 
 Vue.component('container-sentence-expr', {
@@ -206,6 +198,12 @@ var vm = new Vue({
 			window.open('data:application/json;' +
 			            (window.btoa ? 'base64,' + btoa(data)
 			             : data))
+		},
+		addWordlist: function(model) {
+			model.type = 'wordlist'
+		},
+		addSentence: function(model) {
+			model.type = 'sentence'
 		},
 	},
 })

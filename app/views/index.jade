@@ -84,15 +84,15 @@ html(lang='en')
 		.section-init-wrapper(v-if='!model.type && typeof model.children === "undefined"', v-show='open')
 			p What should this section contain?
 			div(v-on='click: model.children = []') [Subsections]
-			div(v-on='click: model.type = "wordlist"') [A word list]
-			div(v-on='click: model.type = "sentence"') [A sentence collection]
+			div(v-on='click: addWordlist(model)') [A word list]
+			div(v-on='click: addSentence(model)') [A sentence collection]
 
 	script(id='container-wordlist-template', type='text/x-template')
 		ul.builder.wordlist
 			li.expr(v-repeat='element: elements | orderBy "expr"')
 				.word {{element.expr}}
 				ul.actions
-					li.delete(v-on='click: removeElement(element)')
+					li.delete(v-on='click: elements.$remove(element)')
 						i.icon.icon-delete
 
 			li.add-textfield
@@ -115,7 +115,7 @@ html(lang='en')
 					i.icon.icon-refresh
 
 				.preview.btn(v-class='active: preview', v-on='click: preview = !preview') Preview
-		div(v-on='click: elements.push({})') Add sentence
+		div(v-on='click: elements.push({sentence:[]})') Add sentence
 
 	script(id='container-sentence-expr-template', type='text/x-template')
 		.word.contextmenu-trigger {{element.expr}}
@@ -123,7 +123,7 @@ html(lang='en')
 			li.divider-after
 				.label Edit
 			li(v-repeat='model: $root.grammar.children | orderBy "label"', v-component='update-element-contextmenu', v-with='elements: elements, element: element')
-			li.divider-before.remove(v-on='click: removeElement(element)')
+			li.divider-before.remove(v-on='click: sentence.sentence.$remove(element)')
 				.label Remove
 
 	script(id='container-sentence-path-template', type='text/x-template')
@@ -140,9 +140,11 @@ html(lang='en')
 
 				li.divider-before
 					.label Convert to phrase
+				li
+					.label Assign variable
 				li.divider-before
 					.label Clear transforms
-				li.remove(v-on='click: removeElement(element)')
+				li.remove(v-on='click: sentence.sentence.$remove(element)')
 					.label Remove
 
 			ol.postfix(v-if='element.transform && filterTransforms(element.transform, "postfix")')
