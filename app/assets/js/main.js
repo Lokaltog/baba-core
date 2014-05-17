@@ -212,10 +212,14 @@ var vm = new Vue({
 			             : data))
 		},
 		addWordlist: function(model) {
+			model.id = generateId()
 			model.type = 'wordlist'
+			model.elements = []
 		},
 		addSentence: function(model) {
+			model.id = generateId()
 			model.type = 'sentence'
+			model.elements = []
 		},
 	},
 })

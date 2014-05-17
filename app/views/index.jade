@@ -30,7 +30,7 @@ html(lang='en')
 				.contents
 					h1
 						| Create the rules
-						span.add(v-on='click: grammar.children.push({})') Add section
+						.add.btn(v-on='click: grammar.children.push({})') Add section
 					section.grammar(v-component='grammar', v-with='model: grammar')
 
 			section.step.preview-grammar
@@ -79,7 +79,8 @@ html(lang='en')
 		.node-wrapper(v-show='(model === $root.grammar) || open')
 			section(v-repeat='model: model.children | orderBy "label"', v-component='grammar')
 			.add-section(v-if='typeof model.children !== "undefined"', v-on='click: model.children.push({})') Add section
-			.container-wrapper(v-class='model.type', v-with='model', v-component='container-{{model.type || "wordlist"}}', v-if='model.type')
+			div(v-if='model.type')
+				.container-wrapper(v-class='model.type', v-with='model', v-component='container-{{model.type || "wordlist"}}')
 
 		.section-init-wrapper(v-if='!model.type && typeof model.children === "undefined"', v-show='open')
 			p What should this section contain?
