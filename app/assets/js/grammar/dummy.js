@@ -3,9 +3,11 @@ module.exports = {
 	author: 'Kim Silkebækken',
 	children: [
 		{
+			id: 'cu4aes6zbm',
 			label: 'Noun',
 			children: [
 				{
+					id: 'msgjejnuya',
 					label: 'Subject',
 					type: 'wordlist',
 					elements: [
@@ -16,6 +18,7 @@ module.exports = {
 					],
 				},
 				{
+					id: 'xyo2m72jf9',
 					label: 'Object',
 					type: 'wordlist',
 					elements: [
@@ -28,9 +31,11 @@ module.exports = {
 			],
 		},
 		{
+			id: '0oevdiptqy',
 			label: 'Verb',
 			children: [
 				{
+					id: 'bxvifn0cyu',
 					label: 'Action',
 					type: 'wordlist',
 					elements: [
@@ -44,6 +49,7 @@ module.exports = {
 			],
 		},
 		{
+			id: 'sry8abe5oc',
 			label: 'Adjective',
 			type: 'wordlist',
 			elements: [
@@ -55,12 +61,15 @@ module.exports = {
 			],
 		},
 		{
+			id: 'a2uxbog2vm',
 			label: 'Adverb',
 			children: [
 				{
+					id: 'd0txfss1wf',
 					label: 'Alignment',
 					children: [
 						{
+							id: '5l2p5uclh2',
 							label: 'Prefix',
 							type: 'wordlist',
 							elements: [
@@ -72,6 +81,7 @@ module.exports = {
 							],
 						},
 						{
+							id: 'wi96d0o1d4',
 							label: 'Postfix',
 							type: 'wordlist',
 							elements: [
@@ -83,6 +93,7 @@ module.exports = {
 							],
 						},
 						{
+							id: '032yds8voe',
 							label: 'Alignment (generated sentence)',
 							type: 'sentence',
 							export: true,
@@ -106,6 +117,7 @@ module.exports = {
 			],
 		},
 		{
+			id: 'gwg2kt1b35',
 			label: 'Statements (public)',
 			type: 'sentence',
 			export: true,
