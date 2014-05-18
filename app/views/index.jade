@@ -157,7 +157,7 @@ html(lang='en')
 			ol.postfix(v-if='element.transform && filterTransforms(element.transform, "postfix")')
 				li(v-repeat='filterTransforms(element.transform, "postfix")') {{label}}
 
-		.preview(v-show='preview')
+		.preview(v-if='preview')
 			ol.components
 				li(v-class='getGrammarComponents(element.ref)[0].key')
 					| {{getGrammarComponentPreview(element)}}
