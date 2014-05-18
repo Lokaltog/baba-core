@@ -101,7 +101,7 @@ html(lang='en')
 
 	script(id='container-sentence-template', type='text/x-template')
 		ul.builder.sentence(v-repeat='sentence: elements')
-			li(v-repeat='element: sentence.sentence', v-component='container-sentence-{{element.expr ? "expr" : "path"}}', v-class='expr: element.expr, path: element.path, preview: preview')
+			li(v-repeat='element: sentence.sentence', v-component='container-sentence-{{element.expr ? "expr" : "ref"}}', v-class='expr: element.expr, ref: element.ref, preview: preview')
 
 			li.buttons
 				.contextmenu-trigger.btn(v-show='!preview')
@@ -127,13 +127,13 @@ html(lang='en')
 			li.divider-before.remove(v-on='click: sentence.sentence.$remove(element)')
 				.label Remove
 
-	script(id='container-sentence-path-template', type='text/x-template')
+	script(id='container-sentence-ref-template', type='text/x-template')
 		.display(v-show='!preview')
 			ol.prefix(v-if='element.transform && filterTransforms(element.transform, "prefix")')
 				li(v-repeat='filterTransforms(element.transform, "prefix")') {{label}}
 
 			ol.components.contextmenu-trigger
-				li(v-repeat='getGrammarComponents(element.path)', v-class='key') {{label}}
+				li(v-repeat='getGrammarComponents(element.ref)', v-class='key') {{label}}
 			ul.contextmenu(v-show='!preview')
 				li.divider-after
 					.item.has-children
@@ -158,7 +158,7 @@ html(lang='en')
 
 		.preview(v-show='preview')
 			ol.components
-				li(v-class='getGrammarComponents(element.path)[0].key')
+				li(v-class='getGrammarComponents(element.ref)[0].key')
 					| {{getGrammarComponentPreview(element)}}
 
 	script(id='add-element-contextmenu-template', type='text/x-template')

@@ -1,10 +1,12 @@
 var utils = require('./utils')
 var exportGrammar = require('./export')
 var grammar = require('./grammar/dummy')
-var transforms = [
-	require('./transforms/common'),
-	require('./transforms/verb'),
-]
+var transforms = {
+	children: [
+		require('./transforms/common'),
+		require('./transforms/verb'),
+	]
+}
 
 function getExportedNodes(node) {
 	var ret = []
@@ -19,40 +21,26 @@ function getExportedNodes(node) {
 	return ret
 }
 
-function getKeypaths(node, keypath) {
+function getNodeCache() {
 	var ret = {}
-	function getKeypath(node, keypath) {
-		keypath = keypath || []
+	function getNodes(node, parent) {
+		if (node.id) {
+			ret[node.id] = { node: node, parent: ret[parent.id] }
+		}
 		if (node.children) {
 			node.children.forEach(function(child) {
-				ret[node.id] = getKeypath(child, keypath.concat([child.id]))
+				getNodes(child, node)
 			})
 		}
-		if (keypath && node.label) {
-			ret[node.id] = keypath
-		}
 	}
-	getKeypath(node, keypath)
+	for (var i = 0; i < arguments.length; i += 1) {
+		getNodes(arguments[i])
+	}
 	return ret
 }
 
 function generateId() {
 	return Math.random().toString(36).substr(2, 10)
-}
-
-function findNode(obj, path) {
-	path = path.slice(0) // duplicate search path array
-	var key = path.shift()
-	for (var node in obj) {
-		if (obj.hasOwnProperty(node)) {
-			if (obj[node].id === key) {
-				if (!path.length) {
-					return obj[node]
-				}
-				return findNode(obj[node].children, path)
-			}
-		}
-	}
 }
 
 Vue.component('grammar', {
@@ -90,13 +78,17 @@ Vue.component('container-sentence-expr', {
 	template: '#container-sentence-expr-template',
 })
 
-Vue.component('container-sentence-path', {
-	template: '#container-sentence-path-template',
+Vue.component('container-sentence-ref', {
+	template: '#container-sentence-ref-template',
 	methods: {
 		filterTransforms: function(transformList, type) {
 			var ret = []
-			transformList.forEach(function(path) {
-				var tf = findNode(transforms, path)
+			var nc = this.$root.nodeCache
+			transformList.forEach(function(ref) {
+				if (!nc.hasOwnProperty(ref)) {
+					return
+				}
+				var tf = nc[ref].node
 				if (tf.type === type) {
 					ret.push(tf)
 				}
@@ -112,7 +104,7 @@ Vue.component('update-element-contextmenu', {
 		updateElement: function(element) {
 			element.expr = undefined
 			element.transform = []
-			element.path = this.$root.keypaths[this.model.id]
+			element.ref = this.model.id
 			element.variable = ''
 		},
 	},
@@ -126,7 +118,7 @@ Vue.component('add-element-contextmenu', {
 				return
 			}
 			elements.push({
-				path: this.$root.keypaths[this.model.id],
+				ref: this.model.id,
 			})
 		},
 	},
@@ -137,66 +129,70 @@ var vm = new Vue({
 	data: {
 		grammar: grammar,
 		transforms: transforms,
+		nodeCache: {},
 		exported: [],
-		keypaths: {},
 	},
 	created: function() {
 		this.$watch('grammar', function() {
 			// walk the grammar tree and detect any exported nodes
 			this.exported = getExportedNodes(this.grammar)
 
-			// store keypaths for all nodes
-			// we can't store keypaths in the grammar, as any updates done here
-			// will trigger the watcher again and end up in an infinite loop
-			this.keypaths = getKeypaths(this.grammar)
+			// store flat cache of all nodes with parents
+			var nodeCache = getNodeCache(this.grammar, this.transforms)
+			for (var n in nodeCache) {
+				if (nodeCache.hasOwnProperty(n)) {
+					this.nodeCache[n] = nodeCache[n]
+				}
+			}
 		})
 	},
 	methods: {
 		generateId: generateId,
-		findNode: findNode,
 		getGrammarNode: function(searchPath) {
-			var path = searchPath.slice(0) // clone path array
-
-			function getComponents(obj) {
-				var id = path.shift()
-				var components = []
-				for (var node in obj) {
-					if (obj.hasOwnProperty(node)) {
-						if (obj[node].id === id) {
-							components = [obj[node]]
-							if (obj[node].children) {
-								components = components.concat(getComponents(obj[node].children))
-							}
-						}
-					}
-				}
-				return components
+			var node = this.nodeCache[searchPath]
+			if (typeof node === 'undefined') {
+				return []
+			}
+			var searchNode = node
+			var components = [node.node]
+			while (searchNode.parent) {
+				searchNode = searchNode.parent
+				components.unshift(searchNode.node)
 			}
 
-			return getComponents(this.$root.grammar.children)
+			return components
 		},
 		getGrammarComponents: function(searchPath) {
-			return this.getGrammarNode(searchPath).map(function(el) {
+			var nodes = this.getGrammarNode(searchPath)
+			if (!nodes.length) {
+				return [{
+					label: '<<missing word>>',
+					key: '',
+				}]
+			}
+			return nodes.map(function(el) {
 				return {
 					label: el.label,
 					key: S(el.label).slugify().toString(),
 				}
 			})
 		},
-		getGrammarComponentPreview: function(element) {
-			var elements = this.getGrammarNode(element.path).splice(-1)[0].elements
-			var item = utils.randomItem(elements)
+		getGrammarComponentPreview: function(node) {
+			var cachedNode = this.nodeCache[node.ref]
+			if (typeof cachedNode === 'undefined') {
+				return '<<invalid reference>>'
+			}
+			var item = utils.randomItem(cachedNode.node.elements)
 			if (typeof item === 'undefined') {
 				return '<<empty word list>>'
 			}
 			var expr = item.expr
 
 			// apply transforms
-			if (element.transform) {
-				element.transform.forEach(function(path) {
-					var tf = findNode(transforms, path)
-					expr = tf.fn(expr)
-				})
+			if (node.transform) {
+				node.transform.forEach(function(transform) {
+					expr = this.nodeCache[transform].node.fn(expr)
+				}.bind(this))
 			}
 
 			return expr

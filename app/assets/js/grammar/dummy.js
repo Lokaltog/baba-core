@@ -101,11 +101,11 @@ module.exports = {
 								{
 									sentence: [
 										{
-											path: ['a2uxbog2vm', 'd0txfss1wf', '5l2p5uclh2'],
+											ref: '5l2p5uclh2',
 											whitespace: false,
 										},
 										{
-											path: ['a2uxbog2vm', 'd0txfss1wf', 'wi96d0o1d4'],
+											ref: 'wi96d0o1d4',
 											whitespace: false,
 										},
 									],
@@ -125,28 +125,28 @@ module.exports = {
 				{
 					sentence: [
 						{
-							path: ['sry8abe5oc'],
+							ref: 'sry8abe5oc',
 							transform: [
-								['ko327t9xuk', '5np6vh8gzd'],
+								'5np6vh8gzd',
 							],
 						},
 						{
-							path: ['cu4aes6zbm', 'msgjejnuya'],
+							ref: 'msgjejnuya',
 							variable: 'subject',
 						},
 						{
 							expr: 'is',
 						},
 						{
-							path: ['0oevdiptqy', 'bxvifn0cyu'],
+							ref: 'bxvifn0cyu',
 							transform: [
-								['1nbdszqqro', '8ikx0opb7j'],
+								'8ikx0opb7j',
 							],
 						},
 						{
-							path: ['cu4aes6zbm', 'xyo2m72jf9'],
+							ref: 'xyo2m72jf9',
 							transform: [
-								['ko327t9xuk', '5np6vh8gzd'],
+								'5np6vh8gzd',
 							],
 						},
 					],
