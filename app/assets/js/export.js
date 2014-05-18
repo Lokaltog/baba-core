@@ -49,31 +49,27 @@ var exportFunctions = {
 	},
 }
 
-function exportGrammar(grammarObject, transforms) {
+function exportGrammar(vm) {
 	var ret = []
-	var grammarFunctions = {}
-	var grammarVariables = {}
-	var grammarExports = {}
+	var grammarFunctions = []
+	var grammarVariables = []
+	var grammarExports = []
 
-	grammarVariables.SPACE = '" "'
+	grammarVariables.unshift(['SPACE', '" "'])
 
+	// add exported functions
 	for (var fn in exportFunctions) {
 		if (exportFunctions.hasOwnProperty(fn)) {
-			grammarFunctions[fn] = exportFunctions[fn]
+			grammarFunctions.push([fn, exportFunctions[fn]])
 		}
 	}
 
-	// traverse grammar tree
-	function initGrammarData(node, parentIndex) {
-		parentIndex = parentIndex || []
-		if (node.children) {
-			var index = 0
-			node.children.forEach(function(el) {
-				initGrammarData(el, parentIndex.concat([index++]))
-			})
-		}
-		if (node.elements) {
-            var nodeName = 'grammarNode_' + parentIndex.join('_')
+	// add node cache variables (unused variables will be removed by uglifyjs)
+	for (var node in vm.nodeCache) {
+		if (vm.nodeCache.hasOwnProperty(node)) {
+			node = vm.nodeCache[node].node
+			var nodeName = 'node_' + node.id
+
 			if (node.type === 'wordlist') {
 				var data = node.elements.map(function(el) {
 					return el.expr
@@ -89,70 +85,86 @@ function exportGrammar(grammarObject, transforms) {
 					// join string with '|' to save space
 					data = 'splitString(' + JSON.stringify(data.join('|')) + ')'
 				}
-				grammarVariables[nodeName] = data
+				// ensure that word lists are defined before the sentences
+				grammarVariables.unshift([nodeName, data])
 			}
 			else if (node.type === 'sentence') {
-				grammarVariables[nodeName] =
-					'parseElements(' +
-					node.elements.map(function(el) {
-						var ret = ''
-						if (el.expr) {
-							ret = JSON.stringify(el.expr)
-						}
-						if (el.path) {
-							// TODO handle whitespace
-							var grammarNode = 'grammarNode_' + el.path.join('_')
-							var grammarNodeTransforms = []
+				var sentenceStr = ''
+				var sentences = []
 
-							;(el.transform || []).forEach(function(tfPath) {
-								var tf = utils.objPropertyPath(transforms, tfPath)
-								var tfKey = 'transform_' + S(tfPath).replace('.', '_').slugify().camelize().toString()
-								grammarNodeTransforms.push(tfKey)
-								grammarFunctions[tfKey] = tf.fn
-							})
+				if (node.elements.length > 1) {
+					// randomly select sentence from sentence list
+                    sentenceStr += 'parseElements(['
+				}
 
-							if (grammarNodeTransforms.length) {
-								grammarNode = 'applyTransforms(' + grammarNode + ', '
-								grammarNode += grammarNodeTransforms.join(', ')
-								grammarNode += ')'
+				node.elements.forEach(function(sentence) {
+					sentences.push(
+						'parseElements(' + sentence.sentence.map(function(el, idx) {
+							var ret = ''
+
+							if (el.expr) {
+								ret = JSON.stringify(el.expr)
 							}
 
-							ret = grammarNode
-						}
+							if (el.ref) {
+								var node = vm.nodeCache[el.ref].node
+								// TODO handle whitespace
+								var grammarNode = 'node_' + node.id
+								var grammarNodeTransforms = []
 
-						if (el.whitespace !== false) {
-							ret += ',SPACE'
-						}
-						return ret
-					}) + ')'
+								;(el.transform || []).forEach(function(tf) {
+									tf = vm.nodeCache[tf].node
+									var tfKey = 'node_' + tf.id
+									grammarNodeTransforms.push(tfKey)
+								})
+
+								if (grammarNodeTransforms.length) {
+									grammarNode = 'applyTransforms(' + grammarNode + ', '
+									grammarNode += grammarNodeTransforms.join(', ')
+									grammarNode += ')'
+								}
+
+								ret = grammarNode
+							}
+
+							if (el.whitespace !== false && idx < sentence.sentence.length - 1) {
+								ret += ',SPACE'
+							}
+
+							return ret
+						}) + ')')
+				})
+
+				sentenceStr += sentences.join(', ')
+
+				if (node.elements.length > 1) {
+					sentenceStr += '])'
+				}
+				grammarVariables.push([nodeName, sentenceStr])
 
 				if (node.export) {
-					grammarExports[JSON.stringify(S(node.label).slugify().camelize().toString())] = nodeName
+					grammarExports.push([node.label, nodeName])
 				}
+			}
+			else if (node.fn) {
+                grammarFunctions.push([nodeName, node.fn])
 			}
 		}
 	}
 
-	initGrammarData(grammarObject)
-
-	var key
-	for (key in grammarFunctions) {
-		if (grammarFunctions.hasOwnProperty(key)) {
-			ret.push('var ' + key + ' = ' + grammarFunctions[key])
-		}
-	}
-	for (key in grammarVariables) {
-		if (grammarVariables.hasOwnProperty(key)) {
-			ret.push('var ' + key + ' = ' + grammarVariables[key])
-		}
-	}
+	grammarFunctions.forEach(function(value) {
+		ret.push('var ' + value[0] + ' = ' + value[1])
+	})
+	grammarVariables.forEach(function(value) {
+		ret.push('var ' + value[0] + ' = ' + value[1])
+	})
 
 	ret.push('return {')
-	for (key in grammarExports) {
-		if (grammarExports.hasOwnProperty(key)) {
-			ret.push(key + ': ' + grammarExports[key] + ',')
-		}
-	}
+	grammarExports.forEach(function(value) {
+		// TODO slugify for node, camelcase for browser
+		var key = JSON.stringify(S(value[0]).slugify().toString())
+		ret.push(key + ': ' + value[1] + ',')
+	})
 	ret.push('}')
 
 	return ret.join('\n')
