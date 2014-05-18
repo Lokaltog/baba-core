@@ -129,6 +129,13 @@ module.exports = {
 							transform: [
 								'5np6vh8gzd',
 							],
+							whitespace: false,
+						},
+						{
+							expr: ',',
+						},
+						{
+							ref: '032yds8voe',
 						},
 						{
 							ref: 'msgjejnuya',

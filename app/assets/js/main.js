@@ -204,7 +204,7 @@ var vm = new Vue({
 			             : data))
 		},
 		exportGrammarGenerator: function() {
-			var data = exportGrammar(this.$root.grammar, transforms)
+			var data = exportGrammar(this.$root, transforms)
 			window.open('data:application/json;' +
 			            (window.btoa ? 'base64,' + btoa(data)
 			             : data))
