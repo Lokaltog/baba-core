@@ -98,13 +98,13 @@ html(lang='en')
 						i.icon.icon-delete
 
 			li.add-textfield
-				input(type='text', placeholder='add phrase', data-autosize-input, v-on='keydown:addPhrase | key enter')
+				input(type='text', placeholder='add string', data-autosize-input, v-on='keydown:addString | key enter')
 
 	script(id='container-sentence-template', type='text/x-template')
 		ul.builder.sentence(v-repeat='sentence: elements')
 			li(v-repeat='element: sentence.sentence', v-class='expr: element.expr, ref: element.ref, preview: preview')
 				div(v-show='element.expr')
-					.phrase.menu-update-sentence-expr(v-on='click: menuUpdateSentenceExpr(this, element, sentence.sentence)') {{element.expr}}
+					.string.menu-update-sentence-expr(v-on='click: menuUpdateSentenceExpr(this, element, sentence.sentence)') {{element.expr}}
 
 				div(v-show='element.ref')
 					.display(v-show='!preview')

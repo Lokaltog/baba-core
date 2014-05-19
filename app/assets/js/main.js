@@ -73,7 +73,7 @@ Vue.component('grammar', {
 Vue.component('container-wordlist', {
 	template: '#container-wordlist-template',
 	methods: {
-		addPhrase: function(ev) {
+		addString: function(ev) {
 			var value = ev.target.value.trim().toLowerCase()
 
 			// check for duplicates
@@ -272,7 +272,7 @@ var vm = new Vue({
 					}
 					else {
 						switch (key) {
-						case 'staticPhrase':
+						case 'staticString':
 							break
 						}
 					}
@@ -287,12 +287,12 @@ var vm = new Vue({
 				items: (function() {
 					// build menu tree
 					var menu = {
-						staticPhrase: { name: 'Static phrase' },
-						div1: '---',
+						staticString: { name: 'Static string' },
+						reference: { name: 'Reference', items: {} },
 					}
 
 					grammar.children.forEach(function(node) {
-						addContextSubmenu(node, menu)
+						addContextSubmenu(node, menu.reference.items)
 					})
 
 					return menu
@@ -329,7 +329,7 @@ var vm = new Vue({
 					}
 					else {
 						switch (key) {
-						case 'staticPhrase':
+						case 'staticString':
 							break
 						case 'remove':
 							sentence.$remove(element)
@@ -347,12 +347,13 @@ var vm = new Vue({
 				items: (function() {
 					// build menu tree
 					var menu = {
-						staticPhrase: { name: 'Static phrase' },
+						edit: { name: 'Edit string' },
 						div1: '---',
+						convert: { name: 'Convert to reference', items: {} },
 					}
 
 					grammar.children.forEach(function(node) {
-						addContextSubmenu(node, menu)
+						addContextSubmenu(node, menu.convert.items)
 					})
 
 					menu.div2 = '---'
@@ -428,15 +429,18 @@ var vm = new Vue({
 					transforms.children.forEach(function(node) {
 						addContextSubmenu(node, menu.transform.items)
 					})
+					menu.transform.items.div = '---'
+					menu.transform.items.clearTransforms = { name: 'Clear transforms', className: 'remove' }
 
+					menu.changeReference = { name: 'Change reference', items: {} },
+					menu.convertToString = { name: 'Convert to string' },
 					grammar.children.forEach(function(node) {
-						addContextSubmenu(node, menu)
+						addContextSubmenu(node, menu.changeReference.items)
 					})
 
 					menu.div2 = '---'
 					menu.assignVariable = { name: 'Assign variable' }
 					menu.div3 = '---'
-					menu.clearTransforms = { name: 'Clear transforms' }
 					menu.remove = { name: 'Remove', className: 'remove' }
 
 					return menu
@@ -446,4 +450,3 @@ var vm = new Vue({
 		},
 	},
 })
-
