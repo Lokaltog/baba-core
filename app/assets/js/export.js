@@ -76,9 +76,7 @@ function exportGrammar(vm) {
 			var nodeName = 'node_' + node.id
 
 			if (node.type === 'wordlist') {
-				var data = node.elements.map(function(el) {
-					return el.expr
-				})
+				var data = node.elements
 				var stringify = data.some(function(el) {
 					return el.indexOf('|') !== -1
 				})

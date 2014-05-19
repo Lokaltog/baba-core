@@ -103,14 +103,14 @@ html(lang='en')
 
 	script(id='container-wordlist-template', type='text/x-template')
 		ul.builder.wordlist
-			li.expr(v-repeat='element: elements | orderBy "expr"')
-				.word {{element.expr}}
+			li.expr(v-repeat='element: elements')
+				.word {{element}}
 				ul.actions
 					li.delete(v-on='click: elements.$remove(element)')
 						i.icon.icon-delete
 
 			li
-				input.text-element(type='text', placeholder='add string', data-autosize-input, v-on='keydown:addString | key enter')
+				input.text-element(type='text', placeholder='add string', data-autosize-input, v-on='keydown: addString | key enter')
 
 	script(id='container-sentence-template', type='text/x-template')
 		ul.builder.sentence(v-repeat='sentence: elements')

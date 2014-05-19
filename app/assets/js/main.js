@@ -98,11 +98,9 @@ Vue.component('container-wordlist', {
 
 			// check for duplicates
 			if (!this.$data.elements.some(function(el) {
-				return el.expr === value
+				return el === value
 			})) {
-				this.$data.elements.push({
-					expr: value,
-				})
+				this.$data.elements.push(value)
 			}
 
 			ev.target.value = ''
@@ -207,7 +205,6 @@ var vm = new Vue({
 			if (typeof item === 'undefined') {
 				return '<<empty word list>>'
 			}
-			var expr = item.expr
 
 			// apply transforms
 			if (node.transform) {
@@ -215,16 +212,16 @@ var vm = new Vue({
 					var node = this.nodeCache[transform].node
 					if (node.fn) {
 						// apply transform function
-						expr = node.fn(expr)
+						item = node.fn(item)
 					}
 					else if (node.re) {
 						// apply transform regexp
-						expr = utils.replaceRegexp(expr, node.re)
+						item = utils.replaceRegexp(item, node.re)
 					}
 				}.bind(this))
 			}
 
-			return expr
+			return item
 		},
 		exportRawGrammar: function() {
 			// sanitize grammar
