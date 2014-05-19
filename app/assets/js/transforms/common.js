@@ -4,7 +4,8 @@ module.exports = {
 	children: [
 		{
 			id: '5np6vh8gzd',
-			label: 'a/an',
+			label: 'Prefix a/an',
+			tag: 'a/an',
 			type: 'prefix',
 			re: [
 				[['^([aeiou].*)$', 'i'], 'an $1'],

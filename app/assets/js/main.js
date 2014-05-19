@@ -3,7 +3,13 @@ var exportGrammar = require('./export')
 var grammar = require('./grammar/dummy')
 var transforms = {
 	children: [
+		// common
+		require('./transforms/builtin'),
 		require('./transforms/common'),
+
+		// word classes
+		require('./transforms/adjective'),
+		require('./transforms/noun'),
 		require('./transforms/verb'),
 	]
 }
