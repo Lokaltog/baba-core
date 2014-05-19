@@ -139,17 +139,21 @@ var vm = new Vue({
 		exported: [],
 	},
 	created: function() {
+		function createNodeCache(obj) {
+			// store flat cache of all nodes with parents
+			var nodeCache = getNodeCache(obj.grammar, obj.transforms)
+			for (var n in nodeCache) {
+				if (nodeCache.hasOwnProperty(n)) {
+					obj.nodeCache[n] = nodeCache[n]
+				}
+			}
+		}
+		createNodeCache(this)
+
 		this.$watch('grammar', function() {
 			// walk the grammar tree and detect any exported nodes
 			this.exported = getExportedNodes(this.grammar)
-
-			// store flat cache of all nodes with parents
-			var nodeCache = getNodeCache(this.grammar, this.transforms)
-			for (var n in nodeCache) {
-				if (nodeCache.hasOwnProperty(n)) {
-					this.nodeCache[n] = nodeCache[n]
-				}
-			}
+			createNodeCache(this)
 		})
 	},
 	methods: {
