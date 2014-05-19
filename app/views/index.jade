@@ -102,10 +102,28 @@ html(lang='en')
 
 	script(id='container-sentence-template', type='text/x-template')
 		ul.builder.sentence(v-repeat='sentence: elements')
-			li(v-repeat='element: sentence.sentence', v-component='container-sentence-{{element.expr ? "expr" : "ref"}}', v-class='expr: element.expr, ref: element.ref, preview: preview')
+			li(v-repeat='element: sentence.sentence', v-class='expr: element.expr, ref: element.ref, preview: preview')
+				div(v-show='element.expr')
+					.phrase.menu-update-sentence-expr(v-on='click: menuUpdateSentenceExpr(this, element, sentence.sentence)') {{element.expr}}
+
+				div(v-show='element.ref')
+					.display(v-show='!preview')
+						ol.prefix(v-if='element.transform && filterTransforms(element.transform, "prefix")')
+							li(v-repeat='filterTransforms(element.transform, "prefix")') {{tag}}
+
+						ol.components.menu-update-sentence-ref(v-on='click: menuUpdateSentenceRef(this, element, sentence.sentence)')
+							li(v-repeat='getGrammarComponents(element.ref)', v-class='key') {{label}}
+
+						ol.suffix(v-if='element.transform && filterTransforms(element.transform, "suffix")')
+							li(v-repeat='filterTransforms(element.transform, "suffix")') {{tag}}
+
+					.preview(v-if='preview')
+						ol.components
+							li(v-class='getGrammarComponents(element.ref)[0].key')
+								| {{getGrammarComponentPreview(element)}}
 
 			li.buttons
-				.btn.menu-add-element(v-show='!preview', v-on='click: menuAddElement(this)')
+				.btn.menu-add-element(v-show='!preview', v-on='click: menuAddElement(this, sentence.sentence)')
 					i.icon.icon-add
 
 			li.actions
@@ -114,25 +132,6 @@ html(lang='en')
 
 				.preview.btn(v-class='active: preview', v-on='click: preview = !preview') Preview
 		div(v-on='click: elements.push({sentence:[]})') Add sentence
-
-	script(id='container-sentence-expr-template', type='text/x-template')
-		.word.menu-update-sentence-expr(v-on='click: menuUpdateSentenceExpr(this)') {{element.expr}}
-
-	script(id='container-sentence-ref-template', type='text/x-template')
-		.display(v-show='!preview')
-			ol.prefix(v-if='element.transform && filterTransforms(element.transform, "prefix")')
-				li(v-repeat='filterTransforms(element.transform, "prefix")') {{tag}}
-
-			ol.components.menu-update-sentence-ref(v-on='click: menuUpdateSentenceRef(this)')
-				li(v-repeat='getGrammarComponents(element.ref)', v-class='key') {{label}}
-
-			ol.suffix(v-if='element.transform && filterTransforms(element.transform, "suffix")')
-				li(v-repeat='filterTransforms(element.transform, "suffix")') {{tag}}
-
-		.preview(v-if='preview')
-			ol.components
-				li(v-class='getGrammarComponents(element.ref)[0].key')
-					| {{getGrammarComponentPreview(element)}}
 
 	script(src='/static/js/lib/vue.js')
 	script(src='/static/js/lib/jquery-2.1.1.js')

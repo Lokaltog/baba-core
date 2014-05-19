@@ -46,10 +46,10 @@ function getNodeCache() {
 }
 
 function addContextSubmenu(node, parent) {
-	var id = node.id
+	var id = 'node:' + node.id
 	parent[id] = { name: node.label }
 	if (node.tag) {
-		parent[id].name += ' <span class="tag">' + node.tag + '</span>'
+		parent[id].name = '<span class="tag-container"><span class="label">' + node.label + '</span> <span class="tag">' + node.tag + '</span></span>'
 	}
 	if (node.children) {
 		parent[id].items = {}
@@ -92,19 +92,12 @@ Vue.component('container-wordlist', {
 
 Vue.component('container-sentence', {
 	template: '#container-sentence-template',
-})
-
-Vue.component('container-sentence-expr', {
-	template: '#container-sentence-expr-template',
-})
-
-Vue.component('container-sentence-ref', {
-	template: '#container-sentence-ref-template',
 	methods: {
 		filterTransforms: function(transformList, type) {
 			var ret = []
 			var nc = this.$root.nodeCache
-			transformList.forEach(function(ref) {
+
+			;(transformList || []).forEach(function(ref) {
 				if (!nc.hasOwnProperty(ref)) {
 					return
 				}
@@ -113,6 +106,7 @@ Vue.component('container-sentence-ref', {
 					ret.push(tf)
 				}
 			})
+
 			return ret
 		},
 	},
@@ -255,8 +249,9 @@ var vm = new Vue({
 			model.type = 'sentence'
 			model.elements = []
 		},
-		menuAddElement: function(node) {
+		menuAddElement: function(node, sentence) {
 			var selector = '.menu-add-element'
+			var nodeCache = this.$root.nodeCache
 			var grammar = this.$root.grammar
 
 			$.contextMenu({
@@ -269,7 +264,19 @@ var vm = new Vue({
 						.css('display', 'none')
 				},
 				callback: function(key, options) {
-					console.log(key, options)
+					if (key.indexOf('node') !== -1) {
+						var keyNode = nodeCache[key.split(':')[1]].node
+						if (keyNode.type === 'wordlist' || keyNode.type === 'sentence') {
+							sentence.push({ ref: keyNode.id })
+						}
+					}
+					else {
+						switch (key) {
+						case 'staticPhrase':
+							break
+						}
+					}
+
 					// destroy all context menus
 					//
 					// this function is only run whenever the user chooses an item, so
@@ -293,8 +300,9 @@ var vm = new Vue({
 			})
 			$(node.$el).find(selector).contextMenu()
 		},
-		menuUpdateSentenceExpr: function(node) {
+		menuUpdateSentenceExpr: function(node, element, sentence) {
 			var selector = '.menu-update-sentence-expr'
+			var nodeCache = this.$root.nodeCache
 			var grammar = this.$root.grammar
 
 			$.contextMenu({
@@ -307,7 +315,28 @@ var vm = new Vue({
 						.css('display', 'none')
 				},
 				callback: function(key, options) {
-					console.log(key, options)
+					if (key.indexOf('node') !== -1) {
+						var keyNode = nodeCache[key.split(':')[1]].node
+						if (keyNode.type === 'wordlist' || keyNode.type === 'sentence') {
+							// clear any element modifiers
+							element.$delete('transform')
+							element.$delete('expr')
+							element.$delete('ref')
+							element.$delete('variable')
+
+							element.$add('ref', keyNode.id)
+						}
+					}
+					else {
+						switch (key) {
+						case 'staticPhrase':
+							break
+						case 'remove':
+							sentence.$remove(element)
+							break
+						}
+					}
+
 					// destroy all context menus
 					//
 					// this function is only run whenever the user chooses an item, so
@@ -334,8 +363,9 @@ var vm = new Vue({
 			})
 			$(node.$el).find(selector).contextMenu()
 		},
-		menuUpdateSentenceRef: function(node) {
+		menuUpdateSentenceRef: function(node, element, sentence) {
 			var selector = '.menu-update-sentence-ref'
+			var nodeCache = this.$root.nodeCache
 			var grammar = this.$root.grammar
 			var transforms = this.$root.transforms
 
@@ -349,7 +379,37 @@ var vm = new Vue({
 						.css('display', 'none')
 				},
 				callback: function(key, options) {
-					console.log(key, options)
+					if (key.indexOf('node') !== -1) {
+						var keyNode = nodeCache[key.split(':')[1]].node
+						if (keyNode.fn || keyNode.re) {
+							if (!element.transform) {
+								element.$add('transform', [])
+							}
+							element.transform.push(keyNode.id)
+						}
+						else if (keyNode.type === 'wordlist' || keyNode.type === 'sentence') {
+							// clear any element modifiers
+							element.$delete('transform')
+							element.$delete('expr')
+							element.$delete('ref')
+							element.$delete('variable')
+
+							element.$add('ref', keyNode.id)
+						}
+					}
+					else {
+						switch (key) {
+						case 'assignVariable':
+							break
+						case 'clearTransforms':
+							element.$delete('transform')
+							break
+						case 'remove':
+							sentence.$remove(element)
+							break
+						}
+					}
+
 					// destroy all context menus
 					//
 					// this function is only run whenever the user chooses an item, so

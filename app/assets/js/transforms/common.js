@@ -5,7 +5,7 @@ module.exports = {
 		{
 			id: '5np6vh8gzd',
 			label: 'Prefix a/an',
-			tag: 'a/an',
+			tag: 'a/an ·',
 			type: 'prefix',
 			re: [
 				[['^([aeiou].*)$', 'i'], 'an $1'],
