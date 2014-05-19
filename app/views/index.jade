@@ -110,6 +110,7 @@ html(lang='en')
 					.display(v-show='!preview')
 						ol.prefix(v-if='element.transform && filterTransforms(element.transform, "prefix")')
 							li(v-repeat='filterTransforms(element.transform, "prefix")') {{tag}}
+							li(v-repeat='filterTransforms(element.transform, undefined)') {{label.toLowerCase()}}
 
 						ol.components.menu-update-sentence-ref(v-on='click: menuUpdateSentenceRef(this, element, sentence.sentence)')
 							li(v-repeat='getGrammarComponents(element.ref)', v-class='key') {{label}}
