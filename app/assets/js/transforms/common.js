@@ -6,12 +6,10 @@ module.exports = {
 			id: '5np6vh8gzd',
 			label: 'a/an',
 			type: 'prefix',
-			fn: function(str) {
-				if (str[0].match(/[aeiou]/)) {
-					return 'an ' + str
-				}
-				return 'a ' + str
-			},
+			re: [
+				[['^([aeiou].*)$', 'i'], 'an $1'],
+				[['^(.*)$', 'i'], 'a $1'],
+			],
 		},
 	],
 }
