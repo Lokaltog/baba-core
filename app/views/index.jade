@@ -131,7 +131,7 @@ html(lang='en')
 	script(id='container-sentence-ref-template', type='text/x-template')
 		.display(v-show='!preview')
 			ol.prefix(v-if='element.transform && filterTransforms(element.transform, "prefix")')
-				li(v-repeat='filterTransforms(element.transform, "prefix")') {{label}}
+				li(v-repeat='filterTransforms(element.transform, "prefix")') {{tag}}
 
 			ol.components.contextmenu-trigger
 				li(v-repeat='getGrammarComponents(element.ref)', v-class='key') {{label}}
@@ -155,7 +155,7 @@ html(lang='en')
 					.label.dismiss Remove
 
 			ol.suffix(v-if='element.transform && filterTransforms(element.transform, "suffix")')
-				li(v-repeat='filterTransforms(element.transform, "suffix")') {{label}}
+				li(v-repeat='filterTransforms(element.transform, "suffix")') {{tag}}
 
 		.preview(v-if='preview')
 			ol.components
