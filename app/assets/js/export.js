@@ -198,7 +198,7 @@ module.exports = function (vm) {
 	var exported = []
 	var comment = [
 		'/**',
-		' * ' + vm.grammar.name + ' by ' + vm.grammar.author,
+		' * ' + (vm.grammar.name || 'Unnamed garbage text generator') + ' by ' + (vm.grammar.author || 'an unknown author'),
 		' *',
 		' * Made with the Baba Grammar Designer:',
 		' * http://baba.computer/',
