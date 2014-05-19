@@ -2,15 +2,15 @@ module.exports = {
 	randomItem: function(items) {
 		return items[Math.floor(Math.random() * items.length)]
 	},
-	replaceRegexp: function(rules, str) {
-		var ret
+	replaceRegexp: function(str, rules) {
 		rules.some(function(filter) {
-			if (str.match(filter[0])) {
-				ret = str.replace(filter[0], filter[1])
+			var re = new RegExp(filter[0][0], filter[0][1])
+			if (str.match(re)) {
+				str = str.replace(re, filter[1])
 				return true
 			}
 		})
-		return ret
+		return str
 	},
 	objPropertyPath: function(obj, path, silent) {
 		var arr = path.split('.')

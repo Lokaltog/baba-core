@@ -191,7 +191,15 @@ var vm = new Vue({
 			// apply transforms
 			if (node.transform) {
 				node.transform.forEach(function(transform) {
-					expr = this.nodeCache[transform].node.fn(expr)
+					var node = this.nodeCache[transform].node
+					if (node.fn) {
+						// apply transform function
+						expr = node.fn(expr)
+					}
+					else if (node.re) {
+						// apply transform regexp
+						expr = utils.replaceRegexp(expr, node.re)
+					}
 				}.bind(this))
 			}
 

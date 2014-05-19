@@ -146,7 +146,12 @@ function exportGrammar(vm) {
 					grammarExports.push([node.label, nodeName])
 				}
 			}
+			else if (node.re) {
+				// add transforms regexps
+				grammarVariables.unshift([nodeName, JSON.stringify(node.re)])
+			}
 			else if (node.fn) {
+				// add transforms functions
                 grammarFunctions.push([nodeName, node.fn])
 			}
 		}
