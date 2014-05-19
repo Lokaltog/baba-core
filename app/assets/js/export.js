@@ -195,9 +195,17 @@ function compress(code) {
 	return compressed_ast.print_to_string()
 }
 
-module.exports = function (grammar, transforms) {
+module.exports = function (vm) {
 	// create raw JS code to be exported
 	var exported = []
+	var comment = [
+		'/**',
+		' * ' + vm.grammar.name + ' by ' + vm.grammar.author,
+		' *',
+		' * Made with the Baba Grammar Designer:',
+		' * http://baba.computer/',
+		' */',
+	].join('\n')
 
 	// wrap in UMD, compatible with AMD/CommonJS/browser
 	exported.push('(function (root, factory) {')
@@ -205,10 +213,10 @@ module.exports = function (grammar, transforms) {
 	exported.push('else if (typeof exports === "object") { module.exports = factory() }')
 	exported.push('else { root.' + moduleName + ' = factory() }')
 	exported.push('}(this, function() {')
-	exported.push(exportGrammar(grammar, transforms))
+	exported.push(exportGrammar(vm))
 	exported.push('}))')
 
 	exported = exported.join('\n')
 
-	return compress(exported)
+	return comment + '\n' + compress(exported)
 }
