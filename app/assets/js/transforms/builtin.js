@@ -10,14 +10,14 @@ module.exports = {
 					id: '654xgb5vh1',
 					label: 'Uppercase',
 					fn: function(str) {
-						return str.substring(0, 1).toUpperCase() + str.substring(1, str.length)
+						return str.toUpperCase()
 					},
 				},
 				{
 					id: 'uhoj9p0fyl',
 					label: 'Uppercase first',
 					fn: function(str) {
-						return str.toUpperCase()
+						return str.substring(0, 1).toUpperCase() + str.substring(1, str.length)
 					},
 				},
 			],
