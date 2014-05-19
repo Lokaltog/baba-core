@@ -141,7 +141,7 @@ Vue.component('container-sentence', {
 var vm = new Vue({
 	el: 'body',
 	data: {
-		grammar: {},
+		grammar: {children: [{}]},
 		transforms: transforms,
 		nodeCache: {},
 		exported: [],
@@ -238,6 +238,13 @@ var vm = new Vue({
 			window.open('data:application/json;' +
 			            (window.btoa ? 'base64,' + btoa(data)
 			             : data))
+		},
+		addChild: function(node) {
+			if (!node.children) {
+				node.$add('children', [])
+				node.children = []
+			}
+			node.children.push({})
 		},
 		addWordlist: function(model) {
 			model.id = generateId()

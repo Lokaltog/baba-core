@@ -36,7 +36,7 @@ html(lang='en')
 				.contents
 					h1
 						| Create the rules
-						.add.btn(v-on='click: grammar.children.push({})') Add section
+						.add.btn(v-on='click: addChild(grammar)') Add section
 					section.grammar(v-component='grammar', v-with='model: grammar')
 
 			section.step.preview-grammar
@@ -91,7 +91,7 @@ html(lang='en')
 
 		.node-wrapper(v-show='(model === $root.grammar) || open')
 			section(v-repeat='model: model.children | orderBy "label"', v-component='grammar')
-			.add-section(v-if='typeof model.children !== "undefined"', v-on='click: model.children.push({})') Add section
+			.add-section(v-if='typeof model.children !== "undefined"', v-on='click: addChild(model)') Add section
 			div(v-if='model.type')
 				.container-wrapper(v-class='model.type', v-with='model', v-component='container-{{model.type || "wordlist"}}')
 
