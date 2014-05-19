@@ -71,6 +71,28 @@ module.exports = {
 						[['(.*)$', 'i'], '$1ize'],
 					],
 				},
+				{
+					id: 'mxjz59qvra',
+					label: 'Agent noun (Latinate)',
+					tag: '·or',
+					type: 'suffix',
+					re: [
+						// exceptions
+						[['^(.*or)$', 'i'], '$1'], // e.g. author
+
+						// general rules
+						[['^(.*?)e?$', 'i'], '$1or'],
+					],
+				},
+				{
+					id: 'v5o544wj5n',
+					label: 'Agent noun (Germanic)',
+					tag: '·er',
+					type: 'suffix',
+					re: [
+						[['^(.*?)e?$', 'i'], '$1er'],
+					],
+				},
 			],
 		},
 	],
