@@ -8,12 +8,6 @@ module.exports = {
 			tag: '·s',
 			type: 'suffix',
 			re: [
-				// exceptions
-				['^(.*)man$', '$1men'],
-				['^(womyn)$', 'wymyn'],
-				['^(person)$', 'people'],
-
-				// general rules
 				['^(.*)ife$', '$1ives'],
 				['^(.*)ex$', '$1ices'],
 				['^(.*)([^ou])y$', '$1$2ies'],
