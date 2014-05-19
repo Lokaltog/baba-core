@@ -384,6 +384,7 @@ var vm = new Vue({
 						if (keyNode.fn || keyNode.re) {
 							if (!element.transform) {
 								element.$add('transform', [])
+								element.transform = []
 							}
 							element.transform.push(keyNode.id)
 						}
