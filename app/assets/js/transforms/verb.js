@@ -28,7 +28,7 @@ module.exports = {
 				},
 				{
 					id: 'lioq5xaxsi',
-					label: 'Past participle',
+					label: 'Past',
 					tag: '·ed',
 					type: 'suffix',
 					re: [
@@ -38,7 +38,7 @@ module.exports = {
 				},
 				{
 					id: 'q0uri6irxk',
-					label: 'Participle',
+					label: 'Past participle',
 					tag: '·en',
 					type: 'suffix',
 					re: [
