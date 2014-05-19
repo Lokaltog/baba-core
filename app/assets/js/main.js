@@ -227,7 +227,44 @@ var vm = new Vue({
 			return expr
 		},
 		exportRawGrammar: function() {
-			var data = JSON.stringify(this.$root.grammar)
+			// sanitize grammar
+			// remove disallowed keys
+			// remove empty properties
+			var grammar = {}
+			var allowedKeys = [
+				'children', 'elements', 'type', 'label', 'comment',
+				'id', 'expr', 'ref', 'variable', 'sentence', 'transform',
+				'name', 'author', 'export',
+			]
+
+			function sanitizeGrammar(node, parent) {
+				for (var key in node) {
+					if (node.hasOwnProperty(key)) {
+						if (!node[key]) {
+							continue
+						}
+
+						if (Array.isArray(node[key])) {
+							parent[key] = []
+							node[key].forEach(function(value, idx) {
+								if (typeof value === 'object') {
+									parent[key][idx] = {}
+									sanitizeGrammar(value, parent[key][idx])
+								}
+								else if (typeof value === 'string') {
+									parent[key][idx] = value
+								}
+							})
+						}
+						else if (allowedKeys.indexOf(key) > -1) {
+							parent[key] = node[key]
+						}
+					}
+				}
+			}
+			sanitizeGrammar(this.$root.grammar, grammar)
+
+			var data = JSON.stringify(grammar, undefined, '\t')
 			window.open('data:application/json;' +
 			            (window.btoa ? 'base64,' + btoa(data)
 			             : data))
