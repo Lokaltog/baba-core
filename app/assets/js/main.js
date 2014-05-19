@@ -122,36 +122,6 @@ Vue.component('container-sentence', {
 	},
 })
 
-Vue.component('update-element-contextmenu', {
-	template: '#update-element-contextmenu-template',
-	methods: {
-		updateElement: function(element) {
-			element.expr = undefined
-			element.transform = []
-			element.ref = this.model.id
-			element.variable = ''
-		},
-	},
-})
-
-Vue.component('add-element-contextmenu', {
-	template: '#add-element-contextmenu-template',
-	methods: {
-		addElement: function(elements) {
-			if (!this.model.type) {
-				return
-			}
-			elements.push({
-				ref: this.model.id,
-			})
-		},
-	},
-})
-
-Vue.component('transform-contextmenu', {
-	template: '#transform-contextmenu-template',
-})
-
 var vm = new Vue({
 	el: '#contents',
 	data: {
