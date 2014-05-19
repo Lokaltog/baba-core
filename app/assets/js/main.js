@@ -52,8 +52,18 @@ function addContextSubmenu(node, parent) {
 		parent[id].name = '<span class="tag-container"><span class="label">' + node.label + '</span> <span class="tag">' + node.tag + '</span></span>'
 	}
 	if (node.children) {
+		var children = node.children.slice(0)
 		parent[id].items = {}
-		node.children.forEach(function(el) {
+		children.sort(function (a, b) {
+			if (a.label > b.label) {
+				return 1
+			}
+			if (a.label < b.label) {
+				return -1
+			}
+			return 0
+		})
+		children.forEach(function(el) {
 			addContextSubmenu(el, parent[id].items)
 		})
 	}
@@ -288,12 +298,13 @@ var vm = new Vue({
 					// build menu tree
 					var menu = {
 						staticString: { name: 'Static string' },
-						reference: { name: 'Reference', items: {} },
 					}
 
-					grammar.children.forEach(function(node) {
-						addContextSubmenu(node, menu.reference.items)
-					})
+					addContextSubmenu({
+						id: 'reference',
+						label: 'Reference',
+						children: grammar.children,
+					}, menu)
 
 					return menu
 				})(),
@@ -349,12 +360,13 @@ var vm = new Vue({
 					var menu = {
 						edit: { name: 'Edit string' },
 						div1: '---',
-						convert: { name: 'Convert to reference', items: {} },
 					}
 
-					grammar.children.forEach(function(node) {
-						addContextSubmenu(node, menu.convert.items)
-					})
+					addContextSubmenu({
+						id: 'convertToReference',
+						label: 'Convert to reference',
+						children: grammar.children,
+					}, menu)
 
 					menu.div2 = '---'
 					menu.remove = { name: 'Remove', className: 'remove' }
@@ -421,23 +433,26 @@ var vm = new Vue({
 				},
 				items: (function() {
 					// build menu tree
-					var menu = {
-						transform: { name: 'Transform', items: {} },
-						div1: '---',
-					}
+					var menu = {}
 
-					transforms.children.forEach(function(node) {
-						addContextSubmenu(node, menu.transform.items)
-					})
-					menu.transform.items.div = '---'
-					menu.transform.items.clearTransforms = { name: 'Clear transforms', className: 'remove' }
+					addContextSubmenu({
+						id: 'transform',
+						label: 'Transform',
+						children: transforms.children,
+					}, menu)
 
-					menu.changeReference = { name: 'Change reference', items: {} },
+					menu['node:transform'].items.div1 = '---'
+					menu['node:transform'].clearTransforms = { name: 'Clear transforms', className: 'remove' }
+
+					menu.div1 = '---'
+
+					addContextSubmenu({
+						id: 'changeReference',
+						label: 'Change reference',
+						children: grammar.children,
+					}, menu)
+
 					menu.convertToString = { name: 'Convert to string' },
-					grammar.children.forEach(function(node) {
-						addContextSubmenu(node, menu.changeReference.items)
-					})
-
 					menu.div2 = '---'
 					menu.assignVariable = { name: 'Assign variable' }
 					menu.div3 = '---'
