@@ -14,7 +14,7 @@ html(lang='en')
 		header
 			h1 Baba Grammar Designer
 			.import
-				.btn Import from gist
+				.btn#import-grammar(href='#popup-import-grammar') Import grammar
 
 		#contents
 			section.step.name-grammar
@@ -62,6 +62,13 @@ html(lang='en')
 				a(href='https://github.com/Lokaltog') Lokaltog
 				=' · '
 				a(href='https://github.com/Lokaltog/baba') GitHub repo
+
+	#popup-import-grammar.mfp-hide
+		input.input-text(name='gist-uri', placeholder='Gist URI or ID')
+		div.or
+			.label or
+		textarea.input-text(name='json', placeholder='JSON source')
+		button.btn Import grammar
 
 	script(id='grammar-template', type='text/x-template')
 		h1(v-if='model !== $root.grammar')

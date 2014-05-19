@@ -1,6 +1,7 @@
+// dummy grammar ID: 948a562c40cc36de62ca
+
 var utils = require('./utils')
 var exportGrammar = require('./export')
-var grammar = require('./grammar/dummy')
 var transforms = {
 	children: [
 		// common
@@ -16,7 +17,7 @@ var transforms = {
 
 function getExportedNodes(node) {
 	var ret = []
-	if (node.children) {
+	if (node.children && node.children.length) {
 		node.children.forEach(function(child) {
 			ret = ret.concat(getExportedNodes(child))
 		})
@@ -33,7 +34,7 @@ function getNodeCache() {
 		if (node.id) {
 			ret[node.id] = { node: node, parent: ret[parent.id] }
 		}
-		if (node.children) {
+		if (node.children && node.children.length) {
 			node.children.forEach(function(child) {
 				getNodes(child, node)
 			})
@@ -129,9 +130,9 @@ Vue.component('container-sentence', {
 })
 
 var vm = new Vue({
-	el: '#contents',
+	el: 'body',
 	data: {
-		grammar: grammar,
+		grammar: {},
 		transforms: transforms,
 		nodeCache: {},
 		exported: [],
@@ -152,6 +153,9 @@ var vm = new Vue({
 			// walk the grammar tree and detect any exported nodes
 			this.exported = getExportedNodes(this.grammar)
 			createNodeCache(this)
+
+			// make sure any new inputs are autosized
+			$('input[data-autosize-input]').autosizeInput()
 		})
 	},
 	methods: {
@@ -220,7 +224,8 @@ var vm = new Vue({
 			             : data))
 		},
 		exportGrammarGenerator: function() {
-			var data = exportGrammar(this.$root, transforms)
+			var data = exportGrammar(vm)
+
 			window.open('data:application/json;' +
 			            (window.btoa ? 'base64,' + btoa(data)
 			             : data))
@@ -264,17 +269,12 @@ var vm = new Vue({
 						}
 					}
 
-					setTimeout(function(){
-						// destroy all context menus
-						//
-						// this function is only run whenever the user chooses an item, so
-						// a couple of menus may build up in the DOM if the user only
-						// opens the menu without performing an action a couple of times
-						$.contextMenu('destroy')
-
-						// make sure any new inputs are autosized
-						$('input[data-autosize-input]').autosizeInput()
-					}, 0)
+					// destroy all context menus
+					//
+					// this function is only run whenever the user chooses an item, so
+					// a couple of menus may build up in the DOM if the user only
+					// opens the menu without performing an action a couple of times
+					setTimeout(function(){$.contextMenu('destroy')}, 0)
 				},
 				items: (function() {
 					// build menu tree
@@ -448,3 +448,98 @@ var vm = new Vue({
 		},
 	},
 })
+
+$('#import-grammar').magnificPopup({
+	type: 'inline',
+	preloader: false,
+	closeBtnInside: false,
+	removalDelay: 300,
+	mainClass: 'mfp-transition-zoom-in',
+	callbacks: {
+		open: function() {
+			setTimeout(function() {
+				$('#popup-import-grammar input[name=gist-uri]').focus()
+			}, 100)
+		},
+		close: function() {
+			var gistUri = $('#popup-import-grammar input[name=gist-uri]')
+			var gistUriVal = gistUri.val()
+			gistUri.val('')
+
+			if (gistUriVal) {
+				importGist(gistUriVal)
+				return
+			}
+
+			var jsonText = $('#popup-import-grammar textarea')
+			var jsonTextVal = jsonText.val()
+			jsonText.val('')
+
+			if (jsonTextVal) {
+				importJson(jsonTextVal)
+			}
+		},
+	},
+})
+$('#popup-import-grammar input[name=gist-uri]').keydown(function(ev) {
+	if (ev.keyCode === 13) {
+        $.magnificPopup.close()
+	}
+})
+$('#popup-import-grammar button').click(function() {
+	$.magnificPopup.close()
+})
+
+function importJson(jsonText) {
+	if (!jsonText) {
+		console.warn('Missing JSON text')
+		return
+	}
+	var jsonObj = JSON.parse(jsonText)
+	if (!jsonObj) {
+		console.warn('Empty JSON object')
+		return
+	}
+	vm.grammar = jsonObj
+    console.log('JSON text imported successfully!')
+}
+
+function importGist(uri) {
+	if (!uri) {
+		console.warn('Missing gist URI or ID')
+		return
+	}
+
+	var id = uri.split('/').slice(-1)[0]
+	var queryUri = 'https://api.github.com/gists/' + id
+
+	$.getJSON(queryUri)
+		.done(function(data) {
+			var grammar = ''
+			for (var file in data.files) {
+				if (data.files.hasOwnProperty(file)) {
+					// only read first item
+					// TODO handle multiple items by prompting the user?
+					try {
+						grammar = JSON.parse(data.files[file].content)
+						break
+					}
+					catch (e) {
+						console.warn('Could not import JSON: ' + e)
+						return
+					}
+				}
+			}
+
+			if (!grammar) {
+				console.warn('Could not read files from gist')
+				return
+			}
+
+			console.log('Gist imported successfully!')
+			vm.grammar = grammar
+		})
+		.fail(function() {
+			console.warn('Invalid gist')
+		})
+}
