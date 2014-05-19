@@ -543,3 +543,12 @@ function importGist(uri) {
 			console.warn('Invalid gist')
 		})
 }
+
+// handle gist ID/URI in query string
+if (window.location.hash) {
+	var split = window.location.hash.substring(1).split(':')
+	switch (split[0]) {
+	case 'gist':
+		importGist(split[1])
+	}
+}
