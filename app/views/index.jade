@@ -154,8 +154,8 @@ html(lang='en')
 				li.remove(v-on='click: sentence.sentence.$remove(element)')
 					.label.dismiss Remove
 
-			ol.postfix(v-if='element.transform && filterTransforms(element.transform, "postfix")')
-				li(v-repeat='filterTransforms(element.transform, "postfix")') {{label}}
+			ol.suffix(v-if='element.transform && filterTransforms(element.transform, "suffix")')
+				li(v-repeat='filterTransforms(element.transform, "suffix")') {{label}}
 
 		.preview(v-if='preview')
 			ol.components
