@@ -12,9 +12,9 @@ module.exports = {
 					tag: '·s',
 					type: 'suffix',
 					re: [
-						[['^(.*[^aeo])y$', 'i'], '$1ies'],
-						[['^(.*([sc]h|s|ex))$', 'i'], '$1es'],
-						[['^(.*)$', 'i'], '$1s'],
+						['^(.*[^aeo])y$', '$1ies'],
+						['^(.*([sc]h|s|ex))$', '$1es'],
+						['^(.*)$', '$1s'],
 					],
 				},
 				{
@@ -23,7 +23,7 @@ module.exports = {
 					tag: '·ing',
 					type: 'suffix',
 					re: [
-						[['^(.*?)e?$', 'i'], '$1ing'],
+						['^(.*?)e?$', '$1ing'],
 					],
 				},
 				{
@@ -32,8 +32,8 @@ module.exports = {
 					tag: '·ed',
 					type: 'suffix',
 					re: [
-						[['^(.*)y$', 'i'], '$1ied'],
-						[['^(.*?)e?$', 'i'], '$1ed'],
+						['^(.*)y$', '$1ied'],
+						['^(.*?)e?$', '$1ed'],
 					],
 				},
 				{
@@ -42,7 +42,7 @@ module.exports = {
 					tag: '·en',
 					type: 'suffix',
 					re: [
-						[['^(.*?)[aeiouy]?$', 'i'], '$1en'],
+						['^(.*?)[aeiouy]?$', '$1en'],
 					],
 				},
 			],
@@ -57,7 +57,7 @@ module.exports = {
 					tag: '·ize',
 					type: 'suffix',
 					re: [
-						[['^(.*?)[aeiouy]?$', 'i'], '$1ize'],
+						['^(.*?)[aeiouy]?$', '$1ize'],
 					],
 				},
 				{
@@ -66,7 +66,7 @@ module.exports = {
 					tag: '·or',
 					type: 'suffix',
 					re: [
-						[['^(.*?)(e|or)?$', 'i'], '$1or'],
+						['^(.*?)(e|or)?$', '$1or'],
 					],
 				},
 				{
@@ -75,7 +75,7 @@ module.exports = {
 					tag: '·er',
 					type: 'suffix',
 					re: [
-						[['^(.*?)e?$', 'i'], '$1er'],
+						['^(.*?)e?$', '$1er'],
 					],
 				},
 			],

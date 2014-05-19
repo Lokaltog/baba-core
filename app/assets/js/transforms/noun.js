@@ -9,16 +9,16 @@ module.exports = {
 			type: 'suffix',
 			re: [
 				// exceptions
-				[['(.*)man$', 'i'], '$1men'],
-				[['(womyn)$', 'i'], 'wymyn'],
-				[['(person)$', 'i'], 'people'],
+				['^(.*)man$', '$1men'],
+				['^(womyn)$', 'wymyn'],
+				['^(person)$', 'people'],
 
 				// general rules
-				[['(.*)ife$', 'i'], '$1ives'],
-				[['(.*)ex$', 'i'], '$1ices'],
-				[['(.*)([^ou])y$', 'i'], '$1$2ies'],
-				[['(.*)([sc]h|s)$', 'i'], '$1$2es'],
-				[['(.*)', 'i'], '$1s'],
+				['^(.*)ife$', '$1ives'],
+				['^(.*)ex$', '$1ices'],
+				['^(.*)([^ou])y$', '$1$2ies'],
+				['^(.*)([sc]h|s)$', '$1$2es'],
+				['^(.*)$', '$1s'],
 			],
 		},
 	],
