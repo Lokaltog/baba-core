@@ -30,14 +30,14 @@ module.exports = {
 					id: '97zyo4wmwl',
 					label: 'Slugify',
 					fn: function(str) {
-						return str.replace(/[^\w\s-]/g, '-').toLowerCase()
+						return str.replace(/[^\w-]/g, '-').toLowerCase()
 					},
 				},
 				{
 					id: '3h13djennn',
 					label: 'Constantify',
 					fn: function(str) {
-						return str.replace(/[^\w\s-]/g, '_').toUpperCase()
+						return str.replace(/[^\w-]/g, '_').toUpperCase()
 					},
 				},
 			],
