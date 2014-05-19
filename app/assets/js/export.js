@@ -41,8 +41,13 @@ var exportFunctions = {
 		return function() {
 			// we need to transform a string, so handle any arrays or functions first
 			var parsed = parseElements(elements)()
-			transforms.forEach(function(fn) {
-				parsed = fn(parsed)
+			transforms.forEach(function(tf) {
+				if (typeof tf === 'function') {
+					parsed = tf(parsed)
+				}
+				else {
+					parsed = replaceRegexp(parsed, tf)
+				}
 			})
 			return parsed
 		}
