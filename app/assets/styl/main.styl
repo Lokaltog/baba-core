@@ -382,120 +382,84 @@ section.grammar
 			.btn
 				margin-left: $builder-gutter
 
-.contextmenu-trigger
+// Context menu triggers
+.menu-update-sentence-expr,
+.menu-update-sentence-ref
 	cursor: pointer
-	& + ul.contextmenu
-		font: 300 .9em/$line-height $font-main
-		background: #fff
-		border: 1px solid $color-foreground-3
-		box-sizing: border-box
-		display: none
-		position: absolute
-		z-index: 100
-		width: 10em
-		margin-top: 0px
-		margin-left: 2px
-		&, ul.contextmenu
-			box-shadow: 0 2px 5px rgba(#000, .08)
-		&.active
-			display: block
-		& > li:first-child
-			// speech bubble arrow
-			$arrow-offset = .4em
-			$arrow-width = .5em
-			position: relative
-			&::before,
-			&::after
-				content: ''
-				position: absolute
-				width: 0
-				height: 0
-				border-style: solid
-			&::before
-				border-width: $arrow-width
-				border-color: transparent lighten($color-foreground-2, 10) transparent transparent
-				left: -(@border-width * 2)
-				top: $arrow-offset
-			&::after
-				border-width: $arrow-width - .05em
-				border-color: transparent #fff transparent transparent
-				left: -(@border-width * 2) + .05em
-				top: $arrow-offset + .05em
-			&:hover
-				&::after
-					border-color: transparent $color-foreground transparent transparent
-		li
-			position: relative
-			display: block
-			color: $color-foreground
-			cursor: pointer
-			&:hover
-				color: #fff
-				background: $color-foreground
-				& > .label::after,
-				& > .item > .label::after
-					background: linear-gradient(left,
-						rgba($color-foreground, 0),
-						rgba($color-foreground, 1) 70%,
-						$color-foreground)
-			&.remove
-				&:hover
-					background: $color-red
-					& > .label::after,
-					& > .item > .label::after
-						background: linear-gradient(left,
-							rgba($color-red, 0),
-							rgba($color-red, 1) 70%,
-							$color-red)
-		.item
-			ul.contextmenu
-				position: absolute
-				display: none
-				flex: none
-				width: 8em
-				background: #fff
-				border: 1px solid $color-foreground-3
-				top: -1px
-				right: -(@width)
-				margin-right: -2px
-				&.active
-					display: block
-			&.has-children
-				&::after
-					font: normal .5em/3em $font-icon
-					content: '\e809'
-					position: absolute
-					right: $quarter-gutter
-					z-index: 20
-		.label
-			white-space: nowrap
-			overflow: hidden
-			padding: 0 $quarter-gutter
-			display: block
-			width: 100%
-			text-align: left
-			box-sizing: border-box
-			text-shadow: none
-			&::after
-				content: ''
-				display: block
-				width: 2em
-				height: $line-height - .1em
-				background: linear-gradient(left, rgba(#fff, 0), rgba(#fff, 1) 70%, #fff)
-				position: absolute
-				right: 0
-				top: 0
-			&:hover
-				font-weight: 400
+	&:hover
+		color: $color-foreground-1
 
-		.divider-before, .divider-after + li
-			margin: 10px 0 0 0
-			&::before
-				content: ''
-				display: block
-				height: 1px
-				background: $color-foreground-3
-				position: absolute
-				left: 3%
-				width: 94%
-				top: -5px
+// Context menu
+.context-menu-list
+	display: block
+	background: #fff
+	border: 1px solid $color-foreground-3
+	box-shadow: 0 2px 5px rgba(#000, .08)
+	box-sizing: border-box
+	position: absolute
+	min-width: 8em
+	span
+		display: block
+
+.context-menu-item
+	display: block
+	padding: 0 $half-gutter 0 $quarter-gutter
+	text-shadow: none
+	position: relative
+	user-select: none
+	margin-top: -1px
+	&.hover
+		cursor: pointer
+		background: $color-foreground
+		& > span
+			color: #fff
+		& > .context-menu-list
+			display: block
+	& > .context-menu-list
+		display: none
+		right: -5px
+		top: 5px
+	&.remove
+		&.hover
+			background: $color-red
+
+.context-menu-root
+	& > li:first-child
+		// speech bubble arrow
+		$arrow-offset = .4em
+		$arrow-width = .5em
+		position: relative
+		&::before,
+		&::after
+			content: ''
+			position: absolute
+			width: 0
+			height: 0
+			border-style: solid
+		&::before
+
+			border-width: $arrow-width
+			border-color: transparent $color-foreground-3 transparent transparent
+			left: -(@border-width * 2)
+			top: $arrow-offset
+		&::after
+			border-width: $arrow-width - .05em
+			border-color: transparent #fff transparent transparent
+			left: -(@border-width * 2) + .05em
+			top: $arrow-offset + .05em
+		&.hover
+			&::after
+				border-color: transparent $color-foreground transparent transparent
+
+.context-menu-separator
+	margin: ($quarter-gutter / 2) 0
+	border-bottom: 1px solid $color-foreground-3
+
+.context-menu-submenu
+	& > span
+		&::after
+			font: normal .5em/3.5em $font-icon
+			vertical-align: top
+			content: '\e809'
+			position: absolute
+			right: $half-gutter

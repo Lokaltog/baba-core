@@ -45,6 +45,20 @@ function getNodeCache() {
 	return ret
 }
 
+function addContextSubmenu(node, parent) {
+	var id = node.id
+	parent[id] = { name: node.label }
+	if (node.tag) {
+		parent[id].name += ' <span class="tag">' + node.tag + '</span>'
+	}
+	if (node.children) {
+		parent[id].items = {}
+		node.children.forEach(function(el) {
+			addContextSubmenu(el, parent[id].items)
+		})
+	}
+}
+
 function generateId() {
 	return Math.random().toString(36).substr(2, 10)
 }
@@ -128,6 +142,10 @@ Vue.component('add-element-contextmenu', {
 			})
 		},
 	},
+})
+
+Vue.component('transform-contextmenu', {
+	template: '#transform-contextmenu-template',
 })
 
 var vm = new Vue({
@@ -237,32 +255,134 @@ var vm = new Vue({
 			model.type = 'sentence'
 			model.elements = []
 		},
+		menuAddElement: function(node) {
+			var selector = '.menu-add-element'
+			var grammar = this.$root.grammar
+
+			$.contextMenu({
+				selector: selector,
+				trigger: 'none',
+				determinePosition: function($menu) {
+					$menu
+						.css('display', 'block')
+						.position({ my: 'left top', at: 'right bottom-100%', of: this })
+						.css('display', 'none')
+				},
+				callback: function(key, options) {
+					console.log(key, options)
+					// destroy all context menus
+					//
+					// this function is only run whenever the user chooses an item, so
+					// a couple of menus may build up in the DOM if the user only
+					// opens the menu without performing an action a couple of times
+					setTimeout(function(){$.contextMenu('destroy')}, 0)
+				},
+				items: (function() {
+					// build menu tree
+					var menu = {
+						staticPhrase: { name: 'Static phrase' },
+						div1: '---',
+					}
+
+					grammar.children.forEach(function(node) {
+						addContextSubmenu(node, menu)
+					})
+
+					return menu
+				})(),
+			})
+			$(node.$el).find(selector).contextMenu()
+		},
+		menuUpdateSentenceExpr: function(node) {
+			var selector = '.menu-update-sentence-expr'
+			var grammar = this.$root.grammar
+
+			$.contextMenu({
+				selector: selector,
+				trigger: 'none',
+				determinePosition: function($menu) {
+					$menu
+						.css('display', 'block')
+						.position({ my: 'left top', at: 'right bottom-100%', of: this })
+						.css('display', 'none')
+				},
+				callback: function(key, options) {
+					console.log(key, options)
+					// destroy all context menus
+					//
+					// this function is only run whenever the user chooses an item, so
+					// a couple of menus may build up in the DOM if the user only
+					// opens the menu without performing an action a couple of times
+					setTimeout(function(){$.contextMenu('destroy')}, 0)
+				},
+				items: (function() {
+					// build menu tree
+					var menu = {
+						staticPhrase: { name: 'Static phrase' },
+						div1: '---',
+					}
+
+					grammar.children.forEach(function(node) {
+						addContextSubmenu(node, menu)
+					})
+
+					menu.div2 = '---'
+					menu.remove = { name: 'Remove', className: 'remove' }
+
+					return menu
+				})(),
+			})
+			$(node.$el).find(selector).contextMenu()
+		},
+		menuUpdateSentenceRef: function(node) {
+			var selector = '.menu-update-sentence-ref'
+			var grammar = this.$root.grammar
+			var transforms = this.$root.transforms
+
+			$.contextMenu({
+				selector: selector,
+				trigger: 'none',
+				determinePosition: function($menu) {
+					$menu
+						.css('display', 'block')
+						.position({ my: 'left top', at: 'right bottom-100%', of: this })
+						.css('display', 'none')
+				},
+				callback: function(key, options) {
+					console.log(key, options)
+					// destroy all context menus
+					//
+					// this function is only run whenever the user chooses an item, so
+					// a couple of menus may build up in the DOM if the user only
+					// opens the menu without performing an action a couple of times
+					setTimeout(function(){$.contextMenu('destroy')}, 0)
+				},
+				items: (function() {
+					// build menu tree
+					var menu = {
+						transform: { name: 'Transform', items: {} },
+						div1: '---',
+					}
+
+					transforms.children.forEach(function(node) {
+						addContextSubmenu(node, menu.transform.items)
+					})
+
+					grammar.children.forEach(function(node) {
+						addContextSubmenu(node, menu)
+					})
+
+					menu.div2 = '---'
+					menu.assignVariable = { name: 'Assign variable' }
+					menu.div3 = '---'
+					menu.clearTransforms = { name: 'Clear transforms' }
+					menu.remove = { name: 'Remove', className: 'remove' }
+
+					return menu
+				})(),
+			})
+			$(node.$el).find(selector).contextMenu()
+		},
 	},
 })
 
-// handle context menus
-$('#contents').on('click', '.contextmenu-trigger', function(ev) {
-	ev.stopPropagation()
-
-	if ($(this).siblings('.contextmenu').hasClass('active')) {
-        $('.contextmenu').removeClass('active')
-		return
-	}
-
-	$('.contextmenu').removeClass('active')
-	$(this).siblings('.contextmenu').addClass('active')
-})
-$('#contents').on('click', '.contextmenu .label', function(ev) {
-	ev.stopPropagation()
-
-	$(this).parents('.contextmenu').first().find('.contextmenu').removeClass('active')
-	$(this).parents('.contextmenu').addClass('active')
-	$(this).siblings('.contextmenu').addClass('active')
-
-	if ($(this).hasClass('dismiss')) {
-		$('.contextmenu').removeClass('active')
-	}
-})
-$('body').on('click', function() {
-	$('.contextmenu').removeClass('active')
-})

@@ -105,12 +105,8 @@ html(lang='en')
 			li(v-repeat='element: sentence.sentence', v-component='container-sentence-{{element.expr ? "expr" : "ref"}}', v-class='expr: element.expr, ref: element.ref, preview: preview')
 
 			li.buttons
-				.contextmenu-trigger.btn(v-show='!preview')
+				.btn.menu-add-element(v-show='!preview', v-on='click: menuAddElement(this)')
 					i.icon.icon-add
-				ul.contextmenu(v-show='!preview')
-					li.divider-after
-						.label.dismiss Static phrase
-					li(v-repeat='model: $root.grammar.children | orderBy "label"', v-component='add-element-contextmenu', v-with='elements: sentence.sentence')
 
 			li.actions
 				.refresh.btn(v-show='preview', v-on='click: model = model')
@@ -120,39 +116,15 @@ html(lang='en')
 		div(v-on='click: elements.push({sentence:[]})') Add sentence
 
 	script(id='container-sentence-expr-template', type='text/x-template')
-		.word.contextmenu-trigger {{element.expr}}
-		ul.contextmenu
-			li.divider-after
-				.label Edit
-			li(v-repeat='model: $root.grammar.children | orderBy "label"', v-component='update-element-contextmenu', v-with='elements: elements, element: element')
-			li.divider-before.remove(v-on='click: sentence.sentence.$remove(element)')
-				.label Remove
+		.word.menu-update-sentence-expr(v-on='click: menuUpdateSentenceExpr(this)') {{element.expr}}
 
 	script(id='container-sentence-ref-template', type='text/x-template')
 		.display(v-show='!preview')
 			ol.prefix(v-if='element.transform && filterTransforms(element.transform, "prefix")')
 				li(v-repeat='filterTransforms(element.transform, "prefix")') {{tag}}
 
-			ol.components.contextmenu-trigger
+			ol.components.menu-update-sentence-ref(v-on='click: menuUpdateSentenceRef(this)')
 				li(v-repeat='getGrammarComponents(element.ref)', v-class='key') {{label}}
-			ul.contextmenu(v-show='!preview')
-				li.divider-after
-					.item.has-children
-						.label Transform
-						ul.contextmenu
-							li
-								.item.has-children
-									.label Group
-
-				li(v-repeat='model: $root.grammar.children | orderBy "label"', v-component='update-element-contextmenu', v-with='elements: elements, element: element')
-				li.divider-before
-					.label.dismiss Convert to phrase
-				li
-					.label.dismiss Assign variable
-				li.divider-before(v-on='click: element.transform = []')
-					.label.dismiss Clear transforms
-				li.remove(v-on='click: sentence.sentence.$remove(element)')
-					.label.dismiss Remove
 
 			ol.suffix(v-if='element.transform && filterTransforms(element.transform, "suffix")')
 				li(v-repeat='filterTransforms(element.transform, "suffix")') {{tag}}
@@ -162,21 +134,11 @@ html(lang='en')
 				li(v-class='getGrammarComponents(element.ref)[0].key')
 					| {{getGrammarComponentPreview(element)}}
 
-	script(id='add-element-contextmenu-template', type='text/x-template')
-		.item(v-class='has-children: model.children')
-			.label(v-on='click: addElement(elements)', v-class='dismiss: !model.children') {{model.label}}
-			ul.contextmenu(v-if='model.children')
-				li(v-repeat='model: model.children | orderBy "label"', v-component='add-element-contextmenu')
-
-	script(id='update-element-contextmenu-template', type='text/x-template')
-		.item(v-class='has-children: model.children')
-			.label(v-on='click: !model.children ? updateElement(element) : []', v-class='dismiss: !model.children') {{model.label}}
-			ul.contextmenu(v-if='model.children')
-				li(v-repeat='model: model.children | orderBy "label"', v-component='update-element-contextmenu')
-
 	script(src='/static/js/lib/vue.js')
 	script(src='/static/js/lib/jquery-2.1.1.js')
 	script(src='/static/js/lib/jquery.autosize.input.js')
+	script(src='/static/js/lib/jquery.ui.position.js')
+	script(src='/static/js/lib/jquery.contextMenu.js')
 	script(src='/static/js/lib/uglifyjs.min.js')
 	script(src='/static/js/lib/uuid.js')
 	script(src='/static/js/lib/seedrandom.js')
