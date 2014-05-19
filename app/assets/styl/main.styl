@@ -314,6 +314,16 @@ section.grammar
 	.buttons
 		flex: 1 1 auto
 		position: relative
+	input.text-element
+		border: 0
+		box-shadow: 0 1px 2px rgba(#000, .1)
+		background: rgba(#fff, .4)
+		height: $line-height
+		&:focus
+			background: rgba(#fff, .8)
+		&::-webkit-input-placeholder
+			color: rgba(#000, .3)
+			text-shadow: 0 1px 0 rgba(#fff, 1)
 
 	// word list style
 	&.wordlist
@@ -322,17 +332,6 @@ section.grammar
 			background: #fff
 			.word
 				padding: 0 $quarter-gutter
-		.add-textfield
-			input
-				border: 0
-				box-shadow: 0 1px 2px rgba(#000, .1)
-				background: rgba(#fff, .4)
-				height: $line-height
-				&:focus
-					background: rgba(#fff, .8)
-				&::-webkit-input-placeholder
-					color: rgba(#000, .3)
-					text-shadow: 0 1px 0 rgba(#fff, 1)
 
 	// sentence style
 	&.sentence

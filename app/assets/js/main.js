@@ -259,16 +259,22 @@ var vm = new Vue({
 					else {
 						switch (key) {
 						case 'staticString':
+							sentence.push({ expr: '', editExpr: true })
 							break
 						}
 					}
 
-					// destroy all context menus
-					//
-					// this function is only run whenever the user chooses an item, so
-					// a couple of menus may build up in the DOM if the user only
-					// opens the menu without performing an action a couple of times
-					setTimeout(function(){$.contextMenu('destroy')}, 0)
+					setTimeout(function(){
+						// destroy all context menus
+						//
+						// this function is only run whenever the user chooses an item, so
+						// a couple of menus may build up in the DOM if the user only
+						// opens the menu without performing an action a couple of times
+						$.contextMenu('destroy')
+
+						// make sure any new inputs are autosized
+						$('input[data-autosize-input]').autosizeInput()
+					}, 0)
 				},
 				items: (function() {
 					// build menu tree
@@ -316,7 +322,8 @@ var vm = new Vue({
 					}
 					else {
 						switch (key) {
-						case 'staticString':
+						case 'edit':
+							element.editExpr = true
 							break
 						case 'remove':
 							sentence.$remove(element)

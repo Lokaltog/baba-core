@@ -97,16 +97,17 @@ html(lang='en')
 					li.delete(v-on='click: elements.$remove(element)')
 						i.icon.icon-delete
 
-			li.add-textfield
-				input(type='text', placeholder='add string', data-autosize-input, v-on='keydown:addString | key enter')
+			li
+				input.text-element(type='text', placeholder='add string', data-autosize-input, v-on='keydown:addString | key enter')
 
 	script(id='container-sentence-template', type='text/x-template')
 		ul.builder.sentence(v-repeat='sentence: elements')
 			li(v-repeat='element: sentence.sentence', v-class='expr: element.expr, ref: element.ref, preview: preview')
-				div(v-show='element.expr')
-					.string.menu-update-sentence-expr(v-on='click: menuUpdateSentenceExpr(this, element, sentence.sentence)') {{element.expr}}
+				div(v-show='typeof element.expr !== "undefined"')
+					.string.menu-update-sentence-expr(v-on='click: menuUpdateSentenceExpr(this, element, sentence.sentence)', v-show='!element.editExpr') {{element.expr}}
+					input.text-element(type='text', placeholder='string', data-autosize-input, v-on='keydown: element.editExpr = false | key enter', v-model='element.expr', v-show='element.editExpr')
 
-				div(v-show='element.ref')
+				div(v-show='typeof element.ref !== "undefined"')
 					.display(v-show='!preview')
 						ol.prefix(v-if='element.transform && filterTransforms(element.transform, "prefix")')
 							li(v-repeat='filterTransforms(element.transform, "prefix")') {{tag}}
