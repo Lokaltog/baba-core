@@ -119,6 +119,12 @@ Vue.component('container-sentence', {
 
 			return ret
 		},
+		updatePreview: function(model) {
+			// add and remove a property to force an update
+			// this will update it twice, but at least it works
+			model.$add('preview', true)
+			model.$delete('preview')
+		},
 	},
 })
 
