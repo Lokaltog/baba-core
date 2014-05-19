@@ -418,7 +418,7 @@ var vm = new Vue({
 					}, menu)
 
 					menu['node:transform'].items.div1 = '---'
-					menu['node:transform'].clearTransforms = { name: 'Clear transforms', className: 'remove' }
+					menu['node:transform'].items.clearTransforms = { name: 'Clear transforms', className: 'remove' }
 
 					menu.div1 = '---'
 
