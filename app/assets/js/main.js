@@ -2,6 +2,7 @@
 
 var utils = require('./utils')
 var exportGrammar = require('./export')
+var catchphraseGenerator = require('./generators/catchphrase.generator.js')
 var transforms = {
 	children: [
 		// common
@@ -15,6 +16,14 @@ var transforms = {
 	]
 }
 
+// catchprase generator
+$('.catchphrase .text')
+	.text(catchphraseGenerator.catchphrase())
+	.click(function() {
+		$(this).text(catchphraseGenerator.catchphrase())
+	})
+
+// vue util functions
 function getExportedNodes(node) {
 	var ret = []
 	if (node.children && node.children.length) {

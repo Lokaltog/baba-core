@@ -141,8 +141,24 @@ header
 	user-select: none
 	h1
 		flex: 1 1 auto
+		display: flex
 		font: 1.5em $font-logo
 		color: #fff
+		.title
+			flex: 1 1 auto
+		.catchphrase
+			color: $color-foreground-1
+			font-size: .8em
+			line-height: 2em
+			flex: 0 1 auto
+			cursor: pointer
+			&:hover
+				color: $color-foreground-2
+			div
+				display: inline-block
+				margin: 0 $quarter-gutter 0 0
+			.icon
+				font-size: .8em
 	.import
 		flex: 0 1 auto
 	.btn
