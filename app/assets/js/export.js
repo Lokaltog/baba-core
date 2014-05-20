@@ -111,9 +111,15 @@ function exportGrammar(vm) {
 
 							if (el.ref) {
 								var node = vm.nodeCache[el.ref].node
-								// TODO handle whitespace
 								var grammarNode = 'node_' + node.id
 								var grammarNodeTransforms = []
+
+								if (grammarNode === nodeName) {
+									// recursive reference, the element has to be returned from a function as it doesn't exist at parse time
+									// the element has a 50% chance to return itself, usually it will repeat itself 0-2 times
+									// TODO add customizable probability
+									grammarNode = 'function() { return Math.random() < 0.5 ? parseElements(' + grammarNode + ') : "" }'
+								}
 
 								;(el.transform || []).forEach(function(tf) {
 									tf = vm.nodeCache[tf].node
