@@ -231,13 +231,13 @@ var vm = new Vue({
 			var allowedKeys = [
 				'children', 'elements', 'type', 'label', 'comment',
 				'id', 'expr', 'ref', 'variable', 'sentence', 'transform',
-				'name', 'author', 'export',
+				'name', 'author', 'export', 'whitespace',
 			]
 
 			function sanitizeGrammar(node, parent) {
 				for (var key in node) {
 					if (node.hasOwnProperty(key)) {
-						if (!node[key]) {
+						if (node[key] === '' || node[key] === [] || node[key] === {}) {
 							continue
 						}
 
@@ -304,6 +304,12 @@ var vm = new Vue({
 						.position({ my: 'left top', at: 'right bottom-100%', of: this })
 						.css('display', 'none')
 				},
+				events: {
+					hide: function() {
+						// destroy all context menus
+						setTimeout(function(){ $.contextMenu('destroy') }, 0)
+					},
+				},
 				callback: function(key, options) {
 					if (key.indexOf('node') !== -1) {
 						var keyNode = nodeCache[key.split(':')[1]].node
@@ -318,13 +324,6 @@ var vm = new Vue({
 							break
 						}
 					}
-
-					// destroy all context menus
-					//
-					// this function is only run whenever the user chooses an item, so
-					// a couple of menus may build up in the DOM if the user only
-					// opens the menu without performing an action a couple of times
-					setTimeout(function(){$.contextMenu('destroy')}, 0)
 				},
 				items: (function() {
 					// build menu tree
@@ -357,6 +356,12 @@ var vm = new Vue({
 						.position({ my: 'left top', at: 'right bottom-100%', of: this })
 						.css('display', 'none')
 				},
+				events: {
+					hide: function() {
+						// destroy all context menus
+						setTimeout(function(){ $.contextMenu('destroy') }, 0)
+					},
+				},
 				callback: function(key, options) {
 					if (key.indexOf('node') !== -1) {
 						var keyNode = nodeCache[key.split(':')[1]].node
@@ -380,13 +385,6 @@ var vm = new Vue({
 							break
 						}
 					}
-
-					// destroy all context menus
-					//
-					// this function is only run whenever the user chooses an item, so
-					// a couple of menus may build up in the DOM if the user only
-					// opens the menu without performing an action a couple of times
-					setTimeout(function(){$.contextMenu('destroy')}, 0)
 				},
 				items: (function() {
 					// build menu tree
@@ -424,6 +422,12 @@ var vm = new Vue({
 						.position({ my: 'left top', at: 'right bottom-100%', of: this })
 						.css('display', 'none')
 				},
+				events: {
+					hide: function() {
+						// destroy all context menus
+						setTimeout(function(){ $.contextMenu('destroy') }, 0)
+					},
+				},
 				callback: function(key, options) {
 					if (key.indexOf('node') !== -1) {
 						var keyNode = nodeCache[key.split(':')[1]].node
@@ -449,8 +453,6 @@ var vm = new Vue({
 					}
 					else {
 						switch (key) {
-						case 'assignVariable':
-							break
 						case 'clearTransforms':
 							element.$delete('transform')
 							break
@@ -459,13 +461,6 @@ var vm = new Vue({
 							break
 						}
 					}
-
-					// destroy all context menus
-					//
-					// this function is only run whenever the user chooses an item, so
-					// a couple of menus may build up in the DOM if the user only
-					// opens the menu without performing an action a couple of times
-					setTimeout(function(){$.contextMenu('destroy')}, 0)
 				},
 				items: (function() {
 					// build menu tree
@@ -476,6 +471,38 @@ var vm = new Vue({
 						label: 'Transform',
 						children: transforms.children,
 					}, menu)
+
+					menu.properties = {
+						name: 'Properties',
+						items: {
+							appendWhitespace: {
+								name: 'Append whitespace',
+								type: 'checkbox',
+								selected: (typeof node.element.whitespace === 'undefined' ? true : node.element.whitespace),
+								events: {
+									click: function(ev) {
+										if (!node.element.whitespace) {
+											node.element.$add('whitespace')
+										}
+										node.element.whitespace = ev.target.checked
+									},
+								},
+							},
+							assignVariable: {
+								name: 'Variable reference:',
+								type: 'text',
+								value: node.element.variable,
+								events: {
+									keyup: function(ev) {
+										if (!node.element.variable) {
+											node.element.$add('variable', ev.target.value)
+										}
+										node.element.variable = ev.target.value
+									},
+								},
+							},
+						}
+					}
 
 					menu['node:transform'].items.div1 = '---'
 					menu['node:transform'].items.clearTransforms = { name: 'Clear transforms', className: 'remove' }
@@ -489,8 +516,6 @@ var vm = new Vue({
 					}, menu)
 
 					menu.convertToString = { name: 'Convert to string' },
-					menu.div2 = '---'
-					menu.assignVariable = { name: 'Assign variable' }
 					menu.div3 = '---'
 					menu.remove = { name: 'Remove', className: 'remove' }
 
