@@ -1,6 +1,7 @@
 // dummy grammar ID: 948a562c40cc36de62ca
 
 var utils = require('./utils')
+var storage = require('./storage')
 var exportGrammar = require('./export')
 var catchphraseGenerator = require('./generators/catchphrase.generator.js')
 var transforms = {
@@ -139,7 +140,7 @@ Vue.component('container-sentence', {
 var vm = new Vue({
 	el: 'body',
 	data: {
-		grammar: {children: [{}]},
+		grammar: storage.load(),
 		transforms: transforms,
 		nodeCache: {},
 		exported: [],
@@ -156,13 +157,16 @@ var vm = new Vue({
 		}
 		createNodeCache(this)
 
-		this.$watch('grammar', function() {
+		this.$watch('grammar', function(grammar) {
 			// walk the grammar tree and detect any exported nodes
-			this.exported = getExportedNodes(this.grammar)
+			this.exported = getExportedNodes(grammar)
 			createNodeCache(this)
 
 			// make sure any new inputs are autosized
 			$('input[data-autosize-input]').autosizeInput()
+
+			// backup grammar in local storage
+			storage.save(this)
 		})
 	},
 	methods: {
@@ -223,7 +227,7 @@ var vm = new Vue({
 
 			return item
 		},
-		exportRawGrammar: function() {
+		getRawGrammar: function() {
 			// sanitize grammar
 			// remove disallowed keys
 			// remove empty properties
@@ -261,6 +265,10 @@ var vm = new Vue({
 			}
 			sanitizeGrammar(this.$root.grammar, grammar)
 
+			return grammar
+		},
+		exportRawGrammar: function() {
+			var grammar = this.getRawGrammar()
 			var data = JSON.stringify(grammar, undefined, '\t')
 			window.open('data:application/json;' +
 			            (window.btoa ? 'base64,' + btoa(data)
