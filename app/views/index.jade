@@ -20,7 +20,7 @@ html(lang='en')
 						i.icon.icon-refresh
 			.actions
 				.btn#import-grammar(href='#popup-import-grammar') Import grammar
-				.btn(v-on='click: grammar = {children: [{}]}') Create new grammar
+				.btn(v-on='click: grammar = {}') Create new grammar
 
 		#contents
 			section.step.name-grammar
@@ -102,17 +102,17 @@ html(lang='en')
 			.comment
 				input(placeholder='comment', v-model='model.comment', data-autosize-input)
 			.export(v-if='model.type === "sentence"', v-on='click: model.export = !model.export')
-				.exported(v-show='model.export') Exported
+				.exported(v-if='model.export') Exported
 				.unexported
-					.btn(v-show='!model.export') Export
+					.btn(v-if='!model.export') Export
 
-		.node-wrapper(v-show='(model === $root.grammar) || open')
+		.node-wrapper(v-if='(model === $root.grammar) || open')
 			section(v-repeat='model: model.children | orderBy "label"', v-component='grammar')
 			.add-section(v-if='typeof model.children !== "undefined"', v-on='click: addChild(model)') Add section
 			div(v-if='model.type')
 				.container-wrapper(v-class='model.type', v-with='model', v-component='container-{{model.type || "wordlist"}}')
 
-		.section-init-wrapper(v-if='!model.type && typeof model.children === "undefined"', v-show='open')
+		.section-init-wrapper(v-if='!model.type && typeof model.children === "undefined" && open')
 			p What should this section contain?
 			div(v-on='click: model.children = []') [Subsections]
 			div(v-on='click: addWordlist(model)') [A word list]

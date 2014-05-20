@@ -286,7 +286,9 @@ var vm = new Vue({
 				node.$add('children', [])
 				node.children = []
 			}
-			node.children.push({})
+			node.children.push({
+				id: generateId(),
+			})
 		},
 		addWordlist: function(model) {
 			model.id = generateId()

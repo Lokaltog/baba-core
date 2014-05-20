@@ -4,7 +4,7 @@ var STORAGE_KEY = 'baba-grammars'
 module.exports = {
 	load: function() {
 		var data = localStorage.getItem(STORAGE_KEY)
-		var emptyGrammar = {children: [{}]}
+		var emptyGrammar = {}
 		var json
 		try {
 			json = JSON.parse(data)
