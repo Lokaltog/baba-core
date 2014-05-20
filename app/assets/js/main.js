@@ -432,7 +432,10 @@ var vm = new Vue({
 								element.$add('transform', [])
 								element.transform = []
 							}
-							element.transform.push(keyNode.id)
+							if (element.transform.indexOf(keyNode.id) === -1) {
+								// make sure the transform isn't already applied to this element
+								element.transform.push(keyNode.id)
+							}
 						}
 						else if (keyNode.type === 'wordlist' || keyNode.type === 'sentence') {
 							// clear any element modifiers
