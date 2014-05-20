@@ -18,8 +18,9 @@ html(lang='en')
 					.text
 					.refresh
 						i.icon.icon-refresh
-			.import
+			.actions
 				.btn#import-grammar(href='#popup-import-grammar') Import grammar
+				.btn(v-on='click: grammar = {children: [{}]}') Create new grammar
 
 		#contents
 			section.step.name-grammar
