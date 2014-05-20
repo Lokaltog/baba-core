@@ -502,6 +502,34 @@ var vm = new Vue({
 	},
 })
 
+// popup windows
+function popupAlert(text, iconClass, buttonText) {
+	$('#popup-alert .text').html(text)
+	$('#popup-alert .btn').text((buttonText || 'OK'))
+	$('#popup-alert .icon').attr('class', 'icon ' + (iconClass || 'info'))
+
+	$.magnificPopup.open({
+		mainClass: 'mfp-transition-zoom-in',
+		removalDelay: 300,
+		preloader: false,
+		closeBtnInside: false,
+		callbacks: {
+			open: function() {
+				setTimeout(function() {
+					$('#popup-alert button').focus()
+				}, 100)
+			}
+		},
+		items: {
+			type: 'inline',
+			src: '#popup-alert',
+		},
+	})
+}
+$('#popup-alert button').click(function() {
+	$.magnificPopup.close()
+})
+
 $('#import-grammar').magnificPopup({
 	type: 'inline',
 	preloader: false,
@@ -514,7 +542,7 @@ $('#import-grammar').magnificPopup({
 				$('#popup-import-grammar input[name=gist-uri]').focus()
 			}, 100)
 		},
-		close: function() {
+		afterClose: function() {
 			var gistUri = $('#popup-import-grammar input[name=gist-uri]')
 			var gistUriVal = gistUri.val()
 			gistUri.val('')
@@ -543,12 +571,20 @@ $('#popup-import-grammar button').click(function() {
 	$.magnificPopup.close()
 })
 
+// import functions
 function importJson(jsonText) {
 	if (!jsonText) {
 		console.warn('Missing JSON text')
 		return
 	}
-	var jsonObj = JSON.parse(jsonText)
+	var jsonObj
+	try {
+		jsonObj = JSON.parse(jsonText)
+	}
+	catch (e) {
+		popupAlert('An error occured while parsing the JSON string: ' + e, 'error')
+		return
+	}
 	if (!jsonObj) {
 		console.warn('Empty JSON object')
 		return
@@ -559,7 +595,7 @@ function importJson(jsonText) {
 
 function importGist(uri) {
 	if (!uri) {
-		console.warn('Missing gist URI or ID')
+		popupAlert('Could not import grammar: missing gist URI or ID.', 'error')
 		return
 	}
 
@@ -578,22 +614,22 @@ function importGist(uri) {
 						break
 					}
 					catch (e) {
-						console.warn('Could not import JSON: ' + e)
+						popupAlert('Could not import JSON: ' + e, 'error')
 						return
 					}
 				}
 			}
 
 			if (!grammar) {
-				console.warn('Could not read files from gist')
+				popupAlert('Could not read any files from the gist!', 'error')
 				return
 			}
 
-			console.log('Gist imported successfully!')
+			popupAlert('The grammar <strong>' + grammar.name + '</strong> by <strong>' + grammar.author + '</strong> was successfully imported.')
 			vm.grammar = grammar
 		})
 		.fail(function() {
-			console.warn('Invalid gist')
+			popupAlert('Could not import grammar: invalid gist URI or ID.', 'error')
 		})
 }
 

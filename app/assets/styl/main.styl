@@ -24,6 +24,7 @@ $half-gutter = ($gutter / 2)
 $quarter-gutter = ($gutter / 4)
 
 $color-accent = #d32
+$color-blue = #47c
 $color-red = #d32
 $color-yellow = #e92
 $color-green = #7a3
@@ -584,3 +585,36 @@ section.grammar
 			position: absolute
 			left: 0
 			top: 50%
+
+.popup
+	.text-wrap
+		display: flex
+		.text
+			flex: 1 1 auto
+		.icon
+			margin: 0 0 0 $half-gutter
+			flex: 0 1 auto
+			width: 5em
+			text-align: right
+			&::before
+				display: block
+				font: normal 2.8em $font-icon
+			&.warn::before
+				color: $color-yellow
+				content: '\e80b'
+			&.error::before
+				color: $color-red
+				content: '\e80c'
+			&.info::before
+				color: $color-blue
+				content: '\e80d'
+			&.question::before
+				color: $color-blue
+				content: '\e80e'
+	.buttons
+		margin: $half-gutter 0 0 0
+		padding: $half-gutter 0 0 0
+		border-top: 1px solid $color-foreground-3
+		button
+			padding: 0 $gutter
+			height: 2.4em

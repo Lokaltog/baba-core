@@ -68,12 +68,28 @@ html(lang='en')
 				=' · '
 				a(href='https://github.com/Lokaltog/baba') GitHub repo
 
-	#popup-import-grammar.mfp-hide
+	#popup-import-grammar.popup.mfp-hide
 		input.input-text(name='gist-uri', placeholder='Gist URI or ID')
 		div.or
 			.label or
 		textarea.input-text(name='json', placeholder='JSON source')
 		button.btn Import grammar
+
+	#popup-alert.popup.mfp-hide
+		.text-wrap
+			.text
+			.icon
+		.buttons
+			button.btn OK
+
+	#popup-prompt.popup.mfp-hide
+		.text-wrap
+			.text
+			.icon.question
+		div.input
+			input.input-text(name='value', placeholder='')
+		div.buttons
+			button.btn OK
 
 	script(id='grammar-template', type='text/x-template')
 		h1(v-if='model !== $root.grammar')
