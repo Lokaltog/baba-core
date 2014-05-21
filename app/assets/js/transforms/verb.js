@@ -60,6 +60,7 @@ module.exports = {
 						// universal rules
 						['^(.*[aeiouy]l)$', '$1led'],
 						['^(.*?[eyo]e)$', '$1d'],
+						['^(.*)y$', '$1ied'],
 						['^(.*?)e?$', '$1ed'],
 					],
 				},
