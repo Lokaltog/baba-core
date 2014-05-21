@@ -162,6 +162,7 @@ var vm = new Vue({
 		createNodeCache(this)
 
 		this.$watch('grammar', function(grammar) {
+			console.debug('Grammar watcher triggered')
 			// walk the grammar tree and detect any exported nodes
 			this.exported = getExportedNodes(grammar)
 
@@ -201,7 +202,7 @@ var vm = new Vue({
 			var container = $('#generator-preview-contents')
 
 			if (!this.exportedGenerator) {
-				console.log('Grammar changed, recompiling grammar')
+				console.debug('Grammar changed, recompiling')
 
 				var exportedGenerator = exportGrammar(vm, false)
 				var context = {}
@@ -715,7 +716,7 @@ function importJson(jsonText) {
 		return
 	}
 	vm.grammar = jsonObj
-    console.log('JSON text imported successfully!')
+    console.debug('JSON text imported successfully!')
 }
 
 function importGist(uri) {
