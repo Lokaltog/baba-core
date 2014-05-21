@@ -1,5 +1,5 @@
 // Imports
-@import url('http://fonts.googleapis.com/css?family=Pacifico|Roboto:300,400,700')
+@import url('http://fonts.googleapis.com/css?family=Pacifico|Roboto:300,400,700|Roboto+Slab:400')
 
 // Web fonts
 @font-face
@@ -11,6 +11,7 @@
 // Design settings
 $font-logo = Pacifico, sans-serif
 $font-main = Roboto, sans-serif
+$font-quote = 'Roboto Slab', serif
 $font-icon = baba-icons
 $line-height = 1.7em
 $color-foreground = #2e281f
@@ -99,7 +100,6 @@ input, textarea
 .btn
 	font: 400 .9em/1.9em $font-main
 	height: 1.85em
-	border: 0
 	box-shadow: inset 0 1px 0 rgba(#fff, .2), inset 0 -1px 0 rgba(#000, .3)
 	cursor: pointer
 	padding: 0 $quarter-gutter
@@ -112,6 +112,7 @@ input, textarea
 	border: 1px solid $color-foreground
 	transition: all .1s
 	display: inline-block
+	user-select: none
 	&:hover
 		background: $color-foreground
 	&.active
@@ -419,6 +420,40 @@ section.grammar
 		.actions
 			.btn
 				margin-left: $builder-gutter
+
+// Generator preview
+.generator-preview-buttons
+	display: flex
+	li
+		font: 400 .9em/1.9em $font-main
+		height: 1.85em
+		box-shadow: 0 2px 2px rgba(#000, .1)
+		cursor: pointer
+		padding: 0 $quarter-gutter
+		position: relative
+		background: #fff
+		text-shadow: 0 1px 0 rgba(#fff, .7)
+		text-align: center
+		box-sizing: border-box
+		transition: all .1s
+		display: inline-block
+		cursor: pointer
+		user-select: none
+		margin: 0 $quarter-gutter 0 0
+		&.active
+			font-weight: 700
+		&:hover
+			color: $color-foreground-1
+		&:active
+			top: 1px
+			box-shadow: 0 1px 1px rgba(#000, .1)
+
+#generator-preview-contents:not(:empty)
+	padding: $half-gutter
+	font-family: $font-quote
+	font-weight: 400
+	margin: $quarter-gutter 0 0 0
+	border: 1px solid $color-foreground-3
 
 // Context menu triggers
 .menu-update-sentence-str,

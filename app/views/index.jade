@@ -45,9 +45,8 @@ html(lang='en')
 				.contents
 					h1 Preview your grammar
 					p(v-if='!exported.length') You need to export at least one sentence collection. Toggle the export button to the right of any sentence collection above.
-					ul(v-if='exported.length')
-						li(v-repeat='exported')
-							.label(v-on='click: previewGenerator(label)') {{label}}
+					ul.generator-preview-buttons(v-if='exported.length')
+						li(v-repeat='exported', v-on='click: previewGenerator($event, label)') {{label}}
 					#generator-preview-contents
 
 			section.step.save-grammar

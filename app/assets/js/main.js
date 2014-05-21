@@ -167,6 +167,8 @@ var vm = new Vue({
 
 			// reset the exported preview generator every time the grammar changes
 			this.exportedGenerator = null
+			$('#generator-preview-contents').text('')
+			$('.generator-preview-buttons li').removeClass('active')
 
 			createNodeCache(this)
 
@@ -194,7 +196,7 @@ var vm = new Vue({
 			parent.children.$remove(model)
 			storage.save(this.$root) // force save
 		},
-		previewGenerator: function(label) {
+		previewGenerator: function(ev, label) {
 			var slug = S(label).slugify().toString()
 			var container = $('#generator-preview-contents')
 
@@ -209,6 +211,8 @@ var vm = new Vue({
 				this.exportedGenerator = context.Baba
 			}
 
+			$('.generator-preview-buttons li').removeClass('active')
+			$(ev.target).addClass('active')
 			container.text(this.exportedGenerator[slug]())
 		},
 		getGrammarNode: function(searchPath) {
