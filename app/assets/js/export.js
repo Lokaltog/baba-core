@@ -56,16 +56,15 @@ var exportFunctions = {
 
 function exportGrammar(vm) {
 	var ret = []
-	var grammarFunctions = []
-	var grammarVariables = []
+	var exportedNodes = []
 	var grammarExports = []
 
-	grammarVariables.unshift(['SPACE', '" "'])
+	exportedNodes.push(['SPACE', '" "'])
 
 	// add exported functions
 	for (var fn in exportFunctions) {
 		if (exportFunctions.hasOwnProperty(fn)) {
-			grammarFunctions.push([fn, exportFunctions[fn]])
+			exportedNodes.push([fn, exportFunctions[fn]])
 		}
 	}
 
@@ -74,6 +73,8 @@ function exportGrammar(vm) {
 		if (vm.nodeCache.hasOwnProperty(node)) {
 			node = vm.nodeCache[node].node
 			var nodeName = 'node_' + node.id
+			// add exported functions as default dependencies
+			var dependencies = Object.keys(exportFunctions).concat(['SPACE'])
 
 			if (node.type === 'wordlist') {
 				var data = node.elements
@@ -89,7 +90,7 @@ function exportGrammar(vm) {
 					data = 'splitString(' + JSON.stringify(data.join('|')) + ')'
 				}
 				// ensure that word lists are defined before the sentences
-				grammarVariables.unshift([nodeName, data])
+				exportedNodes.unshift([nodeName, data])
 			}
 			else if (node.type === 'sentence') {
 				var sentenceStr = ''
@@ -114,6 +115,11 @@ function exportGrammar(vm) {
 								var grammarNode = 'node_' + node.id
 								var grammarNodeTransforms = []
 
+								if (dependencies.indexOf(grammarNode) === -1) {
+									// add unique node dependencies
+									dependencies.push(grammarNode)
+								}
+
 								if (grammarNode === nodeName) {
 									// recursive reference, the element has to be returned from a function as it doesn't exist at parse time
 									// the element has a 50% chance to return itself, usually it will repeat itself 0-2 times
@@ -125,6 +131,10 @@ function exportGrammar(vm) {
 									tf = vm.nodeCache[tf].node
 									var tfKey = 'node_' + tf.id
 									grammarNodeTransforms.push(tfKey)
+
+									if (dependencies.indexOf(tfKey) === -1) {
+										dependencies.push(tfKey)
+									}
 								})
 
 								if (grammarNodeTransforms.length) {
@@ -149,7 +159,7 @@ function exportGrammar(vm) {
 				if (node.elements.length > 1) {
 					sentenceStr += '])'
 				}
-				grammarVariables.push([nodeName, sentenceStr])
+				exportedNodes.push([nodeName, sentenceStr, dependencies])
 
 				if (node.export) {
 					grammarExports.push([node.label, nodeName])
@@ -157,25 +167,34 @@ function exportGrammar(vm) {
 			}
 			else if (node.re) {
 				// add transforms regexps
-				grammarVariables.unshift([nodeName, JSON.stringify(node.re)])
+				exportedNodes.unshift([nodeName, JSON.stringify(node.re)])
 			}
 			else if (node.fn) {
 				// add transforms functions
-                grammarFunctions.push([nodeName, node.fn])
+                exportedNodes.push([nodeName, node.fn])
 			}
 		}
 	}
 
-	grammarFunctions.forEach(function(value) {
-		ret.push('var ' + value[0] + ' = ' + value[1])
+	// resolve exported node dependencies
+	var depGraph = []
+	var grammarObj = {}
+	exportedNodes.forEach(function(el) {
+		grammarObj[el[0]] = el[1]
+
+		if (!el[2]) return
+		el[2].forEach(function(dep) {
+			depGraph.push([el[0], dep])
+		})
 	})
-	grammarVariables.forEach(function(value) {
-		ret.push('var ' + value[0] + ' = ' + value[1])
+
+	// write exported nodes
+	utils.tsort(depGraph).reverse().forEach(function(key) {
+		ret.push('var ' + key + ' = ' + grammarObj[key])
 	})
 
 	ret.push('return {')
 	grammarExports.forEach(function(value) {
-		// TODO slugify for node, camelcase for browser
 		var key = JSON.stringify(S(value[0]).slugify().toString())
 		ret.push(key + ': ' + value[1] + ',')
 	})
