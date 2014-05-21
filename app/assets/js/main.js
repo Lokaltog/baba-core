@@ -401,6 +401,24 @@ var vm = new Vue({
 					// build menu tree
 					var menu = {
 						edit: { name: 'Edit string' },
+						properties: {
+							name: 'Properties',
+							items: {
+								appendWhitespace: {
+									name: 'Append whitespace',
+									type: 'checkbox',
+									selected: (typeof node.element.whitespace === 'undefined' ? true : node.element.whitespace),
+									events: {
+										click: function(ev) {
+											if (!node.element.whitespace) {
+												node.element.$add('whitespace')
+											}
+											node.element.whitespace = ev.target.checked
+										},
+									},
+								},
+							},
+						},
 						div1: '---',
 					}
 
