@@ -105,8 +105,8 @@ function exportGrammar(vm) {
 						'parseElements(' + sentence.sentence.map(function(el, idx) {
 							var ret = ''
 
-							if (el.expr) {
-								ret = JSON.stringify(el.expr)
+							if (el.str) {
+								ret = JSON.stringify(el.str)
 							}
 
 							if (el.ref) {

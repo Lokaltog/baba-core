@@ -235,7 +235,7 @@ var vm = new Vue({
 			var grammar = {}
 			var allowedKeys = [
 				'children', 'elements', 'type', 'label', 'comment',
-				'id', 'expr', 'ref', 'variable', 'sentence', 'transform',
+				'id', 'str', 'ref', 'variable', 'sentence', 'transform',
 				'name', 'author', 'export', 'whitespace',
 			]
 
@@ -331,7 +331,7 @@ var vm = new Vue({
 					else {
 						switch (key) {
 						case 'staticString':
-							sentence.push({ expr: '', editExpr: true })
+							sentence.push({ str: '', editStr: true })
 							break
 						}
 					}
@@ -353,8 +353,8 @@ var vm = new Vue({
 			})
 			$(node.$el).find(selector).contextMenu()
 		},
-		menuUpdateSentenceExpr: function(node, element, sentence) {
-			var selector = '.menu-update-sentence-expr'
+		menuUpdateSentenceStr: function(node, element, sentence) {
+			var selector = '.menu-update-sentence-str'
 			var nodeCache = this.$root.nodeCache
 			var grammar = this.$root.grammar
 
@@ -379,7 +379,7 @@ var vm = new Vue({
 						if (keyNode.type === 'wordlist' || keyNode.type === 'sentence') {
 							// clear any element modifiers
 							element.$delete('transform')
-							element.$delete('expr')
+							element.$delete('str')
 							element.$delete('ref')
 							element.$delete('variable')
 
@@ -389,7 +389,7 @@ var vm = new Vue({
 					else {
 						switch (key) {
 						case 'edit':
-							element.editExpr = true
+							element.editStr = true
 							break
 						case 'remove':
 							sentence.$remove(element)
@@ -473,7 +473,7 @@ var vm = new Vue({
 						else if (keyNode.type === 'wordlist' || keyNode.type === 'sentence') {
 							// clear any element modifiers
 							element.$delete('transform')
-							element.$delete('expr')
+							element.$delete('str')
 							element.$delete('ref')
 							element.$delete('variable')
 

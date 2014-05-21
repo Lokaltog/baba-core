@@ -120,7 +120,7 @@ html(lang='en')
 
 	script(id='container-wordlist-template', type='text/x-template')
 		ul.builder.wordlist
-			li.expr(v-repeat='element: elements')
+			li.str(v-repeat='element: elements')
 				.word {{element}}
 				ul.actions
 					li.delete(v-on='click: elements.$remove(element)')
@@ -131,10 +131,10 @@ html(lang='en')
 
 	script(id='container-sentence-template', type='text/x-template')
 		ul.builder.sentence(v-repeat='sentence: elements')
-			li(v-repeat='element: sentence.sentence', v-class='expr: element.expr, ref: element.ref, preview: preview')
-				div.menu-update-sentence-expr(v-on='click: menuUpdateSentenceExpr(this, element, sentence.sentence)', v-show='typeof element.expr !== "undefined"')
-					.string(v-show='!element.editExpr') {{element.expr}}
-					input.text-element(type='text', placeholder='string', data-autosize-input, v-on='keydown: element.editExpr = false | key enter', v-model='element.expr', v-show='element.editExpr')
+			li(v-repeat='element: sentence.sentence', v-class='str: element.str, ref: element.ref, preview: preview')
+				div.menu-update-sentence-str(v-on='click: menuUpdateSentenceStr(this, element, sentence.sentence)', v-show='typeof element.str !== "undefined"')
+					.string(v-show='!element.editStr') {{element.str}}
+					input.text-element(type='text', placeholder='string', data-autosize-input, v-on='keydown: element.editStr = false | key enter', v-model='element.str', v-show='element.editStr')
 
 				div.menu-update-sentence-ref(v-on='click: menuUpdateSentenceRef(this, element, sentence.sentence)', v-show='typeof element.ref !== "undefined"')
 					.display(v-show='!preview')
