@@ -271,16 +271,47 @@ var vm = new Vue({
 		exportRawGrammar: function() {
 			var grammar = this.getRawGrammar()
 			var data = JSON.stringify(grammar, undefined, '\t')
-			window.open('data:application/json;' +
-			            (window.btoa ? 'base64,' + btoa(data)
-			             : data))
+
+			$.magnificPopup.open({
+				mainClass: 'mfp-transition-zoom-in',
+				removalDelay: 300,
+				preloader: false,
+				closeBtnInside: false,
+				callbacks: {
+					open: function() {
+						$('#popup-export-grammar textarea').text(data)
+						setTimeout(function() {
+							$('#popup-export-grammar textarea').select()
+						}, 100)
+					}
+				},
+				items: {
+					type: 'inline',
+					src: '#popup-export-grammar',
+				},
+			})
 		},
 		exportGrammarGenerator: function() {
 			var data = exportGrammar(vm)
 
-			window.open('data:application/json;' +
-			            (window.btoa ? 'base64,' + btoa(data)
-			             : data))
+			$.magnificPopup.open({
+				mainClass: 'mfp-transition-zoom-in',
+				removalDelay: 300,
+				preloader: false,
+				closeBtnInside: false,
+				callbacks: {
+					open: function() {
+						$('#popup-export-grammar textarea').text(data)
+						setTimeout(function() {
+							$('#popup-export-grammar textarea').select()
+						}, 100)
+					}
+				},
+				items: {
+					type: 'inline',
+					src: '#popup-export-grammar',
+				},
+			})
 		},
 		addChild: function(node) {
 			if (!node.children) {
