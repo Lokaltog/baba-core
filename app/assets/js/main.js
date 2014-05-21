@@ -588,6 +588,9 @@ var vm = new Vue({
 })
 
 // popup windows
+$('.popup button.dismiss').click(function() {
+	$.magnificPopup.close()
+})
 function popupAlert(text, iconClass, buttonText) {
 	$('#popup-alert .text').html(text)
 	$('#popup-alert .btn').text((buttonText || 'OK'))
@@ -611,9 +614,6 @@ function popupAlert(text, iconClass, buttonText) {
 		},
 	})
 }
-$('#popup-alert button').click(function() {
-	$.magnificPopup.close()
-})
 
 $('#import-grammar').magnificPopup({
 	type: 'inline',
@@ -651,9 +651,6 @@ $('#popup-import-grammar input[name=gist-uri]').keydown(function(ev) {
 	if (ev.keyCode === 13) {
         $.magnificPopup.close()
 	}
-})
-$('#popup-import-grammar button').click(function() {
-	$.magnificPopup.close()
 })
 
 // import functions
