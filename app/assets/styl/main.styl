@@ -265,6 +265,12 @@ section.grammar
 					background: transparent
 					&::-webkit-input-placeholder
 						color: rgba(#fff, 0)
+			.delete
+				color: $color-red
+				cursor: pointer
+				display: none
+				&:hover
+					color: darken($color-red, 20)
 			.export
 				text-transform: uppercase
 				font-size: .9em
@@ -290,6 +296,8 @@ section.grammar
 				input
 					&::-webkit-input-placeholder
 						color: rgba(#000, .3)
+				.delete
+					display: block
 		.node-wrapper
 			border-left: 1px solid $color-foreground-3
 			padding-left: $quarter-gutter

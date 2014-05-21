@@ -186,6 +186,10 @@ var vm = new Vue({
 				return 0
 			})
 		},
+		removeGroup: function(model, parent) {
+			parent.children.$remove(model)
+			storage.save(this.$root) // force save
+		},
 		getGrammarNode: function(searchPath) {
 			var node = this.nodeCache[searchPath]
 			if (typeof node === 'undefined') {

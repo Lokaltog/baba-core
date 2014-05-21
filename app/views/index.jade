@@ -115,6 +115,8 @@ html(lang='en')
 				input(placeholder='group name', v-model='model.label', data-autosize-input, v-on='blur: sortChildren(parentModel)')
 			.comment
 				input(placeholder='comment', v-model='model.comment', data-autosize-input)
+			.delete(v-on='click: removeGroup(model, parentModel)')
+				i.icon.icon-delete
 			.export(v-if='model.type === "sentence"', v-on='click: model.export = !model.export')
 				.exported(v-if='model.export') Exported
 				.unexported
