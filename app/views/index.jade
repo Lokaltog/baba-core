@@ -55,6 +55,35 @@ html(lang='en')
 						.btn(v-on='click: exportRawGrammar') Export raw grammar
 					div
 						.btn(v-on='click: exportGrammarGenerator') Get garbage text generator
+					div
+						.export-type
+							| Export as:
+							label(for='radio-export-module')
+								input(type='radio', id='radio-export-module', name='export-type', v-model='exportType', value='module')
+								| CommonJS/AMD/browser module
+							label(for='radio-export-executable')
+								input(type='radio', id='radio-export-executable', name='export-type', v-model='exportType', value='executable')
+								| Node.js executable
+						.usage
+							pre(v-if='exportType === "module"')
+								| // CommonJS:
+								| var Baba = require('./{{$root.grammarNameSlug}}')
+								br
+								br
+								| // AMD:
+								| define(['{{$root.grammarNameSlug}}'], function(Baba) { /* ... */ })
+								br
+								br
+								| // Browser:
+								| Baba // or window.Baba
+								br
+								br
+								| // Get grammar
+								div(v-repeat='slug: $root.exportedSlugs.slice(0, 3)')
+									| var str{{$index}} = Baba['{{slug}}']()
+								| // ...
+							pre(v-if='exportType === "executable"')
+								| Usage: ./{{$root.grammarNameSlug}}.generator.js [ {{ $root.exportedSlugs.join(' | ') }} ]
 					div save as gist
 					div preview exported sentences
 					div tweet, share

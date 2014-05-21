@@ -161,6 +161,14 @@ var vm = new Vue({
 		}
 		createNodeCache(this)
 
+		function updateSlugs(obj) {
+			obj.exportedSlugs = obj.exported.map(function(el) {
+				return S(el.label).slugify().toString()
+			}).sort()
+			obj.grammarNameSlug = S(obj.grammar.name).slugify().toString()
+		}
+		updateSlugs(this)
+
 		this.$watch('grammar', function(grammar) {
 			console.debug('Grammar watcher triggered')
 			// walk the grammar tree and detect any exported nodes
@@ -172,6 +180,7 @@ var vm = new Vue({
 			$('.generator-preview-buttons li').removeClass('active')
 
 			createNodeCache(this)
+			updateSlugs(this)
 
 			// make sure any new inputs are autosized
 			$('input[data-autosize-input]').autosizeInput()
@@ -342,7 +351,7 @@ var vm = new Vue({
 		},
 		exportGrammarGenerator: function() {
 			var slug = S(this.$root.grammar.name).slugify().toString()
-			var data = exportGrammar(vm, 'module', true)
+			var data = exportGrammar(vm, this.$root.exportType, true)
 
 			$.magnificPopup.open({
 				mainClass: 'mfp-transition-zoom-in',

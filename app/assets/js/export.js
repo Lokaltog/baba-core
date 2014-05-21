@@ -249,6 +249,7 @@ module.exports = function (vm, type, uglify) {
 		break
 
 	case 'executable':
+		comment = '#!/usr/bin/env node\n\n' + comment
 		exported = [
 			'(function() {',
 			'var grammar = (function() {',
