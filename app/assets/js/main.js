@@ -164,6 +164,10 @@ var vm = new Vue({
 		this.$watch('grammar', function(grammar) {
 			// walk the grammar tree and detect any exported nodes
 			this.exported = getExportedNodes(grammar)
+
+			// reset the exported preview generator every time the grammar changes
+			this.exportedGenerator = null
+
 			createNodeCache(this)
 
 			// make sure any new inputs are autosized
@@ -189,6 +193,23 @@ var vm = new Vue({
 		removeGroup: function(model, parent) {
 			parent.children.$remove(model)
 			storage.save(this.$root) // force save
+		},
+		previewGenerator: function(label) {
+			var slug = S(label).slugify().toString()
+			var container = $('#generator-preview-contents')
+
+			if (!this.exportedGenerator) {
+				console.log('Grammar changed, recompiling grammar')
+
+				var exportedGenerator = exportGrammar(vm, false)
+				var context = {}
+
+				new Function(exportedGenerator).call(context)
+
+				this.exportedGenerator = context.Baba
+			}
+
+			container.text(this.exportedGenerator[slug]())
 		},
 		getGrammarNode: function(searchPath) {
 			var node = this.nodeCache[searchPath]
@@ -310,7 +331,7 @@ var vm = new Vue({
 			})
 		},
 		exportGrammarGenerator: function() {
-			var data = exportGrammar(vm)
+			var data = exportGrammar(vm, true)
 
 			$.magnificPopup.open({
 				mainClass: 'mfp-transition-zoom-in',

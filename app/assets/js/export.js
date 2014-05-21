@@ -199,7 +199,7 @@ function compress(code) {
 	return compressed_ast.print_to_string()
 }
 
-module.exports = function (vm) {
+module.exports = function (vm, uglify) {
 	// create raw JS code to be exported
 	var exported = []
 	var comment = [
@@ -222,5 +222,8 @@ module.exports = function (vm) {
 
 	exported = exported.join('\n')
 
-	return comment + '\n' + compress(exported)
+	if (uglify) {
+		exported = compress(exported)
+	}
+	return comment + '\n' + exported
 }
