@@ -145,6 +145,7 @@ var vm = new Vue({
 		nodeCache: {},
 		exported: [],
 	},
+	lazy: true,
 	created: function() {
 		function createNodeCache(obj) {
 			// store flat cache of all nodes with parents
