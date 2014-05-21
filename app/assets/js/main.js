@@ -104,6 +104,9 @@ Vue.component('container-wordlist', {
 				this.$data.elements.push(value)
 			}
 
+			// sort word list alphabetically
+			this.$data.elements.sort()
+
 			ev.target.value = ''
 		},
 	},
@@ -172,6 +175,17 @@ var vm = new Vue({
 	},
 	methods: {
 		generateId: generateId,
+		sortChildren: function(model) {
+			model.children.sort(function (a, b) {
+				if (a.label > b.label) {
+					return 1
+				}
+				if (a.label < b.label) {
+					return -1
+				}
+				return 0
+			})
+		},
 		getGrammarNode: function(searchPath) {
 			var node = this.nodeCache[searchPath]
 			if (typeof node === 'undefined') {

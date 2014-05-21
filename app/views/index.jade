@@ -37,7 +37,7 @@ html(lang='en')
 				.contents
 					h1
 						| Create the rules
-						.add.btn(v-on='click: addChild(grammar)') Add section
+						.add.btn(v-on='click: addChild(grammar)') Add group
 					section.grammar(v-component='grammar', v-with='model: grammar')
 
 			section.step.preview-grammar
@@ -73,7 +73,7 @@ html(lang='en')
 		input.input-text(name='gist-uri', placeholder='Gist URI or ID')
 		div.or
 			.label or
-		textarea.input-text(name='json', placeholder='JSON source')
+		textarea.input-text(name='json', placeholder='Paste JSON source')
 		.buttons
 			button.btn.dismiss Import grammar
 
@@ -112,7 +112,7 @@ html(lang='en')
 				i.icon.icon-minus(v-if='open')
 				i.icon.icon-plus(v-if='!open')
 			.label
-				input(placeholder='section name', v-model='model.label', data-autosize-input)
+				input(placeholder='group name', v-model='model.label', data-autosize-input, v-on='blur: sortChildren(parentModel)')
 			.comment
 				input(placeholder='comment', v-model='model.comment', data-autosize-input)
 			.export(v-if='model.type === "sentence"', v-on='click: model.export = !model.export')
@@ -121,14 +121,14 @@ html(lang='en')
 					.btn(v-if='!model.export') Export
 
 		.node-wrapper(v-if='(model === $root.grammar) || open')
-			section(v-repeat='model: model.children | orderBy "label"', v-component='grammar')
-			.add-section(v-if='typeof model.children !== "undefined"', v-on='click: addChild(model)') Add section
+			section(v-repeat='model: model.children', v-with='parentModel: model', v-component='grammar')
+			.add-section(v-if='typeof model.children !== "undefined"', v-on='click: addChild(model)') Add group
 			div(v-if='model.type')
 				.container-wrapper(v-class='model.type', v-with='model', v-component='container-{{model.type || "wordlist"}}')
 
 		.section-init-wrapper(v-if='!model.type && typeof model.children === "undefined" && open')
-			p What should this section contain?
-			div(v-on='click: model.children = []') [Subsections]
+			p What should this group contain?
+			div(v-on='click: model.children = []') [Groups]
 			div(v-on='click: addWordlist(model)') [A word list]
 			div(v-on='click: addSentence(model)') [A sentence collection]
 
