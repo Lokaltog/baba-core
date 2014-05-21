@@ -74,14 +74,20 @@ html(lang='en')
 		div.or
 			.label or
 		textarea.input-text(name='json', placeholder='JSON source')
-		button.btn Import grammar
+		.buttons
+			button.btn.dismiss Import grammar
+
+	#popup-export-grammar.popup.mfp-hide
+		textarea.input-text
+		.buttons
+			button.btn.dismiss Close
 
 	#popup-alert.popup.mfp-hide
 		.text-wrap
 			.text
 			.icon
 		.buttons
-			button.btn OK
+			button.btn.dismiss OK
 
 	#popup-prompt.popup.mfp-hide
 		.text-wrap
@@ -90,7 +96,15 @@ html(lang='en')
 		div.input
 			input.input-text(name='value', placeholder='')
 		div.buttons
-			button.btn OK
+			button.btn.dismiss OK
+
+	#popup-confirm.popup.mfp-hide
+		.text-wrap
+			.text
+			.icon.question
+		div.buttons
+			button.btn.confirm OK
+			button.btn.dismiss Cancel
 
 	script(id='grammar-template', type='text/x-template')
 		h1(v-if='model !== $root.grammar')
