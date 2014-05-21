@@ -314,6 +314,7 @@ var vm = new Vue({
 		},
 		exportRawGrammar: function() {
 			var grammar = this.getRawGrammar()
+			var slug = S(this.$root.grammar.name).slugify().toString()
 			var data = JSON.stringify(grammar, undefined, '\t')
 
 			$.magnificPopup.open({
@@ -324,6 +325,10 @@ var vm = new Vue({
 				callbacks: {
 					open: function() {
 						$('#popup-export-grammar textarea').text(data)
+						$('#popup-export-grammar button.download').click(function() {
+							var blob = new Blob([data], { type: 'application/json' })
+							saveAs(blob, slug + '.grammar.json')
+						})
 						setTimeout(function() {
 							$('#popup-export-grammar textarea').select()
 						}, 100)
@@ -336,6 +341,7 @@ var vm = new Vue({
 			})
 		},
 		exportGrammarGenerator: function() {
+			var slug = S(this.$root.grammar.name).slugify().toString()
 			var data = exportGrammar(vm, true)
 
 			$.magnificPopup.open({
@@ -346,6 +352,10 @@ var vm = new Vue({
 				callbacks: {
 					open: function() {
 						$('#popup-export-grammar textarea').text(data)
+						$('#popup-export-grammar button.download').click(function() {
+							var blob = new Blob([data], { type: 'application/javascript' })
+							saveAs(blob, slug + '.generator.js')
+						})
 						setTimeout(function() {
 							$('#popup-export-grammar textarea').select()
 						}, 100)
