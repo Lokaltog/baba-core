@@ -89,10 +89,12 @@ input, textarea
 	padding: 0 $quarter-gutter
 	outline: none !important
 	display: inline-block
+	border: none
 	&.input-text
-		border: none
 		background: #fff
-		box-shadow: inset 0 1px 2px rgba(#000, .3)
+		box-shadow: inset 0 1px 1px rgba(#000, .3), inset 0 -1px 1px rgba(#000, .05)
+		&:focus
+			box-shadow: inset 0 1px 1px rgba(#000, .3), inset 0 -1px 1px rgba(#000, .05), 0 0 10px rgba($color-foreground-3, .5)
 
 .btn
 	font: 400 .9em/1.9em $font-main
@@ -554,12 +556,11 @@ section.grammar
 .mfp-content
 	margin: auto
 	background: #fff
-	padding: $gutter
 	border: 1px solid $color-foreground-3
 	box-shadow: 0 2px 5px rgba(#000, .08)
 	text-align: left
 	box-sizing: border-box
-	width: 30em
+	width: 35em
 
 .mfp-close
 	display: none
@@ -598,11 +599,12 @@ section.grammar
 			background: #fff
 			z-index: 101
 			display: inline-block
-			padding: 0 $quarter-gutter
+			padding: 0 $half-gutter
+			margin: $quarter-gutter 0
 		&::after
 			z-index: 100
 			content: ''
-			width: 30em - ($gutter * 2)
+			width: 100%
 			height: 0
 			border-bottom: 1px solid $color-foreground-3
 			display: block
@@ -610,7 +612,14 @@ section.grammar
 			left: 0
 			top: 50%
 
+#popup-export-grammar
+	textarea
+		width: 100%
+		height: 20em
+		font-size: .7em
+
 .popup
+	padding: $gutter
 	.text-wrap
 		display: flex
 		.text
