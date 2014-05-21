@@ -218,31 +218,71 @@ function compress(code) {
 	return compressed_ast.print_to_string()
 }
 
-module.exports = function (vm, uglify) {
-	// create raw JS code to be exported
-	var exported = []
+module.exports = function (vm, type, uglify) {
+	var grammar = exportGrammar(vm)
+	var grammarName = (vm.grammar.name || 'Unnamed garbage text generator')
+	var grammarAuthor = (vm.grammar.author || 'an unknown author')
+
+	var exported = ''
 	var comment = [
 		'/**',
-		' * ' + (vm.grammar.name || 'Unnamed garbage text generator') + ' by ' + (vm.grammar.author || 'an unknown author'),
+		' * ' + grammarName + ' by ' + grammarAuthor,
 		' *',
 		' * Made with the Baba Grammar Designer:',
 		' * http://baba.computer/',
 		' */',
 	].join('\n')
 
-	// wrap in UMD, compatible with AMD/CommonJS/browser
-	exported.push('(function (root, factory) {')
-	exported.push('if (typeof define === "function" && define.amd) { define([], factory) }')
-	exported.push('else if (typeof exports === "object") { module.exports = factory() }')
-	exported.push('else { root.' + moduleName + ' = factory() }')
-	exported.push('}(this, function() {')
-	exported.push(exportGrammar(vm))
-	exported.push('}))')
+	switch (type) {
+	default:
+	case 'module':
+		// wrap in UMD, compatible with AMD/CommonJS/browser
+		exported = [
+			'(function (root, factory) {',
+			'if (typeof define === "function" && define.amd) { define([], factory) }',
+			'else if (typeof exports === "object") { module.exports = factory() }',
+			'else { root.' + moduleName + ' = factory() }',
+			'}(this, function() {',
+			grammar,
+			'}))',
+		].join('\n')
+		break
 
-	exported = exported.join('\n')
+	case 'executable':
+		exported = [
+			'(function() {',
+			'var grammar = (function() {',
+			grammar,
+			'})()',
+			'var path = require("path")',
+			'var args = process.argv.slice(2)',
+			'var validArgs = Object.keys(grammar)',
+			'var output = []',
+			'function usage() {',
+			'process.stdout.write(["' + grammarName + '", "by ' + grammarAuthor + '", "",',
+			'"This is a garbage text generator made with",',
+			'"the Baba Grammar Designer: http://baba.computer/", "",',
+			'"Usage:", "",',
+			'"\t" + path.basename(process.argv[1]) + " [ " + validArgs.join(" | ") + " ] ", ""].join("\\n"))',
+			'process.exit(1)',
+			'}',
+			'if (!args.length) { usage() }',
+			'args.some(function(arg) {',
+			'if (validArgs.indexOf(arg) === -1) {',
+			'process.stdout.write("Invalid argument received: \\"" + arg + "\\"\\n\\n")',
+			'usage()',
+			'return true }',
+			'output.push(grammar[arg]())',
+			'})',
+			'process.stdout.write(output.join("\\n\\n") + "\\n")',
+			'})()',
+		].join('\n')
+		break
+	}
 
 	if (uglify) {
 		exported = compress(exported)
 	}
+
 	return comment + '\n' + exported
 }

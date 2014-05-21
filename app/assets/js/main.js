@@ -204,7 +204,7 @@ var vm = new Vue({
 			if (!this.exportedGenerator) {
 				console.debug('Grammar changed, recompiling')
 
-				var exportedGenerator = exportGrammar(vm, false)
+				var exportedGenerator = exportGrammar(vm, 'module', false)
 				var context = {}
 
 				new Function(exportedGenerator).call(context)
@@ -342,7 +342,7 @@ var vm = new Vue({
 		},
 		exportGrammarGenerator: function() {
 			var slug = S(this.$root.grammar.name).slugify().toString()
-			var data = exportGrammar(vm, true)
+			var data = exportGrammar(vm, 'module', true)
 
 			$.magnificPopup.open({
 				mainClass: 'mfp-transition-zoom-in',
