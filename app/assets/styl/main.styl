@@ -424,6 +424,7 @@ section.grammar
 // Generator preview
 .generator-preview-buttons
 	display: flex
+	flex-wrap: wrap
 	li
 		font: 400 .9em/1.9em $font-main
 		height: 1.85em
@@ -439,7 +440,7 @@ section.grammar
 		display: inline-block
 		cursor: pointer
 		user-select: none
-		margin: 0 $quarter-gutter 0 0
+		margin: 0 $quarter-gutter $quarter-gutter 0
 		&.active
 			font-weight: 700
 		&:hover
@@ -452,7 +453,6 @@ section.grammar
 	padding: $half-gutter
 	font-family: $font-quote
 	font-weight: 400
-	margin: $quarter-gutter 0 0 0
 	border: 1px solid $color-foreground-3
 
 // Context menu triggers
