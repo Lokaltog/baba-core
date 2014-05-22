@@ -19,9 +19,9 @@ var transforms = {
 
 // catchprase generator
 $('.catchphrase .text')
-	.text(catchphraseGenerator.catchphrase())
+	.text(catchphraseGenerator.catchphrase() + '!')
 	.click(function() {
-		$(this).text(catchphraseGenerator.catchphrase())
+		$(this).text(catchphraseGenerator.catchphrase() + '!')
 	})
 
 // vue util functions
