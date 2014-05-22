@@ -26,7 +26,7 @@ html(lang='en')
 			section.step.name-grammar
 				.number 1
 				.contents
-					h1 Name your grammar
+					h1 Name your generator
 					div.name
 						input.input-text(type='text', v-model='grammar.name', placeholder='Grammar name', data-autosize-input)
 						span.by by
@@ -35,13 +35,13 @@ html(lang='en')
 			section.step.create-grammar
 				.number 2
 				.contents
-					h1 Create the rules
+					h1 Create the grammar
 					section.grammar(v-component='grammar', v-with='model: grammar')
 
 			section.step.preview-grammar
 				.number 3
 				.contents
-					h1 Preview your grammar
+					h1 Preview your generator
 					p(v-if='!exported.length') You need to export at least one sentence collection. Toggle the export button to the right of any sentence collection above.
 					ul.generator-preview-buttons(v-if='exported.length')
 						li(v-repeat='exported', v-on='click: previewGenerator($event, label)') {{label}}
@@ -50,43 +50,45 @@ html(lang='en')
 			section.step.save-grammar
 				.number 4
 				.contents
-					h1 Save, export and share
-					div
-						.btn(v-on='click: exportRawGrammar') Export raw grammar
-					div
-						.btn(v-on='click: exportGrammarGenerator') Get garbage text generator
-					div
-						.export-type
-							| Export as:
-							label(for='radio-export-module')
-								input(type='radio', id='radio-export-module', name='export-type', v-model='exportType', value='module')
-								| CommonJS/AMD/browser module
-							label(for='radio-export-executable')
-								input(type='radio', id='radio-export-executable', name='export-type', v-model='exportType', value='executable')
-								| Node.js executable
-						.usage
-							pre(v-if='exportType === "module"')
-								| // CommonJS:
-								| var Baba = require('./{{$root.grammarNameSlug}}')
-								br
-								br
-								| // AMD:
-								| define(['{{$root.grammarNameSlug}}'], function(Baba) { /* ... */ })
-								br
-								br
-								| // Browser:
-								| Baba // or window.Baba
-								br
-								br
-								| // Get grammar
-								div(v-repeat='slug: $root.exportedSlugs.slice(0, 3)')
-									| var str{{$index}} = Baba['{{slug}}']()
-								| // ...
-							pre(v-if='exportType === "executable"')
-								| Usage: ./{{$root.grammarNameSlug}}.generator.js [ {{ $root.exportedSlugs.join(' | ') }} ]
-					div save as gist
-					div preview exported sentences
-					div tweet, share
+					h1 Save, export and share!
+					p(v-if='!exported.length') You need to export at least one sentence collection. Toggle the export button to the right of any sentence collection above.
+					div(v-if='exported.length')
+						div
+							.btn(v-on='click: exportRawGrammar') Export raw grammar
+						div
+							.btn(v-on='click: exportGrammarGenerator') Get garbage text generator
+						div
+							.export-type
+								| Export as:
+								label(for='radio-export-module')
+									input(type='radio', id='radio-export-module', name='export-type', v-model='exportType', value='module')
+									| CommonJS/AMD/browser module
+								label(for='radio-export-executable')
+									input(type='radio', id='radio-export-executable', name='export-type', v-model='exportType', value='executable')
+									| Node.js executable
+							.usage
+								pre(v-if='exportType === "module"')
+									| // CommonJS:
+									| var Baba = require('./{{$root.grammarNameSlug}}')
+									br
+									br
+									| // AMD:
+									| define(['{{$root.grammarNameSlug}}'], function(Baba) { /* ... */ })
+									br
+									br
+									| // Browser:
+									| Baba // or window.Baba
+									br
+									br
+									| // Get generated text
+									div(v-repeat='slug: $root.exportedSlugs.slice(0, 3)')
+										div(v-if='slug') var str{{$index + 1}} = Baba['{{slug}}']()
+									| // ...
+								pre(v-if='exportType === "executable"')
+									| Usage: ./{{$root.grammarNameSlug}}.js [ {{ $root.exportedSlugs.join(' | ') }} ]
+						div save as gist
+						div preview exported sentences
+						div tweet, share
 
 		footer
 			p
