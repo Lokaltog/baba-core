@@ -363,7 +363,7 @@ var vm = new Vue({
 						$('#popup-export-grammar textarea').text(data)
 						$('#popup-export-grammar button.download').click(function() {
 							var blob = new Blob([data], { type: 'application/javascript' })
-							saveAs(blob, slug + '.generator.js')
+							saveAs(blob, slug + '.js')
 						})
 						setTimeout(function() {
 							$('#popup-export-grammar textarea').select()
