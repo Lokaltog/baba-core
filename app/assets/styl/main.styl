@@ -34,7 +34,7 @@ $color-green = #7a3
 global-reset()
 
 // Icons
-i.icon
+.icon
 	font: normal 1em/1em $font-icon
 	&.icon-add
 		&::before
@@ -42,27 +42,15 @@ i.icon
 	&.icon-delete
 		&::before
 			content: '\e801'
-	&.icon-edit
-		&::before
-			content: '\e802'
 	&.icon-refresh
 		&::before
 			content: '\e803'
-	&.icon-sort-ascending
-		&::before
-			content: '\e804'
-	&.icon-sort-descending
-		&::before
-			content: '\e805'
 	&.icon-minus
 		&::before
 			content: '\e806'
 	&.icon-plus
 		&::before
 			content: '\e807'
-	&.icon-whitespace
-		&::before
-			content: '\e808'
 
 // Main elements
 p
@@ -295,7 +283,7 @@ section.tree
 						color: darken($color-green, 20)
 					&::before
 						font: normal 1em $font-icon
-						content: '\e80a'
+						content: '\e802'
 						padding: 0 $quarter-gutter 0 0
 			&:hover
 				.export
@@ -430,15 +418,52 @@ section.tree
 
 // Transform editor design
 .transforms
-	.function, .regex
+	.transform
+		display: flex
+		ul.actions
+			display: flex
+			justify-content: flex-end
+			align-self: flex-start
+			width: 15em
+			.up, .down, .delete
+				&::before
+					display: block
+					font: normal 1em/1.4em $font-icon
+					text-align: center
+					cursor: pointer
+					width: 2em
+				&:hover
+					&::before
+						background: $color-foreground
+						color: #fff
+			.down::before
+				content: '\e804'
+			.up::before
+				content: '\e805'
+			.delete
+				&::before
+					content: '\e801'
+					color: $color-red
+				&:hover
+					&::before
+						background: $color-red
+		&:first-of-type .actions .up
+			&::before
+				visibility: hidden
+		&:last-of-type .actions .down
+			&::before
+				visibility: hidden
+	.function,
+	.regex
 		display: flex
 		align-items: center
 		margin: 0 0 $quarter-gutter 0
+		flex: 1 1 auto
 		input, textarea
+			flex: 1 1 auto
 			font-family: monospace
 		textarea
 			height: 6em
-			width: 100%
 		input
 			width: 20em
 	.divider::after
@@ -614,11 +639,11 @@ section.tree
 .context-menu-submenu
 	& > span
 		&::after
-			font: normal .5em/3.5em $font-icon
+			font: normal .8em/2em $font-icon
 			vertical-align: top
-			content: '\e809'
+			content: '\e80f'
 			position: absolute
-			right: $half-gutter
+			right: $quarter-gutter
 
 // Magnificent popup
 .mfp-hide

@@ -239,13 +239,17 @@ html(lang='en')
 			.node-wrapper(v-if='(transform === $root.transforms) || transform.open')
 				div(v-if='transform.children', v-component='transforms', v-with='transforms: transform, parentModel: transform')
 				ul
-					li(v-repeat='tf: transform.transforms')
+					li.transform(v-repeat='tf: transform.transforms')
 						.function(v-if='typeof tf === "function"')
 							textarea.input-text(v-on='change: updateTransformFunction($event, transform.transforms, $index)') {{tf}}
 						.regex(v-if='typeof tf !== "function"')
 							input.input-text(v-on='change: updateTransformRegex($event, transform.transforms, tf, 0)', value='{{tf[0]}}')
 							.divider
 							input.input-text(v-on='change: updateTransformRegex($event, transform.transforms, tf, 1)', value='{{tf[1]}}')
+						ul.actions
+							li.up(v-on='click: swapItems(transform.transforms, $index, $index - 1)')
+							li.down(v-on='click: swapItems(transform.transforms, $index, $index + 1)')
+							li.delete(v-on='click: transform.transforms.$remove(tf)')
 				.add-transform(v-if='typeof transform.children === "undefined"')
 					.add-regex(v-on='click: addTransformRegex(transform)') Add regex
 					.add-function(v-on='click: addTransformFunction(transform)') Add function

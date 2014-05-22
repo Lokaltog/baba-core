@@ -194,6 +194,7 @@ var vm = new Vue({
 
 		this.$watch('grammar', function(grammar) {
 			console.debug('Grammar watcher triggered')
+
 			// walk the grammar tree and detect any exported nodes
 			this.exported = getExportedNodes(grammar)
 
@@ -224,6 +225,11 @@ var vm = new Vue({
 				}
 				return 0
 			})
+		},
+		swapItems: function(arr, index, newIndex) {
+			var tmp = arr[index]
+			arr.$set(index, arr[newIndex])
+			arr.$set(newIndex, tmp)
 		},
 		removeGroup: function(model, parent) {
 			parent.children.$remove(model)
