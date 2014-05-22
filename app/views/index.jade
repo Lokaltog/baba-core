@@ -36,7 +36,12 @@ html(lang='en')
 				.number 2
 				.contents
 					h1 Create the grammar
-					section.grammar(v-component='grammar', v-with='model: grammar')
+					ul.tabs
+						li(v-on='click: tab = "grammar"') Grammar rules
+						li(v-on='click: tab = "transforms"') Transforms
+
+					section.tree.grammar(v-component='grammar', v-with='model: grammar', v-show='!tab || tab === "grammar"')
+					section.tree.transforms(v-component='transforms', v-with='model: transforms', v-show='tab === "transforms"')
 
 			section.step.preview-grammar
 				.number 3
@@ -85,7 +90,10 @@ html(lang='en')
 										div(v-if='slug') var str{{$index + 1}} = Baba['{{slug}}']()
 									| // ...
 								pre(v-if='exportType === "executable"')
-									| Usage: ./{{$root.grammarNameSlug}}.js [ {{ $root.exportedSlugs.join(' | ') }} ]
+									| Usage:
+									br
+									br
+									|     ./{{$root.grammarNameSlug}}.js [ {{ $root.exportedSlugs.join(' | ') }} ]
 						div save as gist
 						div preview exported sentences
 						div tweet, share
@@ -185,14 +193,14 @@ html(lang='en')
 				div.menu-update-sentence-ref(v-on='click: menuUpdateSentenceRef(this, element, sentence.sentence)', v-show='typeof element.ref !== "undefined"')
 					.display(v-show='!preview')
 						ol.prefix(v-if='element.transform && filterTransforms(element.transform, "prefix")')
-							li(v-repeat='filterTransforms(element.transform, "prefix")') {{tag}}
+							li(v-repeat='filterTransforms(element.transform, "prefix")') {{tag}}·
 							li(v-repeat='filterTransforms(element.transform, undefined)') {{label.toLowerCase()}}
 
 						ol.components
 							li(v-repeat='getGrammarComponents(element.ref)', v-class='key') {{label}}
 
 						ol.suffix(v-if='element.transform && filterTransforms(element.transform, "suffix")')
-							li(v-repeat='filterTransforms(element.transform, "suffix")') {{tag}}
+							li(v-repeat='filterTransforms(element.transform, "suffix")') ·{{tag}}
 
 					.preview(v-if='preview')
 						ol.components
@@ -209,6 +217,43 @@ html(lang='en')
 
 				.preview.btn(v-class='active: preview', v-on='click: preview = !preview') Preview
 		div(v-on='click: elements.push({sentence:[]})') Add sentence
+
+	script(id='transforms-template', type='text/x-template')
+		section(v-repeat='transform: transforms.children', v-with='parentModel: transform')
+			h1
+				.toggle(v-on='click: transform.open = !transform.open')
+					i.icon.icon-minus(v-if='transform.open')
+					i.icon.icon-plus(v-if='!transform.open')
+				.label
+					input(placeholder='transform name', v-model='transform.label', data-autosize-input, v-on='blur: sortChildren(parentModel)')
+				.tag(v-if='!transform.children')
+					input(placeholder='set tag', v-model='transform.tag', data-autosize-input)
+				.type(v-if='!transform.children')
+					select(v-model='transform.type')
+						option (none)
+						option(value='prefix') prefix
+						option(value='suffix') suffix
+				.delete(v-on='click: removeGroup(transform, parentModel)')
+					i.icon.icon-delete
+
+			.node-wrapper(v-if='(transform === $root.transforms) || transform.open')
+				div(v-if='transform.children', v-component='transforms', v-with='transforms: transform, parentModel: transform')
+				ul
+					li(v-repeat='tf: transform.transforms')
+						.function(v-if='typeof tf === "function"')
+							textarea.input-text(v-on='change: updateTransformFunction($event, transform.transforms, $index)') {{tf}}
+						.regex(v-if='typeof tf !== "function"')
+							input.input-text(v-on='change: updateTransformRegex($event, transform.transforms, tf, 0)', value='{{tf[0]}}')
+							.divider
+							input.input-text(v-on='change: updateTransformRegex($event, transform.transforms, tf, 1)', value='{{tf[1]}}')
+				.add-transform(v-if='typeof transform.children === "undefined"')
+					.add-regex(v-on='click: addTransformRegex(transform)') Add regex
+					.add-function(v-on='click: addTransformFunction(transform)') Add function
+				.test(v-if='transform.transforms')
+					input.input-text(v-on='keyup: testTransform($event, transform.transforms)', placeholder='Test transform')
+					.divider
+					.transform-test
+		.add-section(v-on='click: addChild(transform || $root.transforms)') Add group
 
 	script(src='/static/js/lib/vue.js')
 	script(src='/static/js/lib/jquery-2.1.1.js')

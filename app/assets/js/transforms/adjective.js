@@ -9,7 +9,7 @@ module.exports = {
 				{
 					id: 'ipb3aevta0',
 					label: 'Abstract noun',
-					tag: '·ity',
+					tag: 'ity',
 					type: 'suffix',
 					transforms: [
 						['^(.*)eme$', '$1emacy'],
@@ -21,7 +21,7 @@ module.exports = {
 				{
 					id: '486o4dziu0',
 					label: 'Adverb',
-					tag: '·ly',
+					tag: 'ly',
 					type: 'suffix',
 					transforms: [
 						['^(.*)ic$', '$1ically'],

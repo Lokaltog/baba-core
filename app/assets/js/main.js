@@ -58,9 +58,13 @@ function getNodeCache() {
 
 function addContextSubmenu(node, parent) {
 	var id = 'node:' + node.id
+	var tag = node.tag
 	parent[id] = { name: node.label }
-	if (node.tag) {
-		parent[id].name = '<span class="tag-container"><span class="label">' + node.label + '</span> <span class="tag">' + node.tag + '</span></span>'
+	if (tag) {
+		if (node.type) {
+			tag = node.type === 'prefix' ? tag + '·' : '·' + tag
+		}
+		parent[id].name = '<span class="tag-container"><span class="label">' + node.label + '</span> <span class="tag">' + tag + '</span></span>'
 	}
 	if (node.children) {
 		var children = node.children.slice(0)
@@ -140,6 +144,13 @@ Vue.component('container-sentence', {
 	},
 })
 
+Vue.component('transforms', {
+	template: '#transforms-template',
+	data: {
+		open: false,
+	},
+})
+
 var vm = new Vue({
 	el: 'body',
 	data: {
@@ -169,6 +180,17 @@ var vm = new Vue({
 			obj.grammarNameSlug = S(obj.grammar.name).slugify().toString()
 		}
 		updateSlugs(this)
+
+		this.$watch('transforms', function(grammar) {
+			console.debug('Transforms watcher triggered')
+
+			createNodeCache(this)
+
+			// make sure any new inputs are autosized
+			$('input[data-autosize-input]').autosizeInput()
+
+			// TODO save in storage below
+		})
 
 		this.$watch('grammar', function(grammar) {
 			console.debug('Grammar watcher triggered')
@@ -388,6 +410,38 @@ var vm = new Vue({
 			model.id = generateId()
 			model.type = 'sentence'
 			model.elements = []
+		},
+		updateTransformFunction: function(ev, transforms, idx) {
+			try {
+				transforms[idx] = Function('return (' + $(ev.target).val() + ')')()
+				this.testTransform(ev, transforms)
+			}
+			catch (e) {
+				popupAlert('An error occured while parsing the transform function: <p><strong>' + e + '</strong></p>', 'error')
+			}
+		},
+		updateTransformRegex: function(ev, transforms, node, idx) {
+			node[idx] = $(ev.target).val()
+			this.testTransform(ev, transforms)
+		},
+		addTransformRegex: function(transform) {
+			if (!transform.transforms) {
+				transform.$add('transforms', [])
+				transform.transforms = []
+			}
+			transform.transforms.push(['^$', ''])
+		},
+		addTransformFunction: function(transform) {
+			if (!transform.transforms) {
+				transform.$add('transforms', [])
+				transform.transforms = []
+			}
+			transform.transforms.push(function(str) {})
+		},
+		testTransform: function(ev, transforms) {
+			var parent = $(ev.target).closest('.node-wrapper')
+			var val = parent.find('.test input').val()
+			parent.find('.transform-test').text(val ? utils.applyTransformArray(val, transforms) : '')
 		},
 		menuAddElement: function(node, sentence) {
 			var selector = '.menu-add-element'

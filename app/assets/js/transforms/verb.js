@@ -9,10 +9,10 @@ module.exports = {
 				{
 					id: '9z7i8y279k',
 					label: 'Present',
-					tag: '·s',
+					tag: 's',
 					type: 'suffix',
 					transforms: [
-						['^(.*[^aeo])y$', '$1ies'],
+						['^(.*[^aeiou])y$', '$1ies'],
 						['^(.*([sc]h|s|ex))$', '$1es'],
 						['^(.*)$', '$1s'],
 					],
@@ -21,7 +21,7 @@ module.exports = {
 					// Rules from http://www.oxforddictionaries.com/us/words/verb-tenses-adding-ed-and-ing
 					id: '8ikx0opb7j',
 					label: 'Present participle',
-					tag: '·ing',
+					tag: 'ing',
 					type: 'suffix',
 					transforms: [
 						// two wovels + consonant -> not double final consonant
@@ -44,7 +44,7 @@ module.exports = {
 					// Rules from http://www.oxforddictionaries.com/us/words/verb-tenses-adding-ed-and-ing
 					id: 'lioq5xaxsi',
 					label: 'Past',
-					tag: '·ed',
+					tag: 'ed',
 					type: 'suffix',
 					transforms: [
 						// two wovels + consonant -> not double final consonant
@@ -67,7 +67,7 @@ module.exports = {
 				{
 					id: 'q0uri6irxk',
 					label: 'Past participle',
-					tag: '·en',
+					tag: 'en',
 					type: 'suffix',
 					transforms: [
 						['^(.*?)[aeiouy]?$', '$1en'],
@@ -82,7 +82,7 @@ module.exports = {
 				{
 					id: '9i2oiktftv',
 					label: 'Make/become/treat',
-					tag: '·ize',
+					tag: 'ize',
 					type: 'suffix',
 					transforms: [
 						['^(.*?)[aeiouy]?$', '$1ize'],
@@ -91,7 +91,7 @@ module.exports = {
 				{
 					id: 'mxjz59qvra',
 					label: 'Agent noun (Latinate)',
-					tag: '·or',
+					tag: 'or',
 					type: 'suffix',
 					transforms: [
 						['^(.*?)(e|or)?$', '$1or'],
@@ -100,7 +100,7 @@ module.exports = {
 				{
 					id: 'v5o544wj5n',
 					label: 'Agent noun (Germanic)',
-					tag: '·er',
+					tag: 'er',
 					type: 'suffix',
 					transforms: [
 						['^(.*?)e?$', '$1er'],

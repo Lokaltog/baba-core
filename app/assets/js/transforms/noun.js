@@ -5,7 +5,7 @@ module.exports = {
 		{
 			id: '5d5kbm8y9k',
 			label: 'Plural',
-			tag: '·s',
+			tag: 's',
 			type: 'suffix',
 			transforms: [
 				['^(.*)ife$', '$1ives'],

@@ -237,7 +237,7 @@ section.step
 
 // Builder styles
 $builder-gutter = 5px
-section.grammar
+section.tree
 	margin-left: -($half-gutter)
 	user-select: none
 	background: #fff
@@ -265,7 +265,8 @@ section.grammar
 					border: 0
 					text-align: left
 					background: transparent
-			.comment
+			.comment,
+			.tag
 				input
 					border: 0
 					text-align: right
@@ -427,6 +428,54 @@ section.grammar
 			.btn
 				margin-left: $builder-gutter
 
+// Transform editor design
+.transforms
+	.function, .regex
+		display: flex
+		align-items: center
+		margin: 0 0 $quarter-gutter 0
+		input, textarea
+			font-family: monospace
+		textarea
+			height: 6em
+			width: 100%
+		input
+			width: 20em
+	.divider::after
+		display: block
+		content: '→'
+		margin: 0 $quarter-gutter
+		line-height: 1em
+	.test
+		display: flex
+		align-items: center
+		margin: $quarter-gutter 0
+		padding: $quarter-gutter 0 0 0
+		border-top: 1px solid $color-foreground-3
+		input
+			width: 10em
+			font-weight: 300
+		.transform-test
+			font-size: .9em
+			&:empty
+				&::after
+					color: $color-foreground-2
+					content: 'waiting for input'
+			&:not(:empty)
+				background: $color-foreground-3
+				padding: 0 $quarter-gutter
+	.add-transform
+		display: flex
+		div
+			margin: 0 $half-gutter 0 0
+			background: $color-foreground-3
+			font-weight: 700
+			font-size: .7em
+			text-transform: uppercase
+			line-height: 1
+			padding: $quarter-gutter
+			cursor: pointer
+
 // Generator preview
 .generator-preview-buttons
 	display: flex
@@ -480,7 +529,7 @@ section.grammar
 
 .context-menu-item
 	display: block
-	padding: 0 $half-gutter 0 $quarter-gutter
+	padding: 0 $quarter-gutter
 	text-shadow: none
 	position: relative
 	user-select: none
@@ -528,6 +577,7 @@ section.grammar
 			flex: 0 0 auto
 			text-align: right
 			color: $color-foreground-2
+			margin: 0 0 0 $half-gutter
 
 .context-menu-root
 	& > li:first-child
