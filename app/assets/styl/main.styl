@@ -1,5 +1,5 @@
 // Imports
-@import url('http://fonts.googleapis.com/css?family=Pacifico|Roboto:300,400,700|Roboto+Slab:400')
+@import url('http://fonts.googleapis.com/css?family=Lobster+Two:700|Roboto:300,700|Roboto+Slab:700')
 
 // Web fonts
 @font-face
@@ -9,7 +9,7 @@
 	font-weight: normal
 
 // Design settings
-$font-logo = Pacifico, sans-serif
+$font-logo = 'Lobster Two', sans-serif
 $font-main = Roboto, sans-serif
 $font-quote = 'Roboto Slab', serif
 $font-icon = baba-icons
@@ -73,11 +73,13 @@ pre
 
 // Form elements
 input
-	font: 400 .9em/1.9em $font-main
+	font: 300 .9em/1.9em $font-main
 	height: 1.9em
 	transition: all .2s
+
 textarea
-	font: 400 .9em $font-main
+	font: 300 .9em $font-main
+
 input, textarea
 	box-sizing: border-box
 	margin: 0
@@ -92,11 +94,11 @@ input, textarea
 			box-shadow: inset 0 1px 1px rgba(#000, .3), inset 0 -1px 1px rgba(#000, .05), 0 0 10px rgba($color-foreground-3, .5)
 
 .btn
-	font: 400 .9em/1.9em $font-main
 	height: 1.85em
+	font: 400 .9em/1.7em $font-main
 	box-shadow: inset 0 1px 0 rgba(#fff, .2), inset 0 -1px 0 rgba(#000, .3)
 	cursor: pointer
-	padding: 0 $quarter-gutter
+	padding: 0 $half-gutter
 	position: relative
 	background: $color-foreground-1
 	color: #fff
@@ -113,6 +115,30 @@ input, textarea
 		background: $color-green
 		&:hover
 			background: darken($color-green, 10)
+
+.link-btn
+	text-transform: uppercase
+	height: 1.7em
+	font: 700 .7em/@height $font-main
+	cursor: pointer
+	position: relative
+	text-shadow: 0 1px 0 rgba(#fff, .7)
+	text-align: center
+	box-sizing: border-box
+	transition: all .1s
+	display: inline-block
+	cursor: pointer
+	user-select: none
+	margin: 0 $quarter-gutter 0 0
+	.icon
+		color: $color-foreground-2
+		margin: 0 $quarter-gutter 0 0
+	&.active
+		font-weight: 700
+	&:hover
+		border-bottom: 1px solid $color-foreground-3
+	&:active
+		top: 1px
 
 // Layout
 html, body
@@ -140,33 +166,38 @@ header
 	h1
 		flex: 1 1 auto
 		display: flex
-		font: 1.5em $font-logo
+		font: 1.5em/1 $font-logo
 		color: #fff
+		align-items: center
 		.title
 			flex: 1 1 auto
+			font-weight: 700
 		.catchphrase
 			color: lighten($color-foreground-1, 5)
-			font-size: .8em
-			line-height: 2em
+			font: .65em/1 $font-logo
 			flex: 0 1 auto
 			cursor: pointer
+			display: flex
+			align-items: center
 			&:hover
 				color: $color-foreground-2
 			div
 				display: inline-block
 				margin: 0 $quarter-gutter 0 0
 			.icon
-				font-size: .7em
+				display: flex
+				&::before
+					font-size: .6em
+					line-height: 1
+					vertical-align: top
 	.actions
-		flex: 0 1 auto
 		.btn
-			display: inline-block
-			font-size: .8em
+			color: $color-foreground-2
 			margin: 0 0 0 $quarter-gutter
 			background: lighten($color-foreground, 14)
-			height: 2.4em
-			line-height: @height
+			font-size: .85em
 			&:hover
+				color: #fff
 				background: lighten($color-foreground, 10)
 
 #contents
@@ -228,14 +259,15 @@ section.step
 					align-self: flex-end
 					padding: .1em $half-gutter .8em $half-gutter
 					box-sizing: border-box
-					font-size: .9em
+					font-size: .7em
+					text-transform: uppercase
 					color: $color-foreground-1
 					&:hover
 						color: $color-foreground
 					&.active
 						color: $color-foreground
 						background: #fff
-						font-weight: 400
+						font-weight: 700
 
 .name-grammar
 	.name .by
@@ -248,8 +280,13 @@ section.tree
 	user-select: none
 	background: #fff
 	padding: $quarter-gutter 0
+	.add-section:not(:empty)
+		padding: $quarter-gutter $quarter-gutter 0 $half-gutter
+		line-height: 1
 	section
 		padding: 0 $quarter-gutter 0 $half-gutter
+		.add-section:not(:empty)
+			padding: ($quarter-gutter / 2) 0 0 $quarter-gutter
 		section
 			padding: 0 0 0 $quarter-gutter
 		h1
@@ -371,7 +408,7 @@ section.tree
 		border: 0
 		box-shadow: 0 1px 2px rgba(#000, .1)
 		background: rgba(#fff, .4)
-		height: $line-height
+		height: 1.85em
 		&:focus
 			background: rgba(#fff, .8)
 		&::-webkit-input-placeholder
@@ -388,6 +425,9 @@ section.tree
 
 	// sentence style
 	&.sentence
+		margin: 0 0 $quarter-gutter 0
+		.btn
+			padding: 0 $quarter-gutter
 		.ref
 			&:not(.preview)
 				box-shadow: 0 1px 2px rgba(#000, .1)
@@ -427,7 +467,7 @@ section.tree
 			&:not(.preview)
 				box-shadow: 0 1px 2px rgba(#000, .1)
 				background: rgba(#fff, .5)
-				font-weight: 400
+				font-weight: 700
 				.string
 					padding: 0 $quarter-gutter
 		.actions
@@ -509,49 +549,22 @@ section.tree
 				padding: 0 $quarter-gutter
 	.add-transform
 		display: flex
-		div
-			margin: 0 $half-gutter 0 0
-			background: $color-foreground-3
-			font-weight: 700
-			font-size: .7em
-			text-transform: uppercase
-			line-height: 1
-			padding: $quarter-gutter
-			cursor: pointer
 
 // Generator preview
 .generator-preview-buttons
 	display: flex
 	flex-wrap: wrap
+	margin: 0 0 $quarter-gutter 0
 	li
-		font: 400 .9em/1.9em $font-main
-		height: 1.85em
-		box-shadow: 0 2px 2px rgba(#000, .1)
-		cursor: pointer
-		padding: 0 $quarter-gutter
-		position: relative
-		background: #fff
-		text-shadow: 0 1px 0 rgba(#fff, .7)
-		text-align: center
-		box-sizing: border-box
-		transition: all .1s
-		display: inline-block
-		cursor: pointer
-		user-select: none
-		margin: 0 $quarter-gutter $quarter-gutter 0
-		&.active
-			font-weight: 700
-		&:hover
-			color: $color-foreground-1
-		&:active
-			top: 1px
-			box-shadow: 0 1px 1px rgba(#000, .1)
+		margin: 0 $half-gutter 0 0
+		font-size: .8em
 
 #generator-preview-contents:not(:empty)
 	padding: $half-gutter
 	font-family: $font-quote
-	font-weight: 400
-	border: 1px solid $color-foreground-3
+	font-size: 1.1em
+	background: #fff
+	margin-left: -1em
 
 // Context menu triggers
 .menu-update-sentence-str,
@@ -564,9 +577,7 @@ section.tree
 .context-menu-list
 	display: block
 	background: #fff
-	border: 1px solid $color-foreground-3
-	box-shadow: 0 2px 5px rgba(#000, .08)
-	box-sizing: border-box
+	box-shadow: 0 0 1px rgba(#000, .5), 0 3px 5px rgba(#000, .08)
 	position: absolute
 	min-width: 8em
 
@@ -576,7 +587,6 @@ section.tree
 	text-shadow: none
 	position: relative
 	user-select: none
-	margin-top: -1px
 	&.hover
 		cursor: pointer
 		background: $color-foreground
@@ -638,7 +648,7 @@ section.tree
 		&::before
 
 			border-width: $arrow-width
-			border-color: transparent $color-foreground-3 transparent transparent
+			border-color: transparent rgba(#000, .2) transparent transparent
 			left: -(@border-width * 2)
 			top: $arrow-offset
 		&::after
@@ -698,8 +708,7 @@ section.tree
 .mfp-content
 	margin: auto
 	background: #fff
-	border: 1px solid $color-foreground-3
-	box-shadow: 0 2px 5px rgba(#000, .08)
+	box-shadow: 0 0 1px rgba(#000, .5), 0 3px 5px rgba(#000, .08)
 	text-align: left
 	box-sizing: border-box
 	width: 35em
@@ -797,3 +806,4 @@ section.tree
 		button
 			padding: 0 $gutter
 			height: 2.4em
+			font-weight: 700

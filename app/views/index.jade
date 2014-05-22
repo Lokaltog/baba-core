@@ -52,7 +52,9 @@ html(lang='en')
 						h1 Preview your generator
 					p(v-if='!exported.length') You need to export at least one sentence collection. Toggle the export button to the right of any sentence collection above.
 					ul.generator-preview-buttons(v-if='exported.length')
-						li(v-repeat='exported', v-on='click: previewGenerator($event, label)') {{label}}
+						li.link-btn(v-repeat='exported', v-on='click: previewGenerator($event, label)')
+							i.icon.icon-refresh
+							| {{label}}
 					#generator-preview-contents
 
 			section.step.save-grammar
@@ -166,7 +168,10 @@ html(lang='en')
 
 		.node-wrapper(v-if='(model === $root.grammar) || open')
 			section(v-repeat='model: model.children', v-with='parentModel: model', v-component='grammar')
-			.add-section(v-if='typeof model.children !== "undefined"', v-on='click: addChild(model)') Add group
+			.add-section
+				.link-btn(v-if='typeof model.children !== "undefined"', v-on='click: addChild(model)')
+					i.icon.icon-add
+					| Add group
 			div(v-if='model.type')
 				.container-wrapper(v-class='model.type', v-with='model', v-component='container-{{model.type || "wordlist"}}')
 
@@ -220,7 +225,11 @@ html(lang='en')
 					i.icon.icon-refresh
 
 				.preview.btn(v-class='active: preview', v-on='click: preview = !preview') Preview
-		div(v-on='click: elements.push({sentence:[]})') Add sentence
+
+		.add-section
+			.link-btn(v-on='click: elements.push({sentence:[]})')
+				i.icon.icon-add
+				| Add sentence
 
 	script(id='transforms-template', type='text/x-template')
 		section(v-repeat='transform: transforms.children', v-with='parentModel: transform')
@@ -255,13 +264,16 @@ html(lang='en')
 							li.down(v-on='click: swapItems(transform.transforms, $index, $index + 1)')
 							li.delete(v-on='click: transform.transforms.$remove(tf)')
 				.add-transform(v-if='typeof transform.children === "undefined"')
-					.add-regex(v-on='click: addTransformRegex(transform)') Add regex
-					.add-function(v-on='click: addTransformFunction(transform)') Add function
+					.add-regex.link-btn(v-on='click: addTransformRegex(transform)') Add regex
+					.add-function.link-btn(v-on='click: addTransformFunction(transform)') Add function
 				.test(v-if='transform.transforms')
 					input.input-text(v-on='keyup: testTransform($event, transform.transforms)', placeholder='Test transform')
 					.divider
 					.transform-test
-		.add-section(v-on='click: addChild(transform || $root.transforms)') Add group
+		.add-section
+			.link-btn(v-on='click: addChild(transform || $root.transforms)')
+				i.icon.icon-add
+				| Add group
 
 	script(src='/static/js/lib/vue.js')
 	script(src='/static/js/lib/jquery-2.1.1.js')
