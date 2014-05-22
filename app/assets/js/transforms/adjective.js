@@ -11,12 +11,11 @@ module.exports = {
 					label: 'Abstract noun',
 					tag: '·ity',
 					type: 'suffix',
-					re: [
+					transforms: [
 						['^(.*)eme$', '$1emacy'],
 						['^(.*)([ia])ble$', '$1$2bility'],
 						['^(.*)([tv])e$', '$1$2eness'],
-						['^(.*)[aeiouy]$', '$1ity'],
-						['^(.*)$', '$1ity'],
+						['^(.*[aeiouy]?)$', '$1ity'],
 					],
 				},
 				{
@@ -24,7 +23,7 @@ module.exports = {
 					label: 'Adverb',
 					tag: '·ly',
 					type: 'suffix',
-					re: [
+					transforms: [
 						['^(.*)ic$', '$1ically'],
 						['^(.*)[aeiouy]$', '$1y'],
 						['^(.*)$', '$1ly'],

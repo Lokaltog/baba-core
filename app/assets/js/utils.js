@@ -2,11 +2,18 @@ module.exports = {
 	randomItem: function(items) {
 		return items[Math.floor(Math.random() * items.length)]
 	},
-	replaceRegexp: function(str, rules) {
+	applyTransformArray: function(str, rules) {
 		rules.some(function(filter) {
-			var re = new RegExp(filter[0], 'ig')
-			if (str.match(re)) {
-				str = str.replace(re, filter[1])
+			if (typeof filter === 'function') {
+				// function transform
+				// TODO allow the transform function to return true to discontinue applying transforms
+				str = filter(str)
+				return false
+			}
+			// regexp transform
+			var search = new RegExp(filter[0], 'ig')
+			if (str.match(search)) {
+				str = str.replace(search, filter[1])
 				return true
 			}
 		})

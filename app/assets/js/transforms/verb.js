@@ -11,7 +11,7 @@ module.exports = {
 					label: 'Present',
 					tag: '·s',
 					type: 'suffix',
-					re: [
+					transforms: [
 						['^(.*[^aeo])y$', '$1ies'],
 						['^(.*([sc]h|s|ex))$', '$1es'],
 						['^(.*)$', '$1s'],
@@ -23,7 +23,7 @@ module.exports = {
 					label: 'Present participle',
 					tag: '·ing',
 					type: 'suffix',
-					re: [
+					transforms: [
 						// two wovels + consonant -> not double final consonant
 						['^(.*[aeiouy]{2}[bcdfghjklmnpqrstvwxz])$', '$1ing'],
 						// words ending in c
@@ -46,7 +46,7 @@ module.exports = {
 					label: 'Past',
 					tag: '·ed',
 					type: 'suffix',
-					re: [
+					transforms: [
 						// two wovels + consonant -> not double final consonant
 						['^(.*[aeiouy]{2}[bcdfghjklmnpqrstvwxz])$', '$1ed'],
 						// words ending in c
@@ -69,7 +69,7 @@ module.exports = {
 					label: 'Past participle',
 					tag: '·en',
 					type: 'suffix',
-					re: [
+					transforms: [
 						['^(.*?)[aeiouy]?$', '$1en'],
 					],
 				},
@@ -84,7 +84,7 @@ module.exports = {
 					label: 'Make/become/treat',
 					tag: '·ize',
 					type: 'suffix',
-					re: [
+					transforms: [
 						['^(.*?)[aeiouy]?$', '$1ize'],
 					],
 				},
@@ -93,7 +93,7 @@ module.exports = {
 					label: 'Agent noun (Latinate)',
 					tag: '·or',
 					type: 'suffix',
-					re: [
+					transforms: [
 						['^(.*?)(e|or)?$', '$1or'],
 					],
 				},
@@ -102,7 +102,7 @@ module.exports = {
 					label: 'Agent noun (Germanic)',
 					tag: '·er',
 					type: 'suffix',
-					re: [
+					transforms: [
 						['^(.*?)e?$', '$1er'],
 					],
 				},

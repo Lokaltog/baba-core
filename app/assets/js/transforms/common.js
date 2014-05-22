@@ -7,7 +7,7 @@ module.exports = {
 			label: 'Prefix a/an',
 			tag: 'a/an ·',
 			type: 'prefix',
-			re: [
+			transforms: [
 				['^([aeiou].*)$', 'an $1'],
 				['^(.*)$', 'a $1'],
 			],

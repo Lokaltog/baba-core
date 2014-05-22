@@ -2,7 +2,7 @@
 var utils = require('./utils')
 var moduleName = 'Baba'
 var exportFunctions = {
-	replaceRegexp: utils.replaceRegexp,
+	applyTransformArray: utils.applyTransformArray,
 	randomItem: function(items) {
 		return items[Math.floor(Math.random() * items.length)]
 	},
@@ -42,12 +42,7 @@ var exportFunctions = {
 			// we need to transform a string, so handle any arrays or functions first
 			var parsed = parseElements(elements)()
 			transforms.forEach(function(tf) {
-				if (typeof tf === 'function') {
-					parsed = tf(parsed)
-				}
-				else {
-					parsed = replaceRegexp(parsed, tf)
-				}
+				parsed = applyTransformArray(parsed, tf)
 			})
 			return parsed
 		}
@@ -165,13 +160,16 @@ function exportGrammar(vm) {
 					grammarExports.push([node.label, nodeName])
 				}
 			}
-			else if (node.re) {
+			else if (node.transforms) {
 				// add transforms regexps
-				exportedNodes.unshift([nodeName, JSON.stringify(node.re)])
-			}
-			else if (node.fn) {
-				// add transforms functions
-                exportedNodes.push([nodeName, node.fn])
+				var nodeTransforms = node.transforms.map(function(tf) {
+					if (typeof tf === 'function') {
+						return tf.toString()
+					}
+					return JSON.stringify(tf)
+				})
+
+				exportedNodes.push([nodeName, '[' + nodeTransforms.toString() + ']'])
 			}
 		}
 	}

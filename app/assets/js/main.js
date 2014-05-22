@@ -147,6 +147,7 @@ var vm = new Vue({
 		transforms: transforms,
 		nodeCache: {},
 		exported: [],
+		exportType: 'module',
 	},
 	lazy: true,
 	created: function() {
@@ -268,14 +269,7 @@ var vm = new Vue({
 			if (node.transform) {
 				node.transform.forEach(function(transform) {
 					var node = this.nodeCache[transform].node
-					if (node.fn) {
-						// apply transform function
-						item = node.fn(item)
-					}
-					else if (node.re) {
-						// apply transform regexp
-						item = utils.replaceRegexp(item, node.re)
-					}
+					item = utils.applyTransformArray(item, node.transforms)
 				}.bind(this))
 			}
 
@@ -288,7 +282,7 @@ var vm = new Vue({
 			var grammar = {}
 			var allowedKeys = [
 				'children', 'elements', 'type', 'label', 'comment',
-				'id', 'str', 'ref', 'variable', 'sentence', 'transform',
+				'id', 'str', 'ref', 'variable', 'sentence', 'transform', 'transforms',
 				'name', 'author', 'export', 'whitespace',
 			]
 
@@ -554,7 +548,16 @@ var vm = new Vue({
 				callback: function(key, options) {
 					if (key.indexOf('node') !== -1) {
 						var keyNode = nodeCache[key.split(':')[1]].node
-						if (keyNode.fn || keyNode.re) {
+						if (keyNode.type === 'wordlist' || keyNode.type === 'sentence') {
+							// clear any element modifiers
+							element.$delete('transform')
+							element.$delete('str')
+							element.$delete('ref')
+							element.$delete('variable')
+
+							element.$add('ref', keyNode.id)
+						}
+						else {
 							if (!element.transform) {
 								element.$add('transform', [])
 								element.transform = []
@@ -563,15 +566,6 @@ var vm = new Vue({
 								// make sure the transform isn't already applied to this element
 								element.transform.push(keyNode.id)
 							}
-						}
-						else if (keyNode.type === 'wordlist' || keyNode.type === 'sentence') {
-							// clear any element modifiers
-							element.$delete('transform')
-							element.$delete('str')
-							element.$delete('ref')
-							element.$delete('variable')
-
-							element.$add('ref', keyNode.id)
 						}
 					}
 					else {

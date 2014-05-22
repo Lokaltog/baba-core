@@ -7,7 +7,7 @@ module.exports = {
 			label: 'Plural',
 			tag: '·s',
 			type: 'suffix',
-			re: [
+			transforms: [
 				['^(.*)ife$', '$1ives'],
 				['^(.*)ex$', '$1ices'],
 				['^(.*)([^ou])y$', '$1$2ies'],
