@@ -159,6 +159,7 @@ var vm = new Vue({
 		nodeCache: {},
 		exported: [],
 		exportType: 'module',
+		tab: 'grammar',
 	},
 	lazy: true,
 	created: function() {

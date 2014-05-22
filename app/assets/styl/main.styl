@@ -208,16 +208,34 @@ section.step
 		left: -(@width / 2) - 2px
 		text-shadow: none
 	.contents
-		& > h1
-			font-weight: 700
-			font-size: 1.1em
-			line-height: $header-height
-			user-select: none
-			.add
-				position: absolute
-				right: $half-gutter
-				top: $half-gutter
-				font-size: .8em
+		& > .header
+			display: flex
+			h1
+				font-weight: 700
+				font-size: 1.1em
+				line-height: $header-height
+				user-select: none
+				flex: 1 1 auto
+				.add
+					position: absolute
+					right: $half-gutter
+					top: $half-gutter
+					font-size: .8em
+			ul.tabs
+				display: flex
+				li
+					cursor: pointer
+					align-self: flex-end
+					padding: .1em $half-gutter .8em $half-gutter
+					box-sizing: border-box
+					font-size: .9em
+					color: $color-foreground-1
+					&:hover
+						color: $color-foreground
+					&.active
+						color: $color-foreground
+						background: #fff
+						font-weight: 400
 
 .name-grammar
 	.name .by

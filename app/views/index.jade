@@ -26,7 +26,8 @@ html(lang='en')
 			section.step.name-grammar
 				.number 1
 				.contents
-					h1 Name your generator
+					.header
+						h1 Name your generator
 					div.name
 						input.input-text(type='text', v-model='grammar.name', placeholder='Grammar name', data-autosize-input)
 						span.by by
@@ -35,10 +36,11 @@ html(lang='en')
 			section.step.create-grammar
 				.number 2
 				.contents
-					h1 Create the grammar
-					ul.tabs
-						li(v-on='click: tab = "grammar"') Grammar rules
-						li(v-on='click: tab = "transforms"') Transforms
+					.header
+						h1 Create the grammar
+						ul.tabs
+							li(v-class='active: tab === "grammar"', v-on='click: tab = "grammar"') Grammar rules
+							li(v-class='active: tab === "transforms"', v-on='click: tab = "transforms"') Transforms
 
 					section.tree.grammar(v-component='grammar', v-with='model: grammar', v-show='!tab || tab === "grammar"')
 					section.tree.transforms(v-component='transforms', v-with='model: transforms', v-show='tab === "transforms"')
@@ -46,7 +48,8 @@ html(lang='en')
 			section.step.preview-grammar
 				.number 3
 				.contents
-					h1 Preview your generator
+					.header
+						h1 Preview your generator
 					p(v-if='!exported.length') You need to export at least one sentence collection. Toggle the export button to the right of any sentence collection above.
 					ul.generator-preview-buttons(v-if='exported.length')
 						li(v-repeat='exported', v-on='click: previewGenerator($event, label)') {{label}}
@@ -55,7 +58,8 @@ html(lang='en')
 			section.step.save-grammar
 				.number 4
 				.contents
-					h1 Save, export and share!
+					.header
+						h1 Save, export and share!
 					p(v-if='!exported.length') You need to export at least one sentence collection. Toggle the export button to the right of any sentence collection above.
 					div(v-if='exported.length')
 						div
