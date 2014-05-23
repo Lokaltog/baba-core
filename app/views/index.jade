@@ -38,6 +38,10 @@ html(lang='en')
 				.contents
 					.header
 						h1 Create the grammar
+						.add-section
+							.link-btn(v-on='click: addChild(tab === "grammar" ? $root.grammar : $root.transforms)')
+								i.icon.icon-folder.add
+								| Add group
 						ul.tabs
 							li(v-class='active: tab === "grammar"', v-on='click: tab = "grammar"') Grammar rules
 							li(v-class='active: tab === "transforms"', v-on='click: tab = "transforms"') Transforms
@@ -151,35 +155,40 @@ html(lang='en')
 			button.btn.dismiss Cancel
 
 	script(id='grammar-template', type='text/x-template')
-		h1(v-if='model !== $root.grammar')
+		.header(v-if='model !== $root.grammar')
 			.toggle(v-on='click: open = !open')
 				i.icon.icon-minus(v-if='open')
 				i.icon.icon-plus(v-if='!open')
+
 			.label
 				input(placeholder='group name', v-model='model.label', data-autosize-input, v-on='blur: sortChildren(parentModel)')
+
 			.comment
 				input(placeholder='comment', v-model='model.comment', data-autosize-input)
-			.delete(v-on='click: removeGroup(model, parentModel)')
-				i.icon.icon-delete
+
 			.export(v-if='model.type === "sentence"', v-on='click: model.export = !model.export')
 				.exported(v-if='model.export') Exported
 				.unexported
 					.btn(v-if='!model.export') Export
 
+			.add-section(v-if='typeof model.children !== "undefined"')
+				.link-btn(v-on='click: addChild(model)')
+					i.icon.icon-folder.add
+					| Subgroup
+				.link-btn(v-on='click: addChild(model, "wordlist")')
+					i.icon.icon-add
+					| Word list
+				.link-btn(v-on='click: addChild(model, "sentence")')
+					i.icon.icon-add
+					| Sentences
+
+			.delete(v-on='click: removeGroup(model, parentModel)')
+				i.icon.icon-delete
+
 		.node-wrapper(v-if='(model === $root.grammar) || open')
 			section(v-repeat='model: model.children', v-with='parentModel: model', v-component='grammar')
-			.add-section
-				.link-btn(v-if='typeof model.children !== "undefined"', v-on='click: addChild(model)')
-					i.icon.icon-add
-					| Add group
 			div(v-if='model.type')
 				.container-wrapper(v-class='model.type', v-with='model', v-component='container-{{model.type || "wordlist"}}')
-
-		.section-init-wrapper(v-if='!model.type && typeof model.children === "undefined" && open')
-			p What should this group contain?
-			div(v-on='click: model.children = []') [Groups]
-			div(v-on='click: addWordlist(model)') [A word list]
-			div(v-on='click: addSentence(model)') [A sentence collection]
 
 	script(id='container-wordlist-template', type='text/x-template')
 		ul.builder.wordlist
@@ -233,19 +242,28 @@ html(lang='en')
 
 	script(id='transforms-template', type='text/x-template')
 		section(v-repeat='transform: transforms.children', v-with='parentModel: transform')
-			h1
+			.header
 				.toggle(v-on='click: transform.open = !transform.open')
 					i.icon.icon-minus(v-if='transform.open')
 					i.icon.icon-plus(v-if='!transform.open')
+
 				.label
 					input(placeholder='transform name', v-model='transform.label', data-autosize-input, v-on='blur: sortChildren(parentModel)')
+
 				.tag(v-if='!transform.children')
 					input(placeholder='set tag', v-model='transform.tag', data-autosize-input)
+
 				.type(v-if='!transform.children')
 					select(v-model='transform.type')
 						option (none)
 						option(value='prefix') prefix
 						option(value='suffix') suffix
+
+				.add-section
+					.link-btn(v-on='click: addChild(transform || $root.transforms)')
+						i.icon.icon-folder.add
+						| Add group
+
 				.delete(v-on='click: removeGroup(transform, parentModel)')
 					i.icon.icon-delete
 
@@ -264,16 +282,16 @@ html(lang='en')
 							li.down(v-on='click: swapItems(transform.transforms, $index, $index + 1)')
 							li.delete(v-on='click: transform.transforms.$remove(tf)')
 				.add-transform(v-if='typeof transform.children === "undefined"')
-					.add-regex.link-btn(v-on='click: addTransformRegex(transform)') Add regex
-					.add-function.link-btn(v-on='click: addTransformFunction(transform)') Add function
+					.add-regex.link-btn(v-on='click: addTransformRegex(transform)')
+						i.icon.icon-add
+						| Add regex
+					.add-function.link-btn(v-on='click: addTransformFunction(transform)')
+						i.icon.icon-plugin
+						| Add function
 				.test(v-if='transform.transforms')
 					input.input-text(v-on='keyup: testTransform($event, transform.transforms)', placeholder='Test transform')
 					.divider
 					.transform-test
-		.add-section
-			.link-btn(v-on='click: addChild(transform || $root.transforms)')
-				i.icon.icon-add
-				| Add group
 
 	script(src='/static/js/lib/vue.js')
 	script(src='/static/js/lib/jquery-2.1.1.js')

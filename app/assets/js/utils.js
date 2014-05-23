@@ -27,6 +27,9 @@ module.exports = {
 		}
 		return obj
 	},
+	generateId: function() {
+		return Math.random().toString(36).substr(2, 10)
+	},
 	/**
 	 * general topological sort
 	 * @author SHIN Suzuki (shinout310@gmail.com)

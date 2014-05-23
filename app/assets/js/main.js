@@ -84,10 +84,6 @@ function addContextSubmenu(node, parent) {
 	}
 }
 
-function generateId() {
-	return Math.random().toString(36).substr(2, 10)
-}
-
 Vue.component('grammar', {
 	template: '#grammar-template',
 	data: {
@@ -178,7 +174,7 @@ var vm = new Vue({
 			obj.exportedSlugs = obj.exported.map(function(el) {
 				return S(el.label).slugify().toString()
 			}).sort()
-			obj.grammarNameSlug = S(obj.grammar.name).slugify().toString()
+			obj.grammarNameSlug = S(obj.grammar.name || '').slugify().toString()
 		}
 		updateSlugs(this)
 
@@ -215,7 +211,6 @@ var vm = new Vue({
 		})
 	},
 	methods: {
-		generateId: generateId,
 		sortChildren: function(model) {
 			model.children.sort(function (a, b) {
 				if (a.label > b.label) {
@@ -399,24 +394,39 @@ var vm = new Vue({
 				},
 			})
 		},
-		addChild: function(node) {
-			if (!node.children) {
-				node.$add('children', [])
-				node.children = []
+		addChild: function(model, type) {
+			if (!model.children) {
+				model.$add('children', [])
+				model.children = []
 			}
-			node.children.push({
-				id: generateId(),
-			})
-		},
-		addWordlist: function(model) {
-			model.id = generateId()
-			model.type = 'wordlist'
-			model.elements = []
-		},
-		addSentence: function(model) {
-			model.id = generateId()
-			model.type = 'sentence'
-			model.elements = []
+			var obj = {
+				id: utils.generateId(),
+			}
+			switch (type) {
+			default:
+			case 'group':
+				obj.children = []
+				break
+			case 'wordlist':
+				obj.type = type
+				obj.elements = []
+				break
+			case 'sentence':
+				obj.type = type
+				obj.elements = [{sentence:[]}]
+				break
+			}
+
+			model.children.push(obj)
+
+			setTimeout(function() {
+				// find first empty label node and expand it
+				var input = $($('.header .label :text:visible').filter(function() { return $(this).val() === '' })[0])
+				input.closest('.header').find('.toggle').click()
+				input.focus()
+			}, 0)
+
+			return obj
 		},
 		updateTransformFunction: function(ev, transforms, idx) {
 			try {

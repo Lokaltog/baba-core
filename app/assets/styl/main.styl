@@ -51,6 +51,24 @@ global-reset()
 	&.icon-plus
 		&::before
 			content: '\e807'
+	&.icon-plugin
+		&::before
+			content: '\e810'
+	&.icon-folder
+		&::before
+			content: '\e811'
+	&.icon-add-folder
+		&::before
+			content: '\e811'
+	&.add
+		&::after
+			content: '\e800'
+			position: absolute
+			color: $color-green !important
+			bottom: 0
+			left: -.3em
+			font-size: .8em
+			text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff
 
 // Main elements
 p
@@ -119,7 +137,7 @@ input, textarea
 .link-btn
 	text-transform: uppercase
 	height: 1.7em
-	font: 700 .7em/@height $font-main
+	font: 700 .8em/@height $font-main
 	cursor: pointer
 	position: relative
 	text-shadow: 0 1px 0 rgba(#fff, .7)
@@ -130,13 +148,15 @@ input, textarea
 	cursor: pointer
 	user-select: none
 	margin: 0 $quarter-gutter 0 0
+	color: $color-foreground-2
 	.icon
-		color: $color-foreground-2
+		color: $color-foreground
 		margin: 0 $quarter-gutter 0 0
 	&.active
 		font-weight: 700
 	&:hover
-		border-bottom: 1px solid $color-foreground-3
+		color: $color-foreground
+		border-bottom: 2px solid $color-foreground-3
 	&:active
 		top: 1px
 
@@ -252,12 +272,15 @@ section.step
 					right: $half-gutter
 					top: $half-gutter
 					font-size: .8em
+			.add-section
+				line-height: $header-height
+				margin: 0 $half-gutter 0 0
 			ul.tabs
 				display: flex
 				li
 					cursor: pointer
 					align-self: flex-end
-					padding: .1em $half-gutter .8em $half-gutter
+					padding: .1em $half-gutter 1em $half-gutter
 					box-sizing: border-box
 					font-size: .7em
 					text-transform: uppercase
@@ -280,16 +303,20 @@ section.tree
 	user-select: none
 	background: #fff
 	padding: $quarter-gutter 0
-	.add-section:not(:empty)
-		padding: $quarter-gutter $quarter-gutter 0 $half-gutter
-		line-height: 1
 	section
 		padding: 0 $quarter-gutter 0 $half-gutter
-		.add-section:not(:empty)
-			padding: ($quarter-gutter / 2) 0 0 $quarter-gutter
 		section
 			padding: 0 0 0 $quarter-gutter
-		h1
+		.node-wrapper
+			border-left: 1px solid $color-foreground-3
+			padding-left: $quarter-gutter
+			margin-left: ($quarter-gutter / 2)
+		.header
+			.add-section
+				display: none
+			&:hover
+				.add-section
+					display: block
 			display: flex
 			.toggle
 				line-height: 1.5em
@@ -341,6 +368,7 @@ section.tree
 						content: '\e802'
 						padding: 0 $quarter-gutter 0 0
 			&:hover
+				box-shadow: 0 1px 0 $color-foreground-3
 				.export
 					.unexported
 						opacity: 1
@@ -349,10 +377,7 @@ section.tree
 						color: rgba(#000, .3)
 				.delete
 					display: block
-		.node-wrapper
-			border-left: 1px solid $color-foreground-3
-			padding-left: $quarter-gutter
-			margin-left: ($quarter-gutter / 2)
+
 
 .builder
 	cursor: default
