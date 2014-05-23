@@ -43,7 +43,7 @@ html(lang='en')
 								i.icon.icon-folder.add
 								| Add group
 						ul.tabs
-							li(v-class='active: tab === "grammar"', v-on='click: tab = "grammar"') Grammar rules
+							li(v-class='active: tab === "grammar"', v-on='click: tab = "grammar"') Grammar
 							li(v-class='active: tab === "transforms"', v-on='click: tab = "transforms"') Transforms
 
 					section.tree.grammar(v-component='grammar', v-with='model: grammar', v-show='!tab || tab === "grammar"')
