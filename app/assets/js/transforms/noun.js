@@ -8,10 +8,9 @@ module.exports = {
 			tag: 's',
 			type: 'suffix',
 			transforms: [
-				['^(.*)ife$', '$1ives'],
-				['^(.*)ex$', '$1ices'],
-				['^(.*)([^ou])y$', '$1$2ies'],
-				['^(.*)([sc]h|s)$', '$1$2es'],
+				['^(.*)ife$', '$1ives'], // knife, life
+				['^(.*)([^ou])y$', '$1$2ies'], // fry, try
+				['^(.*((tc|s)h|[sx]))$', '$1es'], // batch, bash, bass, sex
 				['^(.*)$', '$1s'],
 			],
 		},
