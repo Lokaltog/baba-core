@@ -27,11 +27,11 @@ html(lang='en')
 				.number 1
 				.contents
 					.header
-						h1 Name your generator
+						h1 Give it a name
 					div.name
-						input.input-text(type='text', v-model='generator.grammar.name', placeholder='Grammar name', data-autosize-input)
+						input.input-text#generator-name(type='text', v-model='generator.grammar.name', placeholder='Generator name', data-autosize-input)
 						span.by by
-						input.input-text(type='text', v-model='generator.grammar.author', placeholder='Author', data-autosize-input)
+						input.input-text#generator-author(type='text', v-model='generator.grammar.author', placeholder='Author', data-autosize-input)
 
 			section.step.create-grammar
 				.number 2

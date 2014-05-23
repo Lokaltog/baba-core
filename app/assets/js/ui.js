@@ -1,10 +1,14 @@
 module.exports = function() {
-	var catchphraseGenerator = require('./generators/catchphrase.generator.js')
+	var generator = require('./generators/catchphrase.generator.js')
 
 	// init catchprase generator
 	$('.catchphrase .text')
-		.text(catchphraseGenerator.catchphrase() + '!')
+		.text(generator.catchphrase() + '!')
 		.click(function() {
-			$(this).text(catchphraseGenerator.catchphrase() + '!')
+			$(this).text(generator.catchphrase() + '!')
 		})
+
+	// dynamic name/author
+	$('#generator-name').attr('placeholder', generator.generator())
+	$('#generator-author').attr('placeholder', generator.name())
 }
