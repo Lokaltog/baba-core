@@ -2,8 +2,29 @@ module.exports = {
 	randomItem: function(items) {
 		return items[Math.floor(Math.random() * items.length)]
 	},
+	swapItems: function(arr, index, newIndex) {
+		var tmp = arr[index]
+		arr.$set(index, arr[newIndex])
+		arr.$set(newIndex, tmp)
+	},
+	sortByProperty: function(obj, property) {
+		obj.sort(function (a, b) {
+			if (a[property] > b[property]) {
+				return 1
+			}
+			if (a[property] < b[property]) {
+				return -1
+			}
+			return 0
+		})
+	},
 	applyTransformArray: function(str, rules) {
 		rules.some(function(filter) {
+			if (typeof filter === 'string') {
+				// function string from imported/stored generator
+				// convert to native function
+				filter = Function('return (' + filter + ')')()
+			}
 			if (typeof filter === 'function') {
 				// function transform
 				// TODO allow the transform function to return true to discontinue applying transforms

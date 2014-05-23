@@ -1,5 +1,5 @@
 // TODO store multiple grammars
-var STORAGE_KEY = 'baba-grammars'
+var STORAGE_KEY = 'generator'
 
 module.exports = {
 	load: function() {
@@ -15,6 +15,6 @@ module.exports = {
 		return json || {}
 	},
 	save: function(vm) {
-		localStorage.setItem(STORAGE_KEY, JSON.stringify(vm.getRawGrammar()))
+		localStorage.setItem(STORAGE_KEY, JSON.stringify(vm.getRawGenerator(true)))
 	},
 }
