@@ -1,3 +1,5 @@
+var generator = require('./generators/catchphrase.generator')
+
 module.exports = {
 	init: function(vm) {
 		var importGenerator = require('./import')
@@ -30,7 +32,7 @@ module.exports = {
 								vm.generator = ret
 							})
 							.fail(function(ret) {
-								module.exports.alert(ret)
+								module.exports.alert(ret, 'error')
 							})
 						return
 					}
@@ -46,7 +48,7 @@ module.exports = {
 								vm.generator = ret
 							})
 							.fail(function(ret) {
-								module.exports.alert(ret)
+								module.exports.alert(ret, 'error')
 							})
 					}
 				},
@@ -63,6 +65,20 @@ module.exports = {
 		$('#popup-alert .btn').text((buttonText || 'OK'))
 		$('#popup-alert .icon').attr('class', 'icon ' + (iconClass || 'info'))
 
+		var btnText
+		switch (iconClass) {
+		default:
+		case 'info':
+		case 'success':
+			btnText = generator.confirm()
+			break
+		case 'error':
+		case 'warn':
+			btnText = generator.error()
+			break
+		}
+
+		$('#popup-alert button').text(btnText)
 		$.magnificPopup.open({
 			mainClass: 'mfp-transition-zoom-in',
 			removalDelay: 300,
