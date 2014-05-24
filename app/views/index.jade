@@ -5,7 +5,7 @@ html(lang='en')
 		meta(http-equiv='Content-Type', content='text/html;charset=utf-8')
 		meta(name='viewport', content='width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no')
 
-		title Baba Grammar Designer by Lokaltog
+		title Baba Create-a-Generator by Lokaltog
 
 		link(rel='shortcut icon', href='/static/img/favicon.png')
 		link(rel='stylesheet', href='/static/css/main.css', type='text/css')
@@ -13,13 +13,13 @@ html(lang='en')
 	body
 		header
 			h1
-				.title Baba Grammar Designer
+				.title Baba Create-a-Generator
 				.catchphrase
 					.text
 					.refresh
 						i.icon.icon-refresh
 			.actions
-				.btn#import-grammar(href='#popup-import-grammar') Import grammar
+				.btn#import-grammar(href='#popup-import') Import grammar
 				.btn(v-on='click: generator = {}') Create new grammar
 
 		#contents
@@ -27,7 +27,7 @@ html(lang='en')
 				.number 1
 				.contents
 					.header
-						h1 Give it a name
+						h1 Name your text generator
 					div.name
 						input.input-text#generator-name(type='text', v-model='generator.grammar.name', placeholder='Generator name', data-autosize-input)
 						span.by by
@@ -37,7 +37,7 @@ html(lang='en')
 				.number 2
 				.contents
 					.header
-						h1 Create the grammar
+						h1 Create the rules
 						.add-section
 							.link-btn(v-on='click: addChild($root.generator[tab])')
 								i.icon.icon-folder.add
@@ -53,7 +53,7 @@ html(lang='en')
 				.number 3
 				.contents
 					.header
-						h1 Preview your generator
+						h1 Preview generated text
 					p(v-if='!exported.length') You need to export at least one sentence collection. Toggle the export button to the right of any sentence collection above.
 					ul.generator-preview-buttons(v-if='exported.length')
 						li.link-btn(v-repeat='exported', v-on='click: previewGenerator($event, label)')
@@ -71,61 +71,66 @@ html(lang='en')
 						div
 							.btn(v-on='click: exportRawGenerator') Export raw grammar
 						div
-							.btn(v-on='click: exportGrammarGenerator') Get garbage text generator
+							.btn(v-on='click: exportGrammarGenerator') Get text generator
 						div
-							.export-type
-								| Export as:
-								label(for='radio-export-module')
-									input(type='radio', id='radio-export-module', name='export-type', v-model='exportType', value='module')
-									| CommonJS/AMD/browser module
-								label(for='radio-export-executable')
-									input(type='radio', id='radio-export-executable', name='export-type', v-model='exportType', value='executable')
-									| Node.js executable
-							.usage
-								pre(v-if='exportType === "module"')
-									| // CommonJS:
-									| var Baba = require('./{{$root.grammarNameSlug}}')
-									br
-									br
-									| // AMD:
-									| define(['{{$root.grammarNameSlug}}'], function(Baba) { /* ... */ })
-									br
-									br
-									| // Browser:
-									| Baba // or window.Baba
-									br
-									br
-									| // Get generated text
-									div(v-repeat='slug: $root.exportedSlugs.slice(0, 3)')
-										div(v-if='slug') var str{{$index + 1}} = Baba['{{slug}}']()
-									| // ...
-								pre(v-if='exportType === "executable"')
-									| Usage:
-									br
-									br
-									|     node {{$root.grammarNameSlug}}.js [ {{ $root.exportedSlugs.join(' | ') }} ]
 						div save as gist
 						div preview exported sentences
 						div tweet, share
 
 		footer
 			p
-				| Baba Grammar Designer by
+				| Baba Create-a-Generator by
 				=' '
 				a(href='https://github.com/Lokaltog') Lokaltog
 				=' · '
 				a(href='https://github.com/Lokaltog/baba') GitHub repo
 
-	#popup-import-grammar.popup.mfp-hide
+	#popup-import.popup.mfp-hide
 		input.input-text(name='gist-uri', placeholder='Gist URI or ID')
-		div.or
+		.center-header
 			.label or
 		textarea.input-text(name='json', placeholder='Paste JSON source')
 		.buttons
 			button.btn.dismiss Import grammar
 
-	#popup-export-grammar.popup.mfp-hide
-		textarea.input-text
+	#popup-export-json.popup.mfp-hide
+		textarea(disabled).input-text
+		.buttons
+			button.btn.download Download
+			button.btn.dismiss Close
+
+	#popup-export-generator.popup.mfp-hide
+		ul.export-type
+			li
+				input(type='radio', id='radio-export-module', name='export-type', v-model='exportType', value='module')
+				label(for='radio-export-module')
+					i.icon.icon-plugin
+					| CommonJS/AMD/browser module
+			li
+				input(type='radio', id='radio-export-executable', name='export-type', v-model='exportType', value='executable')
+				label(for='radio-export-executable')
+					i.icon.icon-cog
+					| Node.js executable
+
+		textarea(disabled).input-text
+
+		h1.center-header
+			.label Usage
+
+		pre.usage
+			div(v-if='exportType === "module"')
+				| var Baba = require('./{{$root.grammarNameSlug}}') // CommonJS
+				| define(['{{$root.grammarNameSlug}}'], function(Baba) { }) // AMD
+				| Baba // Browser (alternatively window.Baba)
+				br
+				br
+				| // Get generated text
+				div(v-repeat='slug: $root.exportedSlugs.slice(0, 3)')
+					div(v-if='slug') var str{{$index + 1}} = Baba.generator['{{slug}}']()
+				| // ...
+			div(v-if='exportType === "executable"')
+				| node {{$root.grammarNameSlug}} [ {{ $root.exportedSlugs.join(' | ') }} ]
+
 		.buttons
 			button.btn.download Download
 			button.btn.dismiss Close
@@ -212,7 +217,7 @@ html(lang='en')
 					.display(v-show='!preview')
 						ol.prefix(v-if='element.transform && filterTransforms(element.transform, "prefix")')
 							li(v-repeat='filterTransforms(element.transform, "prefix")') {{tag}}·
-							li(v-repeat='filterTransforms(element.transform, undefined)') {{label.toLowerCase()}}
+							li(v-repeat='filterTransforms(element.transform)') {{label.toLowerCase()}}
 
 						ol.components
 							li(v-repeat='getGrammarComponents(element.ref)', v-class='key') {{label}}
@@ -267,7 +272,7 @@ html(lang='en')
 						i.icon.icon-add
 						| Transform
 
-				.delete(v-on='click: removeGroup(transform, parentModel)')
+				.delete(v-on='click: removeGroup(transform, parentModel || $root.generator.transforms)')
 					i.icon.icon-delete
 
 			.node-wrapper(v-if='(transform === $root.generator.transforms) || transform.open')

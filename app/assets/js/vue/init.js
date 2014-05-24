@@ -93,7 +93,7 @@ module.exports = function() {
 
 				$('.generator-preview-buttons li').removeClass('active')
 				$(ev.target).addClass('active')
-				container.text(this.exportedGenerator[slug]())
+				container.text(this.exportedGenerator.generator[slug]())
 			},
 			getGrammarNode: function(searchPath) {
 				var node = this.nodeCache[searchPath]
@@ -220,26 +220,33 @@ module.exports = function() {
 					closeBtnInside: false,
 					callbacks: {
 						open: function() {
-							$('#popup-export-grammar textarea').text(data)
-							$('#popup-export-grammar button.download').click(function() {
+							$('#popup-export-json textarea').text(data)
+							$('#popup-export-json button.download').click(function() {
 								var blob = new Blob([data], { type: 'application/json' })
 								saveAs(blob, slug + '.grammar.json')
 							})
 							setTimeout(function() {
-								$('#popup-export-grammar textarea').select()
+								$('#popup-export-json textarea').select()
 							}, 100)
 						}
 					},
 					items: {
 						type: 'inline',
-						src: '#popup-export-grammar',
+						src: '#popup-export-json',
 					},
 				})
 			},
 			exportGrammarGenerator: function() {
-				var data = exportGenerator.export(this.$root, this.$root.exportType, true)
-				var slug = this.$root.grammarNameSlug
+				var $root = this.$root
+				var data = exportGenerator.export($root, $root.exportType, true)
+				var slug = $root.grammarNameSlug
 
+				$('#popup-export-generator label').click(function() {
+					setTimeout(function() {
+						var data = exportGenerator.export($root, $root.exportType, true)
+						$('#popup-export-generator textarea').text(data).select()
+					}, 0)
+				})
 
 				$.magnificPopup.open({
 					mainClass: 'mfp-transition-zoom-in',
@@ -248,19 +255,19 @@ module.exports = function() {
 					closeBtnInside: false,
 					callbacks: {
 						open: function() {
-							$('#popup-export-grammar textarea').text(data)
-							$('#popup-export-grammar button.download').click(function() {
+							$('#popup-export-generator textarea').text(data)
+							$('#popup-export-generator button.download').click(function() {
 								var blob = new Blob([data], { type: 'application/javascript' })
 								saveAs(blob, slug + '.js')
 							})
 							setTimeout(function() {
-								$('#popup-export-grammar textarea').select()
+								$('#popup-export-generator textarea').select()
 							}, 100)
 						}
 					},
 					items: {
 						type: 'inline',
-						src: '#popup-export-grammar',
+						src: '#popup-export-generator',
 					},
 				})
 			},

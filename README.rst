@@ -1,19 +1,19 @@
-Baba Grammar Designer
-=====================
+Baba
+====
 
 :Author: Kim Silkebækken (kim@silkebaekken.net)
 :Source: https://github.com/Lokaltog/baba
 :Website: http://baba.computer/
 
-**Grammar designer application which exports AMD/CommonJS/browser-compatible garbage
-text generators.**
+**Grammar designer application which exports AMD/CommonJS/browser-compatible text
+generators.**
 
-Baba is a modern Javascript-based grammar designer for garbage text generators,
-inspired by the `Dada Engine <http://dev.null.org/dadaengine/>`_. It runs in the
-browser and allows you to easily design your very own garbage text generator.
+Baba is a modern Javascript-based designer for text generators, inspired by the `Dada
+Engine <http://dev.null.org/dadaengine/>`_. It runs in the browser and allows you to
+easily design your very own text generator.
 
-Baba exports compressed garbage text generator scripts which can be run in the
-browser or on the command line (with node.js).
+Baba exports compressed text generator scripts which can be run in the browser or on
+the command line (with node.js).
 
 Tutorial
 --------
@@ -45,7 +45,7 @@ Creating a man page generator
        [noun] are [verb-ed] to a [adjective] [noun].
 
    You should replace as many words as possible with synonyms, this will make the
-   resulting garbage text less repetitive and more believable.
+   resulting text less repetitive and more believable.
 
 #. Collect synonyms and jargon, for this generator you can list all the git
    executables and collect the verbs from them (add, annotate, apply) to get some
@@ -79,7 +79,7 @@ Creating a man page generator
    grammar. These sentences will be available as functions in the exported grammar
    object.
 
-#. Congratulations, you've just created a garbage text generator!
+#. Congratulations, you've just created a text generator!
 
    Hit the export button to get the final JS source code. The JS code can be used as
    a CommonJS or AMD module, or directly in the browser via the ``window.Baba``

@@ -18,23 +18,23 @@ module.exports = {
 			return 0
 		})
 	},
-	applyTransformArray: function(str, rules) {
-		rules.some(function(filter) {
-			if (typeof filter === 'string') {
+	applyTransformArray: function(str, transforms) {
+		transforms.some(function(transform) {
+			if (typeof transform === 'string') {
 				// function string from imported/stored generator
 				// convert to native function
-				filter = Function('return (' + filter + ')')()
+				transform = new Function('return (' + transform + ')')()
 			}
-			if (typeof filter === 'function') {
+			if (typeof transform === 'function') {
 				// function transform
 				// TODO allow the transform function to return true to discontinue applying transforms
-				str = filter(str)
+				str = transform(str)
 				return false
 			}
 			// regexp transform
-			var search = new RegExp(filter[0], 'ig')
+			var search = new RegExp(transform[0], 'ig')
 			if (str.match(search)) {
-				str = str.replace(search, filter[1])
+				str = str.replace(search, transform[1])
 				return true
 			}
 		})

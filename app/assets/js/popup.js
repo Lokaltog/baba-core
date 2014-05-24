@@ -17,11 +17,11 @@ module.exports = {
 			callbacks: {
 				open: function() {
 					setTimeout(function() {
-						$('#popup-import-grammar input[name=gist-uri]').focus()
+						$('#popup-import input[name=gist-uri]').focus()
 					}, 100)
 				},
 				afterClose: function() {
-					var gistUri = $('#popup-import-grammar input[name=gist-uri]')
+					var gistUri = $('#popup-import input[name=gist-uri]')
 					var gistUriVal = gistUri.val()
 					gistUri.val('')
 
@@ -37,7 +37,7 @@ module.exports = {
 						return
 					}
 
-					var jsonText = $('#popup-import-grammar textarea')
+					var jsonText = $('#popup-import textarea')
 					var jsonTextVal = jsonText.val()
 					jsonText.val('')
 
@@ -54,7 +54,7 @@ module.exports = {
 				},
 			},
 		})
-		$('#popup-import-grammar input[name=gist-uri]').keydown(function(ev) {
+		$('#popup-import input[name=gist-uri]').keydown(function(ev) {
 			if (ev.keyCode === 13) {
 				$.magnificPopup.close()
 			}
