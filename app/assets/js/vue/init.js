@@ -151,7 +151,7 @@ module.exports = function() {
 				var allowedKeys = [
 					'grammar', 'children', 'elements', 'type', 'label', 'comment',
 					'id', 'str', 'ref', 'variable', 'sentence', 'transform', 'transforms',
-					'name', 'author', 'export', 'whitespace', 'tag',
+					'name', 'author', 'export', 'whitespace', 'tag', 'probability',
 				]
 
 				function sanitizeNode(node, parent) {
@@ -422,6 +422,19 @@ module.exports = function() {
 												node.element.whitespace = ev.target.checked
 											},
 										},
+										probabilityOfAppearing: {
+											name: 'Probability of appearing (0-100):',
+											type: 'text',
+											value: node.element.probability,
+											events: {
+												keyup: function(ev) {
+													if (!node.element.variable) {
+														node.element.$add('probability', 100)
+													}
+													node.element.probability = parseInt(ev.target.value) || undefined
+												},
+											},
+										},
 									},
 								},
 							},
@@ -532,7 +545,20 @@ module.exports = function() {
 											if (!node.element.variable) {
 												node.element.$add('variable', ev.target.value)
 											}
-											node.element.variable = ev.target.value
+											node.element.variable = ev.target.value || undefined
+										},
+									},
+								},
+								probabilityOfAppearing: {
+									name: 'Probability of appearing (0-100):',
+									type: 'text',
+									value: node.element.probability,
+									events: {
+										keyup: function(ev) {
+											if (!node.element.variable) {
+												node.element.$add('probability', 100)
+											}
+											node.element.probability = parseInt(ev.target.value) || undefined
 										},
 									},
 								},

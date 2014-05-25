@@ -31,9 +31,14 @@ var exportFunctions = {
 			return ret.trim()
 		}.bind(this, arguments)
 	},
+	applyProbability: function(str, probability) {
+		return function() {
+			return (Math.random() * 100) < probability ? str : null
+		}
+	},
 	applyVariable: function(str, variable) {
 		return function() {
-            return variables[variable] || str
+			return variables[variable] || str
 		}
 	},
 	applyTransforms: function() {
@@ -152,6 +157,12 @@ function exportGrammar(vm) {
 								if (grammarNodeTransforms.length) {
 									grammarNode = 'applyTransforms(' + grammarNode + ', '
 									grammarNode += grammarNodeTransforms.join(', ')
+									grammarNode += ')'
+								}
+
+								if (el.probability && el.probability < 100) {
+									grammarNode = 'applyProbability(' + grammarNode + ', '
+									grammarNode += parseInt(el.probability)
 									grammarNode += ')'
 								}
 
