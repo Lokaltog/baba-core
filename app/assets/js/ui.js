@@ -1,14 +1,14 @@
 module.exports = function() {
-	var generator = require('./generators/catchphrase.generator.js')
+	var Baba = require('./generators/baba-dynamic-site-text')
 
 	// init catchprase generator
 	$('.catchphrase .text')
-		.text(generator.catchphrase() + '!')
+		.text(Baba.generator.catchphrase() + '!')
 		.click(function() {
-			$(this).text(generator.catchphrase() + '!')
+			$(this).text(Baba.generator.catchphrase() + '!')
 		})
 
 	// dynamic name/author
-	$('#generator-name').attr('placeholder', generator.generator())
-	$('#generator-author').attr('placeholder', generator.name())
+	$('#generator-name').attr('placeholder', Baba.generator.generator())
+	$('#generator-author').attr('placeholder', Baba.generator.name())
 }

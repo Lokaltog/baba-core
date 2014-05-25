@@ -1,4 +1,4 @@
-var generator = require('./generators/catchphrase.generator')
+var Baba = require('./generators/baba-dynamic-site-text')
 
 module.exports = {
 	init: function(vm) {
@@ -70,11 +70,11 @@ module.exports = {
 		default:
 		case 'info':
 		case 'success':
-			btnText = generator.confirm()
+			btnText = Baba.generator.confirm()
 			break
 		case 'error':
 		case 'warn':
-			btnText = generator.error()
+			btnText = Baba.generator.error()
 			break
 		}
 
