@@ -1,3 +1,5 @@
+var Vue = require('../lib/vue')
+
 module.exports = function() {
 	Vue.component('grammar', {
 		template: '#grammar-template',

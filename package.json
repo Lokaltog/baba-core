@@ -37,5 +37,8 @@
 	},
 	"engines": {
 		"node": ">=0.10"
+	},
+	"browser": {
+		"jquery": "./app/assets/js/lib/jquery.js"
 	}
 }

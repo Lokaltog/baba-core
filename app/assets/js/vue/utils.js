@@ -1,3 +1,5 @@
+var S = require('../lib/string')
+
 module.exports = {
 	getNodeCache: function() {
 		var ret = {}

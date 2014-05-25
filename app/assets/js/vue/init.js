@@ -1,9 +1,13 @@
-module.exports = function() {
-	var utils = require('../utils')
-	var vueUtils = require('./utils')
-	var storage = require('../storage')
-	var exportGenerator = require('../export')
+var $ = require('jquery')
+var exportGenerator = require('../export')
+var S = require('../lib/string')
+var saveAs = require('../lib/filesaver')
+var storage = require('../storage')
+var utils = require('../utils')
+var vueUtils = require('./utils')
+var Vue = require('../lib/vue')
 
+module.exports = function() {
 	require('./grammar')()
 	require('./transforms')()
 
@@ -120,7 +124,7 @@ module.exports = function() {
 				return nodes.map(function(el) {
 					return {
 						label: el.label,
-						key: S(el.label).slugify().toString(),
+						key: string.S(el.label).slugify().toString(),
 					}
 				})
 			},
@@ -257,7 +261,7 @@ module.exports = function() {
 						open: function() {
 							$('#popup-export-generator textarea').text(data)
 							$('#popup-export-generator button.download').click(function() {
-								var blob = new Blob([data], { type: 'application/javascript' })
+								var blob = new Blob([$('#popup-export-generator textarea').val()], { type: 'application/javascript' })
 								saveAs(blob, slug + '.js')
 							})
 							setTimeout(function() {

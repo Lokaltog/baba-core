@@ -1,6 +1,8 @@
+var $ = require('jquery')
 var popup = require('../popup')
 var storage = require('../storage')
 var utils = require('../utils')
+var Vue = require('../lib/vue')
 
 module.exports = function() {
 	Vue.component('transforms', {
