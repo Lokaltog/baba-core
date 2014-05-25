@@ -54,16 +54,14 @@ module.exports = {
 				},
 			},
 		})
-		$('#popup-import input[name=gist-uri]').keydown(function(ev) {
+		$('#popup-import input[name=gist-uri], #popup-prompt input').keydown(function(ev) {
 			if (ev.keyCode === 13) {
 				$.magnificPopup.close()
 			}
 		})
 	},
 	alert: function(text, iconClass, buttonText) {
-		$('#popup-alert .text').html(text)
-		$('#popup-alert .btn').text((buttonText || 'OK'))
-		$('#popup-alert .icon').attr('class', 'icon ' + (iconClass || 'info'))
+		var deferred = $.Deferred()
 
 		var btnText
 		switch (iconClass) {
@@ -78,7 +76,10 @@ module.exports = {
 			break
 		}
 
-		$('#popup-alert button').text(btnText)
+		$('#popup-alert .text').html(text)
+		$('#popup-alert .icon').attr('class', 'icon ' + (iconClass || 'info'))
+		$('#popup-alert button').text(buttonText || btnText)
+
 		$.magnificPopup.open({
 			mainClass: 'mfp-transition-zoom-in',
 			removalDelay: 300,
@@ -86,6 +87,9 @@ module.exports = {
 			closeBtnInside: false,
 			callbacks: {
 				open: function() {
+					$('#popup-confirm button').click(function() {
+						return deferred.resolve()
+					})
 					setTimeout(function() {
 						$('#popup-alert button').focus()
 					}, 100)
@@ -96,5 +100,69 @@ module.exports = {
 				src: '#popup-alert',
 			},
 		})
+
+		return deferred.promise()
+	},
+	confirm: function(text) {
+		var deferred = $.Deferred()
+
+		$('#popup-confirm .text').html(text)
+		$('#popup-confirm .btn.yes').text(Baba.generator.yes())
+		$('#popup-confirm .btn.no').text(Baba.generator.no())
+
+		$.magnificPopup.open({
+			mainClass: 'mfp-transition-zoom-in',
+			removalDelay: 300,
+			preloader: false,
+			closeBtnInside: false,
+			callbacks: {
+				open: function() {
+					$('#popup-confirm .btn.yes').click(function() {
+						return deferred.resolve()
+					})
+					$('#popup-confirm .btn.no').click(function() {
+						return deferred.reject()
+					})
+					setTimeout(function() {
+						$('#popup-alert .btn.yes').focus()
+					}, 100)
+				}
+			},
+			items: {
+				type: 'inline',
+				src: '#popup-confirm',
+			},
+		})
+
+		return deferred.promise()
+	},
+	prompt: function(text, buttonText) {
+		var deferred = $.Deferred()
+
+		$('#popup-prompt .text').html(text)
+		$('#popup-prompt button').text(buttonText || 'Submit')
+
+		$.magnificPopup.open({
+			mainClass: 'mfp-transition-zoom-in',
+			removalDelay: 300,
+			preloader: false,
+			closeBtnInside: false,
+			callbacks: {
+				open: function() {
+					setTimeout(function() {
+						$('#popup-prompt input').focus()
+					}, 100)
+				},
+				close: function() {
+					return deferred.resolve($('#popup-prompt input').val())
+				},
+			},
+			items: {
+				type: 'inline',
+				src: '#popup-prompt',
+			},
+		})
+
+		return deferred.promise()
 	},
 }

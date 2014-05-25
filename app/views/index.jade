@@ -149,15 +149,15 @@ html(lang='en')
 		div.input
 			input.input-text(name='value', placeholder='')
 		div.buttons
-			button.btn.dismiss OK
+			button.btn.dismiss Submit
 
 	#popup-confirm.popup.mfp-hide
 		.text-wrap
 			.text
 			.icon.question
 		div.buttons
-			button.btn.confirm OK
-			button.btn.dismiss Cancel
+			button.btn.dismiss.yes Yes
+			button.btn.dismiss.no No
 
 	script(id='grammar-template', type='text/x-template')
 		.header(v-if='model !== $root.generator.grammar')
