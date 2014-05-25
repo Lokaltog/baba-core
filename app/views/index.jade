@@ -117,7 +117,7 @@ html(lang='en')
 		h1.center-header
 			.label Usage
 
-		pre.usage
+		pre.usage(v-if='$root.exportedSlugs')
 			div(v-if='exportType === "module"')
 				| var Baba = require('./{{$root.grammarNameSlug}}') // CommonJS
 				| define(['{{$root.grammarNameSlug}}'], function(Baba) { }) // AMD
