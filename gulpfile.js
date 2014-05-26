@@ -148,6 +148,7 @@ gulp.task('webpack', function(callback) {
 				throw new gutil.PluginError('webpack', err)
 			}
 			gutil.log('Webpack', stats.toString())
+			livereload().changed(__assets_dest + 'js/main.js')
 			callback()
 		})
 })
