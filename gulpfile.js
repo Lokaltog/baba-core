@@ -49,6 +49,18 @@ var config = {
 			processScripts: ['text/x-template'],
 		},
 		webpack: {
+			cache: true,
+			debug: true,
+			devtool: 'source-map',
+			entry: {
+				main: __assets_src + 'js/main.js',
+			},
+			output: {
+				path: __assets_dest + 'js/',
+				filename: '[name].bundle.js',
+				chunkFilename: '[id].chunk.js',
+				publicPath: '/static/js/',
+			},
 			plugins: [
 				new webpack.BannerPlugin(info.name + '\n' + info.version + ':' + Date.now() + ' [development build]'),
 				new webpack.DefinePlugin({
@@ -93,6 +105,16 @@ var config = {
 			processScripts: ['text/x-template'],
 		},
 		webpack: {
+			cache: true,
+			entry: {
+				main: __assets_src + 'js/main.js',
+			},
+			output: {
+				path: __assets_dest + 'js/',
+				filename: '[name].bundle.js',
+				chunkFilename: '[id].chunk.js',
+				publicPath: '/static/js/',
+			},
 			plugins: [
 				new webpack.BannerPlugin(info.name + '\n' + info.version + ':' + Date.now() + ' [production build]'),
 				new webpack.DefinePlugin({
@@ -128,34 +150,25 @@ gulp.task('jade', function() {
 		.pipe(livereload())
 })
 
+var webpackCompiler
 gulp.task('webpack', function(callback) {
-	webpack(
-		{
-			cache: true,
-			entry: {
-				main: __assets_src + 'js/main.js',
-			},
-			output: {
-				path: __assets_dest + 'js/',
-				filename: '[name].bundle.js',
-				chunkFilename: '[id].chunk.js',
-				publicPath: '/static/js/',
-			},
-			plugins: activeConfig.webpack.plugins,
-		},
-		function(err, stats) {
-			if(err) {
-				throw new gutil.PluginError('webpack', err)
-			}
-			gutil.log('Webpack', stats.toString())
-			try {
-				livereload().changed(__assets_dest + 'js/main.js')
-			}
-			catch(e) {
-				// error most likely triggered by noop(), ignore
-			}
-			callback()
-		})
+	webpackCompiler.run(function(err, stats) {
+		if (err) {
+			throw new gutil.PluginError('webpack', err)
+		}
+
+		gutil.log('webpack', stats.toString({
+			colors: true,
+		}))
+
+		try {
+			livereload().changed(__assets_dest + 'js/main.js')
+		}
+		catch(e) {
+			// error most likely triggered by noop(), ignore
+		}
+		callback()
+	})
 })
 
 gulp.task('inline', ['stylus', 'jade', 'webpack', 'sync'], function() {
@@ -183,11 +196,13 @@ gulp.task('sync', function() {
 // handle dev/prod config
 gulp.task('set-env-dev', function() {
 	activeConfig = config.development
+	webpackCompiler = webpack(activeConfig.webpack)
 })
 
 gulp.task('set-env-prod', function() {
 	activeConfig = config.production
 	livereload = gutil.noop
+	webpackCompiler = webpack(activeConfig.webpack)
 })
 
 // main tasks
