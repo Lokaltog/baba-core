@@ -2046,4 +2046,4 @@ $.magnificPopup.registerModule(RETINA_NS, {
 })();
 
 /*>>fastclick*/
- _checkInstance(); })(window.jQuery || window.Zepto);
+ _checkInstance(); })(jQuery);
