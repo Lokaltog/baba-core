@@ -1,3 +1,8 @@
+/*!
+ * __GENERATOR_NAME__ by __GENERATOR_AUTHOR__
+ *
+ * Made with Baba: http://baba.computer/
+ */
 (function() {
 	var Baba = (function() { __GENERATOR__ })()
 

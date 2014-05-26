@@ -1,3 +1,8 @@
+/*!
+ * __GENERATOR_NAME__ by __GENERATOR_AUTHOR__
+ *
+ * Made with Baba: http://baba.computer/
+ */
 (function (root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		define([], factory)

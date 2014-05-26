@@ -1,4 +1,3 @@
-var $ = require('jquery')
 var Baba = require('./generators/baba-dynamic-site-text')
 
 module.exports = {

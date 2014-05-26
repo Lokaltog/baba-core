@@ -254,25 +254,9 @@ function exportGenerator(vm) {
 	return ret.join('\n')
 }
 
-function compress(code) {
-	var UglifyJS = require('./lib/uglify-js')
-	var ast = UglifyJS.parse(code)
-	var compressor = UglifyJS.Compressor({
-		unsafe: true,
-		pure_getters: true,
-	})
-	ast.figure_out_scope()
-	var compressed_ast = ast.transform(compressor)
-	compressed_ast.figure_out_scope()
-	compressed_ast.compute_char_frequency()
-	compressed_ast.mangle_names()
-
-	return compressed_ast.print_to_string()
-}
-
 module.exports = {
-	export: function (vm, type, uglify) {
-		var fs = require('fs') // brfs
+	export: function (vm, type, uglify, callback) {
+		var deferred = $.Deferred()
 		var template
 		var templateVars = {
 			__GENERATOR__: exportGenerator(vm),
@@ -280,35 +264,46 @@ module.exports = {
 			__GENERATOR_AUTHOR__: (vm.generator.grammar.author || 'an unknown author'),
 			__MODULE_NAME__: moduleName,
 		}
-		var comment = [
-			'/**',
-			' * ' + templateVars.__GENERATOR_NAME__ + ' by ' + templateVars.__GENERATOR_AUTHOR__,
-			' *',
-			' * Made with Baba: http://baba.computer/',
-			' */\n',
-		].join('\n')
 
 		switch (type) {
 		default:
 		case 'module':
-			template = fs.readFileSync(__dirname + '/templates/export.module.js', 'utf8')
+			template = require('raw!./templates/export.module.js')
 			break
 		case 'executable':
-			template = fs.readFileSync(__dirname + '/templates/export.executable.js', 'utf8')
-			comment = '#!/usr/bin/env node\n' + comment
+			template = require('raw!./templates/export.executable.js')
 			break
 		}
 
 		for (var key in templateVars) {
 			if (templateVars.hasOwnProperty(key)) {
-				template = template.replace(key, templateVars[key], 'g')
+				template = template.replace(new RegExp(key, 'g'), templateVars[key])
 			}
 		}
 
 		if (uglify) {
-			template = compress(template)
+			require.ensure(['./lib/uglify-js'], function(require) {
+				var UglifyJS = require('./lib/uglify-js')
+				var ast = UglifyJS.parse(template)
+				var compressor = UglifyJS.Compressor({
+					unsafe: true,
+					pure_getters: true,
+				})
+				ast.figure_out_scope()
+				var compressed_ast = ast.transform(compressor)
+				compressed_ast.figure_out_scope()
+				compressed_ast.compute_char_frequency()
+				compressed_ast.mangle_names()
+
+				deferred.resolve(compressed_ast.print_to_string({
+					comments: /^\**!|@preserve|@license/,
+				}))
+			})
+		}
+		else {
+			deferred.resolve(template)
 		}
 
-		return comment + template
+		return deferred.promise()
 	},
 }

@@ -1,5 +1,3 @@
-var $ = require('jquery')
-var exportGenerator = require('../export')
 var S = require('../lib/string')
 var saveAs = require('../lib/filesaver')
 var storage = require('../storage')
@@ -81,23 +79,36 @@ module.exports = function() {
 				storage.save(this.$root) // force save
 			},
 			previewGenerator: function(ev, label) {
-				var slug = S(label).slugify().toString()
-				var container = $('#generator-preview-contents')
+				var $root = this.$root
+				var obj = this
+				require.ensure(['../export'], function(require) {
+					var exportGenerator = require('../export')
+					var slug = S(label).slugify().toString()
+					var container = $('#generator-preview-contents')
 
-				if (!this.exportedGenerator) {
-					console.debug('Grammar changed, recompiling')
+					function updatePreview() {
+						$('.generator-preview-buttons li').removeClass('active')
+						$(ev.target).addClass('active')
+						container.text(obj.exportedGenerator.generator[slug]())
+					}
 
-					var exportedGenerator = exportGenerator.export(this.$root, 'module', false)
-					var context = {}
+					if (!obj.exportedGenerator) {
+						console.debug('Grammar changed, recompiling')
 
-					new Function(exportedGenerator).call(context)
+						exportGenerator.export($root, 'module', false)
+							.done(function(data) {
+								var context = {}
 
-					this.exportedGenerator = context.Baba
-				}
+								new Function(data).call(context)
 
-				$('.generator-preview-buttons li').removeClass('active')
-				$(ev.target).addClass('active')
-				container.text(this.exportedGenerator.generator[slug]())
+								obj.exportedGenerator = context.Baba
+								updatePreview()
+							})
+					}
+					else {
+						updatePreview()
+					}
+				})
 			},
 			getGrammarNode: function(searchPath) {
 				var node = this.nodeCache[searchPath]
@@ -242,37 +253,43 @@ module.exports = function() {
 			},
 			exportGrammarGenerator: function() {
 				var $root = this.$root
-				var data = exportGenerator.export($root, $root.exportType, true)
 				var slug = $root.grammarNameSlug
-
-				$('#popup-export-generator label').click(function() {
-					setTimeout(function() {
-						var data = exportGenerator.export($root, $root.exportType, true)
-						$('#popup-export-generator textarea').text(data).select()
-					}, 0)
-				})
-
-				$.magnificPopup.open({
-					mainClass: 'mfp-transition-zoom-in',
-					removalDelay: 300,
-					preloader: false,
-					closeBtnInside: false,
-					callbacks: {
-						open: function() {
-							$('#popup-export-generator textarea').text(data)
-							$('#popup-export-generator button.download').click(function() {
-								var blob = new Blob([$('#popup-export-generator textarea').val()], { type: 'application/javascript' })
-								saveAs(blob, slug + '.js')
+				require.ensure(['../export'], function(require) {
+					var exportGenerator = require('../export')
+					exportGenerator.export($root, $root.exportType, true)
+						.done(function(data) {
+							$('#popup-export-generator label').click(function() {
+								setTimeout(function() {
+									exportGenerator.export($root, $root.exportType, true)
+										.done(function(data) {
+											$('#popup-export-generator textarea').text(data).select()
+										})
+								}, 0)
 							})
-							setTimeout(function() {
-								$('#popup-export-generator textarea').select()
-							}, 100)
-						}
-					},
-					items: {
-						type: 'inline',
-						src: '#popup-export-generator',
-					},
+
+							$.magnificPopup.open({
+								mainClass: 'mfp-transition-zoom-in',
+								removalDelay: 300,
+								preloader: false,
+								closeBtnInside: false,
+								callbacks: {
+									open: function() {
+										$('#popup-export-generator textarea').text(data)
+										$('#popup-export-generator button.download').click(function() {
+											var blob = new Blob([$('#popup-export-generator textarea').val()], { type: 'application/javascript' })
+											saveAs(blob, slug + '.js')
+										})
+										setTimeout(function() {
+											$('#popup-export-generator textarea').select()
+										}, 100)
+									}
+								},
+								items: {
+									type: 'inline',
+									src: '#popup-export-generator',
+								},
+							})
+						})
 				})
 			},
 			addChild: function(model, type) {

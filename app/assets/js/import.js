@@ -1,5 +1,3 @@
-var $ = require('jquery')
-
 module.exports = {
 	fromGist: function(uri) {
 		var id = uri.split('/').slice(-1)[0]

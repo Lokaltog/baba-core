@@ -14,31 +14,27 @@
 	},
 	"devDependencies" : {
 		"jade": "*",
-		"nib": "*",
 		"stylus": "*",
+		"nib": "*",
 		"uglify-js": "*",
-		"browserify": "*",
-		"vinyl-source-stream": "*",
 
-		"brfs": "*",
-		"es6ify": "*",
+		"webpack": "*",
+		"imports-loader": "*",
+		"raw-loader": "*",
 
 		"gulp": "*",
 		"gulp-clean": "*",
 		"gulp-jade": "*",
 		"gulp-livereload": "*",
 		"gulp-htmlmin": "*",
-		"gulp-imagemin": "*",
-		"gulp-smoosher": "*",
-		"gulp-streamify": "*",
+		"gulp-inline": "*",
 		"gulp-stylus": "*",
-		"gulp-uglify": "*",
 		"gulp-util": "*"
 	},
 	"engines": {
 		"node": ">=0.10"
 	},
 	"browser": {
-		"jquery": "./app/assets/js/lib/jquery.js"
+		"jquery": "./app/assets/js/lib/jquery"
 	}
 }

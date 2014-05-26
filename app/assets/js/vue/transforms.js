@@ -1,4 +1,3 @@
-var $ = require('jquery')
 var popup = require('../popup')
 var storage = require('../storage')
 var utils = require('../utils')
