@@ -148,7 +148,12 @@ gulp.task('webpack', function(callback) {
 				throw new gutil.PluginError('webpack', err)
 			}
 			gutil.log('Webpack', stats.toString())
-			livereload().changed(__assets_dest + 'js/main.js')
+			try {
+				livereload().changed(__assets_dest + 'js/main.js')
+			}
+			catch(e) {
+				// error most likely triggered by noop(), ignore
+			}
 			callback()
 		})
 })
@@ -182,6 +187,7 @@ gulp.task('set-env-dev', function() {
 
 gulp.task('set-env-prod', function() {
 	activeConfig = config.production
+	livereload = gutil.noop
 })
 
 // main tasks
