@@ -135,7 +135,7 @@ module.exports = function() {
 				return nodes.map(function(el) {
 					return {
 						label: el.label,
-						key: string.S(el.label).slugify().toString(),
+						key: S(el.label).slugify().toString(),
 					}
 				})
 			},
