@@ -337,14 +337,14 @@ section.tree
 			.add-section
 				display: none
 			.toggle
-				line-height: 1.5em
-				width: $half-gutter
 				color: $color-foreground-3
 				cursor: pointer
+				margin: 0 $quarter-gutter 0 0
 				&:hover
 					color: $color-foreground-2
-				i::before
+				&::before
 					font-size: .8em
+					line-height: 2.2
 			.label
 				flex: 1 1 auto
 				text-transform: uppercase
@@ -419,26 +419,21 @@ section.tree
 		display: flex
 		flex: 0 1 auto
 	& > li
-		.actions
-			overflow: hidden
-			width: 0
-			li
-				cursor: pointer
-				border-left: 1px solid #ddd
-				padding: 0 $quarter-gutter
-				height: $line-height
-				line-height: $line-height
-				font-size: .95em
-				&:hover
-					background: $color-foreground
-					color: #fff
-					text-shadow: 0 1px 1px rgba(#000, .5)
+		.delete
+			cursor: pointer
+			border-left: 1px solid #ddd
+			padding: 0 $quarter-gutter
+			height: $line-height
+			line-height: $line-height
+			font-size: .95em
+			display: none
+			&:hover
+				background: $color-red
+				color: #fff
+				text-shadow: 0 1px 1px rgba(#000, .5)
 		&:hover
-			padding-right: 0
-			.actions
-				width: auto
-				.delete:hover
-					background: $color-red
+			.delete
+				display: block
 	.icon::before
 		line-height: @line-height
 	.buttons

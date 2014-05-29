@@ -161,15 +161,13 @@ html(lang='en')
 
 	script(id='grammar-template', type='text/x-template')
 		.header(v-if='model !== $root.generator.grammar')
-			.toggle(v-on='click: model.open = !model.open')
-				i.icon.icon-minus(v-if='model.open')
-				i.icon.icon-plus(v-if='!model.open')
+			i.toggle.icon(v-on='click: model.open = !model.open', v-class='icon-minus: model.open, icon-plus: !model.open')
 
 			.label(v-model='model.label', v-on='blur: sortByProperty(parentModel.children, "label")', contenteditable, placeholder='group name')
 
 			.comment(v-model='model.comment', contenteditable, placeholder='add comment')
 
-			.export(v-show='model.type === "sentence"', v-on='click: model.export = !model.export')
+			.export(v-if='model.type === "sentence"', v-on='click: model.export = !model.export')
 				.exported(v-show='model.export') Exported
 				.unexported
 					.btn(v-show='!model.export') Export
@@ -189,17 +187,14 @@ html(lang='en')
 				i.icon.icon-delete
 
 		.node-wrapper(v-if='(model === $root.generator.grammar) || model.open')
-			section(v-repeat='model: model.children', v-with='parentModel: model', v-component='grammar')
-			div(v-show='model.type')
-				.container-wrapper(v-class='model.type', v-with='model', v-component='container-{{model.type || "wordlist"}}')
+			section(v-repeat='model: model.children', v-with='parentModel: model', v-component='grammar', )
+			.container-wrapper(v-class='model.type', v-with='model', v-component='container-{{model.type || "wordlist"}}', v-show='model.type')
 
 	script(id='container-wordlist-template', type='text/x-template')
 		ul.builder.wordlist
 			li.str(v-repeat='elements')
 				.word(v-model='$value', contenteditable, placeholder='string', v-on='blur: elements.$set($index, $value)')
-				ul.actions
-					li.delete(v-on='click: elements.$remove($value)')
-						i.icon.icon-delete
+				i.icon.icon-delete.delete(v-on='click: elements.$remove($value)')
 
 			li
 				input.text-element(type='text', placeholder='add string', data-autosize-input, v-on='keydown: addString | key enter')
@@ -207,23 +202,23 @@ html(lang='en')
 	script(id='container-sentence-template', type='text/x-template')
 		ul.builder.sentence(v-repeat='sentence: elements')
 			li(v-repeat='element: sentence.sentence', v-class='str: element.str, ref: element.ref, preview: preview')
-				div(v-show='typeof element.ref === "undefined"')
+				div(v-if='typeof element.ref === "undefined"')
 					.string(v-model='element.str', contenteditable, placeholder='string')
 					.menu-update-sentence-str(v-on='click: menuUpdateSentenceStr(this, element, sentence.sentence)', v-show='!preview') &hellip;
 
 				div.menu-update-sentence-ref(v-on='click: menuUpdateSentenceRef(this, element, sentence.sentence)', v-show='typeof element.ref !== "undefined"')
-					.display(v-show='!preview')
-						ol.prefix(v-show='element.transform && filterTransforms(element.transform, "prefix")')
+					.display(v-if='!preview')
+						ol.prefix(v-if='element.transform && filterTransforms(element.transform, "prefix")')
 							li(v-repeat='filterTransforms(element.transform, "prefix")') {{tag}}·
-							li(v-repeat='filterTransforms(element.transform)') {{label.toLowerCase()}}
+							li(v-repeat='filterTransforms(element.transform, undefined)') {{label.toLowerCase()}}
 
 						ol.components
 							li(v-repeat='getGrammarComponents(element.ref)', v-class='key') {{label}}
 
-						ol.suffix(v-show='element.transform && filterTransforms(element.transform, "suffix")')
+						ol.suffix(v-if='element.transform && filterTransforms(element.transform, "suffix")')
 							li(v-repeat='filterTransforms(element.transform, "suffix")') ·{{tag}}
 
-					.preview(v-show='preview')
+					.preview(v-if='preview')
 						ol.components
 							li(v-class='getGrammarComponents(element.ref)[0].key')
 								| {{getGrammarComponentPreview(element)}}
@@ -233,7 +228,7 @@ html(lang='en')
 					i.icon.icon-add
 
 			li.actions
-				.refresh.btn(v-show='preview', v-on='click: updatePreview(model)')
+				.refresh.btn(v-if='preview', v-on='click: updatePreview(model)')
 					i.icon.icon-refresh
 
 				.preview.btn(v-class='active: preview', v-on='click: preview = !preview') Preview
@@ -246,9 +241,7 @@ html(lang='en')
 	script(id='transforms-template', type='text/x-template')
 		section(v-repeat='transform: model.children', v-with='parentModel: transform')
 			.header
-				.toggle(v-on='click: transform.open = !transform.open')
-					i.icon.icon-minus(v-if='transform.open')
-					i.icon.icon-plus(v-if='!transform.open')
+				i.toggle.icon(v-on='click: transform.open = !transform.open', v-class='icon-minus: transform.open, icon-plus: !transform.open')
 
 				.label(v-model='transform.label', v-on='blur: sortByProperty(parentModel.children, "label")', contenteditable, placeholder='transform name')
 

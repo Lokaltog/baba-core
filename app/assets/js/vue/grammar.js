@@ -41,7 +41,7 @@ module.exports = function() {
 						return
 					}
 					var tf = nc[ref].node
-					if (tf.type === type || !type) {
+					if (tf.type === type) {
 						ret.push(tf)
 					}
 				})
