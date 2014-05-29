@@ -22,10 +22,10 @@
 		"imports-loader": "*",
 		"raw-loader": "*",
 
+		"fb-flo": "*",
 		"gulp": "*",
 		"gulp-clean": "*",
 		"gulp-jade": "*",
-		"gulp-livereload": "*",
 		"gulp-htmlmin": "*",
 		"gulp-inline": "*",
 		"gulp-stylus": "*",
