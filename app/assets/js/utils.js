@@ -19,6 +19,10 @@ module.exports = {
 		})
 	},
 	applyTransformArray: function(str, transforms) {
+		if (typeof str !== 'string') {
+			// TODO handle references here
+			str = str.toString()
+		}
 		transforms.some(function(transform) {
 			if (typeof transform === 'string') {
 				// function string from imported/stored generator

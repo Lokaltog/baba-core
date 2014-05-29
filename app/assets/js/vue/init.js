@@ -64,9 +64,6 @@ module.exports = function() {
 				vueUtils.createNodeCache(this)
 				vueUtils.updateSlugs(this)
 
-				// make sure any new inputs are autosized
-				$('input[data-autosize-input]').autosizeInput()
-
 				// backup grammar in local storage
 				storage.save(this)
 			})
@@ -358,7 +355,7 @@ module.exports = function() {
 						else {
 							switch (key) {
 							case 'staticString':
-								sentence.push({ str: '', editStr: true })
+								sentence.push({ str: '' })
 								break
 							}
 						}
@@ -415,9 +412,6 @@ module.exports = function() {
 						}
 						else {
 							switch (key) {
-							case 'edit':
-								element.editStr = true
-								break
 							case 'remove':
 								sentence.$remove(element)
 								break
@@ -427,7 +421,6 @@ module.exports = function() {
 					items: (function() {
 						// build menu tree
 						var menu = {
-							edit: { name: 'Edit string' },
 							properties: {
 								name: 'Properties',
 								items: {

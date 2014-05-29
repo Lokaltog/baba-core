@@ -97,6 +97,17 @@ pre
 	color: #fff
 	text-shadow: none
 
+[contenteditable]
+	cursor: text !important
+	$color-hover = rgba($color-foreground, .1)
+	&:hover
+		text-shadow: 1px 1px 0 $color-hover, 1px -1px 0 $color-hover, -1px 1px 0 $color-hover, -1px -1px 0 $color-hover
+	&:empty
+		display: inline
+		&:before
+			content: attr(placeholder)
+			color: rgba(#000, .3)
+
 // Form elements
 input
 	font: 300 .9em/1.9em $font-main
@@ -325,9 +336,6 @@ section.tree
 			display: flex
 			.add-section
 				display: none
-			&:hover
-				.add-section
-					display: block
 			.toggle
 				line-height: 1.5em
 				width: $half-gutter
@@ -339,20 +347,15 @@ section.tree
 					font-size: .8em
 			.label
 				flex: 1 1 auto
-				input
-					text-transform: uppercase
-					font-weight: 700
-					border: 0
-					text-align: left
-					background: transparent
+				text-transform: uppercase
+				font-weight: 700
+				border: 0
+				text-align: left
+				background: transparent
 			.comment,
 			.tag
-				input
-					border: 0
-					text-align: right
-					background: transparent
-					&::-webkit-input-placeholder
-						color: rgba(#fff, 0)
+				text-align: right
+				display: none
 			.delete
 				color: $color-red
 				cursor: pointer
@@ -379,12 +382,14 @@ section.tree
 						padding: 0 $quarter-gutter 0 0
 			&:hover
 				box-shadow: 0 1px 0 $color-foreground-3
+				.add-section
+					display: block
 				.export
 					.unexported
 						opacity: 1
-				input
-					&::-webkit-input-placeholder
-						color: rgba(#000, .3)
+				.comment,
+				.tag
+					display: block
 				.delete
 					display: block
 
