@@ -191,7 +191,7 @@ html(lang='en')
 			.container-wrapper(v-class='model.type', v-with='model', v-component='container-{{model.type || "wordlist"}}', v-show='model.type')
 
 	script(id='container-wordlist-template', type='text/x-template')
-		ul.builder.wordlist
+		ul.builder.wordlist(v-if='elements')
 			li.str(v-repeat='elements')
 				.word(v-model='$value', contenteditable, placeholder='string', v-on='blur: elements.$set($index, $value)')
 				i.icon.icon-delete.delete(v-on='click: elements.$remove($value)')
