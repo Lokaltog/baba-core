@@ -188,7 +188,7 @@ function exportGenerator(vm) {
 				}
 				exportedNodes.push([nodeName, sentenceStr, dependencies])
 
-				if (node.export) {
+				if (vm.generator.exposed.indexOf(node.id) > -1) {
 					grammarExports.push([node.label, nodeName])
 				}
 			}

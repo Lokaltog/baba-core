@@ -56,11 +56,11 @@ html(lang='en')
 				.contents
 					.header
 						h1 Preview generated text
-					p(v-if='!exported.length') You need to export at least one sentence collection. Toggle the export button to the right of any sentence collection above.
-					ul.generator-preview-buttons(v-if='exported.length')
-						li.link-btn(v-repeat='exported', v-on='click: previewGenerator($event, label)')
+					p(v-if='!$root.generator.exposed') You need to expose at least one sentence collection. Toggle the expose button to the right of any sentence collection above.
+					ul.generator-preview-buttons(v-if='$root.generator.exposed')
+						li.link-btn(v-repeat='$root.generator.exposed', v-on='click: previewGenerator($event, $root.nodeCache[$value].node.label)')
 							i.icon.icon-refresh
-							| {{label}}
+							| {{$root.nodeCache[$value].node.label}}
 					#generator-preview-contents
 
 			section.step.save-grammar
@@ -68,12 +68,12 @@ html(lang='en')
 				.contents
 					.header
 						h1 Save, export and share!
-					p(v-if='!exported.length') You need to export at least one sentence collection. Toggle the export button to the right of any sentence collection above.
-					div(v-if='exported.length')
+					p(v-if='!$root.generator.exposed') You need to expose at least one sentence collection. Toggle the expose button to the right of any sentence collection above.
+					div(v-if='$root.generator.exposed')
 						div
 							.btn(v-on='click: exportRawGenerator') Export raw grammar
 						div
-							.btn(v-on='click: exportGrammarGenerator') Get text generator
+							.btn(v-on='click: exportGeneratorJS') Get text generator
 						div
 						div save as gist
 						div preview exported sentences
@@ -119,7 +119,7 @@ html(lang='en')
 		h1.center-header
 			.label Usage
 
-		pre.usage(v-if='$root.exportedSlugs')
+		pre.usage(v-if='$root.exposedSlugs')
 			div(v-if='exportType === "module"')
 				| var Baba = require('./{{$root.grammarNameSlug}}') // CommonJS
 				| define(['{{$root.grammarNameSlug}}'], function(Baba) { }) // AMD
@@ -127,11 +127,11 @@ html(lang='en')
 				br
 				br
 				| // Get generated text
-				div(v-repeat='slug: $root.exportedSlugs.slice(0, 3)')
+				div(v-repeat='slug: $root.exposedSlugs.slice(0, 3)')
 					div(v-if='slug') var str{{$index + 1}} = Baba.generator['{{slug}}']()
 				| // ...
 			div(v-if='exportType === "executable"')
-				| node {{$root.grammarNameSlug}} [ {{ $root.exportedSlugs.join(' | ') }} ]
+				| node {{$root.grammarNameSlug}} [ {{ $root.exposedSlugs.join(' | ') }} ]
 
 		.buttons
 			button.btn.download Download
@@ -167,10 +167,10 @@ html(lang='en')
 
 			.label(v-model='model.label', contenteditable, placeholder='group name')
 
-			.export(v-if='model.type === "sentence"', v-on='click: model.export = !model.export')
-				.exported(v-show='model.export') Exported
+			.export(v-if='model.type === "sentence"')
+				.exported(v-show='$root.generator.exposed.indexOf(model.id) > -1', v-on='click: $root.generator.exposed.$remove(model.id)') Exposed
 				.unexported
-					.btn(v-show='!model.export') Export
+					.btn(v-show='$root.generator.exposed.indexOf(model.id) === -1', v-on='click: $root.generator.exposed.push(model.id)') Expose
 
 			.add-section(v-if='typeof model.children !== "undefined"')
 				.link-btn(v-on='click: addChild(model)')

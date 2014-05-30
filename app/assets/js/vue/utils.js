@@ -34,8 +34,8 @@ module.exports = {
 		if (!obj.generator.grammar) {
 			return
 		}
-		obj.exportedSlugs = (obj.exported || []).map(function(el) {
-			return S(el.label).slugify().toString()
+		obj.exposedSlugs = (obj.generator.exposed || []).map(function(el) {
+			return S(obj.nodeCache[el].node.label).slugify().toString()
 		}).sort()
 		obj.grammarNameSlug = S(obj.generator.grammar.name || '').slugify().toString()
 	},

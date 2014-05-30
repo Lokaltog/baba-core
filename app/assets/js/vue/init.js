@@ -29,13 +29,44 @@ module.exports = function() {
 		}
 	}
 
+	function grammarWatcher() {
+		console.debug('Refreshing generator nodes')
+
+		// reset the exported preview generator every time the grammar changes
+		this.exportedGenerator = null
+		$('#generator-preview-contents').text('')
+		$('.generator-preview-buttons li').removeClass('active')
+
+		vueUtils.createNodeCache(this)
+		vueUtils.updateSlugs(this)
+
+		// update open node object
+		for (var key in this.nodeCache) {
+			if (this.nodeCache.hasOwnProperty(key) && typeof this.openNodes[key] === 'undefined') {
+				this.openNodes.$add(key, false)
+			}
+		}
+
+		// backup grammar in local storage
+		storage.save(this)
+	}
+	var transformsWatcher = grammarWatcher
+
+	function exposedWatcher() {
+		console.debug('Refreshing exposed nodes')
+
+		vueUtils.updateSlugs(this)
+
+		// backup grammar in local storage
+		storage.save(this)
+	}
+
 	return new Vue({
 		el: 'body',
 		data: {
 			generator: storage.load(),
 			nodeCache: {},
 			openNodes: {},
-			exported: [],
 			exportType: 'module',
 			tab: 'grammar',
 		},
@@ -50,31 +81,14 @@ module.exports = function() {
 			if (!this.generator.transforms) {
 				this.generator.transforms = {}
 			}
+			if (!this.generator.exposed) {
+				this.generator.exposed = []
+			}
 
-			this.$watch('generator', function(generator) {
-				console.debug('Generator watcher triggered')
-
-				// walk the grammar tree and detect any exported nodes
-				this.exported = vueUtils.getExportedNodes(generator.grammar)
-
-				// reset the exported preview generator every time the grammar changes
-				this.exportedGenerator = null
-				$('#generator-preview-contents').text('')
-				$('.generator-preview-buttons li').removeClass('active')
-
-				vueUtils.createNodeCache(this)
-				vueUtils.updateSlugs(this)
-
-				// update open node object
-				for (var key in this.nodeCache) {
-					if (this.nodeCache.hasOwnProperty(key) && typeof this.openNodes[key] === 'undefined') {
-						this.openNodes.$add(key, false)
-					}
-				}
-
-				// backup grammar in local storage
-				storage.save(this)
-			})
+			// we don't need to watch the exposed keypath for changes
+			this.$watch('generator.grammar', grammarWatcher.bind(this))
+			this.$watch('generator.transforms', transformsWatcher.bind(this))
+			this.$watch('generator.exposed', exposedWatcher.bind(this))
 		},
 		methods: {
 			swapItems: utils.swapItems,
@@ -164,73 +178,13 @@ module.exports = function() {
 
 				return item
 			},
-			getRawGenerator: function(convertFunctions) {
-				// sanitize grammar
-				// remove disallowed keys
-				// remove empty properties
-				var allowedKeys = [
-					'grammar', 'children', 'elements', 'type', 'label', 'comment',
-					'id', 'str', 'ref', 'variable', 'sentence', 'transform', 'transforms',
-					'name', 'author', 'export', 'whitespace', 'tag', 'probability',
-				]
-
-				function sanitizeNode(node, parent) {
-					for (var key in node) {
-						if (node.hasOwnProperty(key)) {
-							if (node[key] === '' ||
-							    node[key] === [] ||
-							    node[key] === {} ||
-							    typeof node[key] === 'undefined' ||
-							    allowedKeys.indexOf(key) === -1) {
-								continue
-							}
-							if (Array.isArray(node[key])) {
-								parent[key] = []
-								node[key].forEach(function(value, idx) {
-									if (typeof value === 'object') {
-										if (Array.isArray(value)) {
-											parent[key][idx] = []
-											value.forEach(function(el) {
-												parent[key][idx].push(el)
-											})
-										}
-										else {
-											parent[key][idx] = {}
-											sanitizeNode(value, parent[key][idx])
-										}
-									}
-									else if (typeof value === 'function' && convertFunctions) {
-										parent[key][idx] = value.toString()
-									}
-									else {
-										parent[key][idx] = value
-									}
-								})
-							}
-							else {
-								parent[key] = node[key]
-							}
-						}
-					}
-				}
-
-				function sanitizeGenerator(generator) {
-					var ret = {}
-					for (var key in generator) {
-						if (generator.hasOwnProperty(key)) {
-							ret[key] = {}
-							sanitizeNode(generator[key], ret[key])
-						}
-					}
-					return ret
-				}
-				var ret = sanitizeGenerator(this.$root.generator)
-
-				return ret
+			getRawGenerator: function() {
+				// TODO write proper sanitizer for this
+				return this.$root.generator
 			},
 			exportRawGenerator: function() {
-				var grammar = this.getRawGenerator()
-				var data = JSON.stringify(grammar, undefined, '\t')
+				var generator = this.getRawGenerator()
+				var data = JSON.stringify(generator, undefined, '\t')
 				var slug = this.$root.grammarNameSlug
 
 				$.magnificPopup.open({
@@ -256,7 +210,7 @@ module.exports = function() {
 					},
 				})
 			},
-			exportGrammarGenerator: function() {
+			exportGeneratorJS: function() {
 				var $root = this.$root
 				var slug = $root.grammarNameSlug
 				require.ensure(['../export'], function(require) {
