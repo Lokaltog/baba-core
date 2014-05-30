@@ -28,10 +28,12 @@ html(lang='en')
 				.contents
 					.header
 						h1 Name your text generator
-					div.name
+					.name
 						input.input-text#generator-name(type='text', v-model='generator.grammar.name', placeholder='Generator name', data-autosize-input)
 						span.by by
 						input.input-text#generator-author(type='text', v-model='generator.grammar.author', placeholder='Author', data-autosize-input)
+					.comment
+						textarea(v-model='generator.grammar.comment', placeholder='Generator comments')
 
 			section.step.create-grammar
 				.number 2
@@ -46,8 +48,8 @@ html(lang='en')
 							li(v-class='active: tab === "grammar"', v-on='click: tab = "grammar"') Grammar
 							li(v-class='active: tab === "transforms"', v-on='click: tab = "transforms"') Transforms
 
-					section.tree.grammar(v-component='grammar', v-with='model: generator.grammar', v-if='!tab || tab === "grammar"')
-					section.tree.transforms(v-component='transforms', v-with='model: generator.transforms', v-if='tab === "transforms"')
+					section.tree.grammar(v-component='grammar', v-with='model: generator.grammar', v-show='!tab || tab === "grammar"')
+					section.tree.transforms(v-component='transforms', v-with='model: generator.transforms', v-show='tab === "transforms"')
 
 			section.step.preview-grammar
 				.number 3
@@ -161,11 +163,9 @@ html(lang='en')
 
 	script(id='grammar-template', type='text/x-template')
 		.header(v-if='model !== $root.generator.grammar')
-			i.toggle.icon(v-on='click: model.open = !model.open', v-class='icon-minus: model.open, icon-plus: !model.open')
+			i.toggle.icon(v-on='click: openNodes[model.id] = !openNodes[model.id]', v-class='icon-minus: (openNodes[model.id]), icon-plus: !(openNodes[model.id])')
 
-			.label(v-model='model.label', v-on='blur: sortByProperty(parentModel.children, "label")', contenteditable, placeholder='group name')
-
-			.comment(v-model='model.comment', contenteditable, placeholder='add comment')
+			.label(v-model='model.label', contenteditable, placeholder='group name')
 
 			.export(v-if='model.type === "sentence"', v-on='click: model.export = !model.export')
 				.exported(v-show='model.export') Exported
@@ -186,8 +186,8 @@ html(lang='en')
 			.delete(v-on='click: removeGroup(model, parentModel)')
 				i.icon.icon-delete
 
-		.node-wrapper(v-if='(model === $root.generator.grammar) || model.open')
-			section(v-repeat='model: model.children', v-with='parentModel: model', v-component='grammar', )
+		.node-wrapper(v-if='(model === $root.generator.grammar) || openNodes[model.id]')
+			section(v-repeat='model: model.children | orderBy "label"', v-with='parentModel: model', v-component='grammar', )
 			.container-wrapper(v-class='model.type', v-with='model', v-component='container-{{model.type || "wordlist"}}', v-show='model.type')
 
 	script(id='container-wordlist-template', type='text/x-template')
@@ -241,7 +241,7 @@ html(lang='en')
 	script(id='transforms-template', type='text/x-template')
 		section(v-repeat='transform: model.children', v-with='parentModel: transform')
 			.header
-				i.toggle.icon(v-on='click: transform.open = !transform.open', v-class='icon-minus: transform.open, icon-plus: !transform.open')
+				i.toggle.icon(v-on='click: openNodes[transform.id] = !openNodes[transform.id]', v-class='icon-minus: (openNodes[transform.id]), icon-plus: !(openNodes[transform.id])')
 
 				.label(v-model='transform.label', v-on='blur: sortByProperty(parentModel.children, "label")', contenteditable, placeholder='transform name')
 
@@ -264,7 +264,7 @@ html(lang='en')
 				.delete(v-on='click: removeGroup(transform, parentModel || $root.generator.transforms)')
 					i.icon.icon-delete
 
-			.node-wrapper(v-if='(transform === $root.generator.transforms) || transform.open')
+			.node-wrapper(v-if='(transform === $root.generator.transforms) || openNodes[transform.id]')
 				div(v-if='transform.children', v-component='transforms', v-with='model: transform, parentModel: transform')
 				ul
 					li.transform(v-repeat='tf: transform.transforms')

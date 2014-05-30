@@ -3,13 +3,12 @@ var Vue = require('../lib/vue')
 module.exports = function() {
 	Vue.component('grammar', {
 		template: '#grammar-template',
-		data: {
-			open: false,
-		},
+		lazy: true,
 	})
 
 	Vue.component('container-wordlist', {
 		template: '#container-wordlist-template',
+		lazy: true,
 		methods: {
 			addString: function(ev) {
 				var value = ev.target.value.trim().toLowerCase()
@@ -31,6 +30,7 @@ module.exports = function() {
 
 	Vue.component('container-sentence', {
 		template: '#container-sentence-template',
+		lazy: true,
 		methods: {
 			filterTransforms: function(transformList, type) {
 				var ret = []

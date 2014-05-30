@@ -9,6 +9,7 @@ module.exports = function() {
 		data: {
 			open: false,
 		},
+		lazy: true,
 		methods: {
 			updateTransformFunction: function(ev, transforms, idx) {
 				try {

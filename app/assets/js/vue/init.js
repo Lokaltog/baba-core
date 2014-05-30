@@ -34,6 +34,7 @@ module.exports = function() {
 		data: {
 			generator: storage.load(),
 			nodeCache: {},
+			openNodes: {},
 			exported: [],
 			exportType: 'module',
 			tab: 'grammar',
@@ -63,6 +64,13 @@ module.exports = function() {
 
 				vueUtils.createNodeCache(this)
 				vueUtils.updateSlugs(this)
+
+				// update open node object
+				for (var key in this.nodeCache) {
+					if (this.nodeCache.hasOwnProperty(key) && typeof this.openNodes[key] === 'undefined') {
+						this.openNodes.$add(key, false)
+					}
+				}
 
 				// backup grammar in local storage
 				storage.save(this)
@@ -296,7 +304,6 @@ module.exports = function() {
 				}
 				var obj = {
 					id: utils.generateId(),
-					open: true,
 				}
 				switch (type) {
 					default:
