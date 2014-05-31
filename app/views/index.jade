@@ -19,8 +19,8 @@ html(lang='en')
 					.refresh
 						i.icon.icon-refresh
 			.actions
-				.btn#import-grammar(href='#popup-import') Import grammar
-				.btn(v-on='click: generator = {}') Create new grammar
+				.btn#import-grammar(href='#popup-import') Import generator
+				.btn(v-on='click: generator = {}') Create new generator
 
 		#contents
 			section.step.name-grammar
@@ -71,7 +71,7 @@ html(lang='en')
 					p(v-if='!$root.generator.exposed') You need to expose at least one sentence collection. Toggle the expose button to the right of any sentence collection above.
 					div(v-if='$root.generator.exposed')
 						div
-							.btn(v-on='click: exportRawGenerator') Export raw grammar
+							.btn(v-on='click: exportRawGenerator') Export raw JSON
 						div
 							.btn(v-on='click: exportGeneratorJS') Get text generator
 						div
@@ -93,7 +93,10 @@ html(lang='en')
 			.label or
 		textarea.input-text(name='json', placeholder='Paste JSON source')
 		.buttons
-			button.btn.dismiss Import grammar
+			select(name='merge-grammar')
+				option(value='delete') Delete current generator
+				option(value='merge') Merge with current generator
+			button.btn.dismiss Import generator
 
 	#popup-export-json.popup.mfp-hide
 		textarea(disabled).input-text

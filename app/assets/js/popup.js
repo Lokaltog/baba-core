@@ -28,8 +28,16 @@ module.exports = {
 					if (gistUriVal) {
 						importGenerator.fromGist(gistUriVal)
 							.done(function(ret) {
-								module.exports.alert('The grammar <strong>' + ret.grammar.name + '</strong> by <strong>' + ret.grammar.author + '</strong> was successfully imported.')
-								vm.generator = ret
+								module.exports.alert('The generator <strong>' + ret.grammar.name + '</strong> by <strong>' + ret.grammar.author + '</strong> was successfully imported.')
+								switch ($('#popup-import [name=merge-grammar]').val()) {
+								default:
+								case 'delete':
+									vm.generator = ret
+									break
+								case 'merge':
+									$.extend(true, vm.generator, ret)
+									break
+								}
 							})
 							.fail(function(ret) {
 								module.exports.alert(ret, 'error')
@@ -44,8 +52,16 @@ module.exports = {
 					if (jsonTextVal) {
 						importGenerator.fromJson(jsonTextVal)
 							.done(function(ret) {
-								module.exports.alert('The grammar <strong>' + ret.grammar.name + '</strong> by <strong>' + ret.grammar.author + '</strong> was successfully imported.')
-								vm.generator = ret
+								module.exports.alert('The generator <strong>' + ret.grammar.name + '</strong> by <strong>' + ret.grammar.author + '</strong> was successfully imported.')
+								switch ($('#popup-import [name=merge-grammar]').val()) {
+								default:
+								case 'delete':
+									vm.generator = ret
+									break
+								case 'merge':
+									$.extend(true, vm.generator, ret)
+									break
+								}
 							})
 							.fail(function(ret) {
 								module.exports.alert(ret, 'error')
