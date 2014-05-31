@@ -218,12 +218,12 @@ module.exports = function() {
 					exportGenerator.export($root, $root.exportType, true)
 						.done(function(data) {
 							$('#popup-export-generator label').click(function() {
-								setTimeout(function() {
+								Vue.nextTick(function() {
 									exportGenerator.export($root, $root.exportType, true)
 										.done(function(data) {
 											$('#popup-export-generator textarea').text(data).select()
 										})
-								}, 0)
+								})
 							})
 
 							$.magnificPopup.open({
@@ -279,10 +279,10 @@ module.exports = function() {
 
 				model.children.push(obj)
 
-				setTimeout(function() {
+				Vue.nextTick(function() {
 					// find first empty label node and expand it
-					$('.header .label :text:visible').filter(function() { return $(this).val() === '' }).focus()
-				}, 0)
+					$('.header .label').filter(function() { return $(this).text() === '' }).focus()
+				})
 
 				return obj
 			},
@@ -303,7 +303,7 @@ module.exports = function() {
 					events: {
 						hide: function() {
 							// destroy all context menus
-							setTimeout(function(){ $.contextMenu('destroy') }, 0)
+							Vue.nextTick(function(){ $.contextMenu('destroy') })
 						},
 					},
 					callback: function(key, options) {
@@ -355,7 +355,7 @@ module.exports = function() {
 					events: {
 						hide: function() {
 							// destroy all context menus
-							setTimeout(function(){ $.contextMenu('destroy') }, 0)
+							Vue.nextTick(function(){ $.contextMenu('destroy') })
 						},
 					},
 					callback: function(key, options) {
@@ -448,7 +448,7 @@ module.exports = function() {
 					events: {
 						hide: function() {
 							// destroy all context menus
-							setTimeout(function(){ $.contextMenu('destroy') }, 0)
+							Vue.nextTick(function(){ $.contextMenu('destroy') })
 						},
 					},
 					callback: function(key) {
