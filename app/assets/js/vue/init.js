@@ -178,8 +178,24 @@ module.exports = function() {
 				return item
 			},
 			getRawGenerator: function() {
-				// TODO write proper sanitizer for this
-				return this.$root.generator
+				var traverse = require('../lib/traverse')
+				var allowedKeys = [
+					'exposed', 'grammar', 'transforms', // root nodes
+					'author', 'comment', // grammar properties
+					// common properties
+					'id', 'name', 'type', 'children', 'elements', 'label', 'tag', 'transforms', 'ref', 'str', 'whitespace', 'probability',
+				]
+				// sanitize exported data
+				return traverse(this.$root.generator).map(function(node) {
+					if (typeof node === 'function') {
+						// convert functions to strings
+						this.update(node.toString())
+					}
+					if (this.isLeaf && !Array.isArray(this.parent.node) && allowedKeys.indexOf(this.key) === -1) {
+						// remove disallowed keys
+						this.remove()
+					}
+				})
 			},
 			exportRawGenerator: function() {
 				var generator = this.getRawGenerator()
