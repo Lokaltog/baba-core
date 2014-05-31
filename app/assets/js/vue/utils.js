@@ -31,10 +31,13 @@ module.exports = {
 		}
 	},
 	updateSlugs: function(obj) {
-		if (!obj.generator.grammar) {
+		if (!obj.generator.grammar || !obj.nodeCache) {
 			return
 		}
 		obj.exposedSlugs = (obj.generator.exposed || []).map(function(el) {
+			if (!obj.nodeCache[el]) {
+				return ''
+			}
 			return S(obj.nodeCache[el].node.label).slugify().toString()
 		}).sort()
 		obj.grammarNameSlug = S(obj.generator.grammar.name || '').slugify().toString()

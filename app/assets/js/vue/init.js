@@ -408,26 +408,26 @@ module.exports = function() {
 									appendWhitespace: {
 										name: 'Append whitespace',
 										type: 'checkbox',
-										selected: (typeof node.element.whitespace === 'undefined' ? true : node.element.whitespace),
+										selected: (typeof element.whitespace === 'undefined' ? true : element.whitespace),
 										events: {
 											click: function(ev) {
-												if (!node.element.whitespace) {
-													node.element.$add('whitespace')
+												if (!element.whitespace) {
+													element.$add('whitespace')
 												}
-												node.element.whitespace = ev.target.checked
+												element.whitespace = ev.target.checked
 											},
 										},
-										probabilityOfAppearing: {
-											name: 'Probability of appearing (0-100):',
-											type: 'text',
-											value: node.element.probability,
-											events: {
-												keyup: function(ev) {
-													if (!node.element.variable) {
-														node.element.$add('probability', 100)
-													}
-													node.element.probability = parseInt(ev.target.value) || undefined
-												},
+									},
+									probabilityOfAppearing: {
+										name: 'Probability of appearing (0-100):',
+										type: 'text',
+										value: element.probability,
+										events: {
+											keyup: function(ev) {
+												if (!element.variable) {
+													element.$add('probability', 100)
+												}
+												element.probability = parseInt(ev.target.value) || undefined
 											},
 										},
 									},

@@ -32,10 +32,10 @@ var exportFunctions = {
 			return ret.trim()
 		}.bind(this, arguments)
 	},
-	applyProbability: function(str, probability) {
-		return function() {
+	applyProbability: function() {
+		return function(probability, str) {
 			return (Math.random() * 100) < probability ? str : null
-		}
+		}.bind(this, arguments[0], [].slice.call(arguments, 1).join(''))
 	},
 	applyVariable: function(str, variable) {
 		return function() {
@@ -161,16 +161,14 @@ function exportGenerator(vm) {
 									grammarNode += ')'
 								}
 
-								if (el.probability && el.probability < 100) {
-									grammarNode = 'applyProbability(' + grammarNode + ', '
-									grammarNode += parseInt(el.probability)
-									grammarNode += ')'
-								}
-
 								ret = grammarNode
 							}
 							else {
 								ret = JSON.stringify(el.str || '')
+							}
+
+							if (el.probability && el.probability < 100) {
+								ret = 'applyProbability(' + parseInt(el.probability) + ', ' + ret + ')'
 							}
 
 							if (el.whitespace !== false && idx < sentence.sentence.length - 1) {
