@@ -5,7 +5,7 @@ html(lang='en')
 		meta(http-equiv='Content-Type', content='text/html;charset=utf-8')
 		meta(name='viewport', content='width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no')
 
-		title Baba Create-a-Generator by Lokaltog
+		title Baba Create-a-Generator
 
 		link(rel='shortcut icon', href='/static/img/favicon.png')
 		link(rel='stylesheet', href='/static/css/main.css', type='text/css')
@@ -57,7 +57,7 @@ html(lang='en')
 					.header
 						h1 Preview generated text
 					p(v-if='!$root.generator.exposed') You need to expose at least one sentence collection. Toggle the expose button to the right of any sentence collection above.
-					ul.generator-preview-buttons(v-if='$root.generator.exposed')
+					ul.generator-preview-buttons(v-if='$root.generator.exposed && $root.nodeCache')
 						li.link-btn(v-repeat='$root.generator.exposed', v-on='click: previewGenerator($event, $root.nodeCache[$value].node.label)')
 							i.icon.icon-refresh
 							| {{$root.nodeCache[$value].node.label}}

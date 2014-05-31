@@ -54,6 +54,7 @@ module.exports = function() {
 	function exposedWatcher() {
 		console.debug('Refreshing exposed nodes')
 
+		vueUtils.createNodeCache(this)
 		vueUtils.updateSlugs(this)
 
 		// backup grammar in local storage
