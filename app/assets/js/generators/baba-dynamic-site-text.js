@@ -1,4 +1,4 @@
-/**
+/*!
  * Baba dynamic site text by Lokaltog
  *
  * Made with Baba: http://baba.computer/
