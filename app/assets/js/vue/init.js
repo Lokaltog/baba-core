@@ -196,6 +196,10 @@ module.exports = function() {
 						// remove disallowed keys
 						this.remove()
 					}
+					if (node === [] || node === {} || node === undefined || node === null) {
+						// remove empty nodes
+						this.remove()
+					}
 				})
 			},
 			exportRawGenerator: function() {
