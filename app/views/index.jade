@@ -48,8 +48,8 @@ html(lang='en')
 							li(v-class='active: tab === "grammar"', v-on='click: tab = "grammar"') Grammar
 							li(v-class='active: tab === "transforms"', v-on='click: tab = "transforms"') Transforms
 
-					section.tree.grammar(v-component='grammar', v-with='model: generator.grammar', v-show='!tab || tab === "grammar"')
-					section.tree.transforms(v-component='transforms', v-with='model: generator.transforms', v-show='tab === "transforms"')
+					section.tree.grammar(v-component='tree', v-with='model: generator.grammar, root: $root.generator.grammar', v-show='!tab || tab === "grammar"')
+					section.tree.transforms(v-component='tree', v-with='model: generator.transforms, root: $root.generator.transforms', v-show='tab === "transforms"')
 
 			section.step.preview-grammar
 				.number 3
@@ -164,8 +164,8 @@ html(lang='en')
 			button.btn.dismiss.yes Yes
 			button.btn.dismiss.no No
 
-	script(id='grammar-template', type='text/x-template')
-		.header(v-if='model !== $root.generator.grammar')
+	script(id='tree-template', type='text/x-template')
+		.header(v-if='model !== root')
 			i.toggle.icon(v-on='click: openNodes[model.id] = !openNodes[model.id]', v-class='icon-minus: (openNodes[model.id]), icon-plus: !(openNodes[model.id])')
 
 			.label(v-model='model.label', contenteditable, placeholder='group name')
@@ -175,23 +175,41 @@ html(lang='en')
 				.unexported
 					.btn(v-show='$root.generator.exposed.indexOf(model.id) === -1', v-on='click: $root.generator.exposed.push(model.id)') Expose
 
-			.add-section(v-if='typeof model.children !== "undefined"')
-				.link-btn(v-on='click: addChild(model)')
-					i.icon.icon-folder.add
-					| Subgroup
-				.link-btn(v-on='click: addChild(model, "wordlist")')
-					i.icon.icon-add
-					| Word list
-				.link-btn(v-on='click: addChild(model, "sentence")')
-					i.icon.icon-add
-					| Sentences
+			div(v-if='tab === "grammar"')
+				.add-section(v-if='typeof model.children !== "undefined"')
+					.link-btn(v-on='click: addChild(model)')
+						i.icon.icon-folder.add
+						| Subgroup
+					.link-btn(v-on='click: addChild(model, "wordlist")')
+						i.icon.icon-add
+						| Word list
+					.link-btn(v-on='click: addChild(model, "sentence")')
+						i.icon.icon-add
+						| Sentences
+
+			div(v-if='tab === "transforms"')
+				.tag(v-if='!model.children', v-model='model.tag', contenteditable, placeholder='add editor tag')
+
+				.type(v-if='!model.children')
+					select(v-model='model.type')
+						option(value='') (none)
+						option(value='prefix') prefix
+						option(value='suffix') suffix
+
+				.add-section
+					.link-btn(v-on='click: addChild(model || $root.generator.transforms)')
+						i.icon.icon-folder.add
+						| Add group
+					.link-btn(v-on='click: addChild(model, "transforms")')
+						i.icon.icon-add
+						| Transform
 
 			.delete(v-on='click: removeGroup(model, parentModel)')
 				i.icon.icon-delete
 
-		.node-wrapper(v-if='(model === $root.generator.grammar) || openNodes[model.id]')
-			section(v-repeat='model: model.children | orderBy "label"', v-with='parentModel: model', v-component='grammar', )
-			.container-wrapper(v-class='model.type', v-with='model', v-component='container-{{model.type || "wordlist"}}', v-show='model.type')
+		.node-wrapper(v-if='(model === root) || openNodes[model.id]')
+			section(v-repeat='model: model.children | orderBy "label"', v-with='parentModel: model', v-component='tree')
+			.container-wrapper(v-class='model.type', v-with='model', v-component='container-{{getComponent(model)}}')
 
 	script(id='container-wordlist-template', type='text/x-template')
 		ul.builder.wordlist(v-if='elements')
@@ -241,56 +259,29 @@ html(lang='en')
 				i.icon.icon-add
 				| Add sentence
 
-	script(id='transforms-template', type='text/x-template')
-		section(v-repeat='transform: model.children', v-with='parentModel: transform')
-			.header
-				i.toggle.icon(v-on='click: openNodes[transform.id] = !openNodes[transform.id]', v-class='icon-minus: (openNodes[transform.id]), icon-plus: !(openNodes[transform.id])')
-
-				.label(v-model='transform.label', v-on='blur: sortByProperty(parentModel.children, "label")', contenteditable, placeholder='transform name')
-
-				.tag(v-if='!transform.children', v-model='transform.tag', contenteditable, placeholder='add editor tag')
-
-				.type(v-if='!transform.children')
-					select(v-model='transform.type')
-						option(value='') (none)
-						option(value='prefix') prefix
-						option(value='suffix') suffix
-
-				.add-section
-					.link-btn(v-on='click: addChild(transform || $root.generator.transforms)')
-						i.icon.icon-folder.add
-						| Add group
-					.link-btn(v-on='click: addChild(transform, "transforms")')
-						i.icon.icon-add
-						| Transform
-
-				.delete(v-on='click: removeGroup(transform, parentModel || $root.generator.transforms)')
-					i.icon.icon-delete
-
-			.node-wrapper(v-if='(transform === $root.generator.transforms) || openNodes[transform.id]')
-				div(v-if='transform.children', v-component='transforms', v-with='model: transform, parentModel: transform')
-				ul
-					li.transform(v-repeat='tf: transform.transforms')
-						.function(v-if='typeof tf === "function" || typeof tf === "string"')
-							textarea.input-text(v-on='change: updateTransformFunction($event, transform.transforms, $index)') {{tf}}
-						.regex(v-if='typeof tf === "object"')
-							input.input-text(v-on='change: updateTransformRegex($event, transform.transforms, tf, 0)', value='{{tf[0]}}')
-							.divider
-							input.input-text(v-on='change: updateTransformRegex($event, transform.transforms, tf, 1)', value='{{tf[1]}}')
-						ul.actions
-							li.up(v-on='click: swapItems(transform.transforms, $index, $index - 1)')
-							li.down(v-on='click: swapItems(transform.transforms, $index, $index + 1)')
-							li.delete(v-on='click: transform.transforms.$remove(tf)')
-				.add-transform(v-if='typeof transform.children === "undefined"')
-					.add-regex.link-btn(v-on='click: addTransformRegex(transform)')
-						i.icon.icon-add
-						| Add regex
-					.add-function.link-btn(v-on='click: addTransformFunction(transform)')
-						i.icon.icon-plugin
-						| Add function
-				.test(v-if='transform.transforms')
-					input.input-text(v-on='keyup: testTransform($event, transform.transforms)', placeholder='Test transform')
+	script(id='container-transforms-template', type='text/x-template')
+		ul
+			li.transform(v-repeat='tf: model.transforms')
+				.function(v-if='typeof tf === "function" || typeof tf === "string"')
+					textarea.input-text(v-on='change: updateTransformFunction($event, model.transforms, $index)') {{tf}}
+				.regex(v-if='typeof tf === "object"')
+					input.input-text(v-on='change: updateTransformRegex($event, model.transforms, tf, 0)', value='{{tf[0]}}')
 					.divider
-					.transform-test
+					input.input-text(v-on='change: updateTransformRegex($event, model.transforms, tf, 1)', value='{{tf[1]}}')
+				ul.actions
+					li.up(v-on='click: swapItems(model.transforms, $index, $index - 1)')
+					li.down(v-on='click: swapItems(model.transforms, $index, $index + 1)')
+					li.delete(v-on='click: model.transforms.$remove(tf)')
+		.add-transform(v-if='typeof model.children === "undefined"')
+			.add-regex.link-btn(v-on='click: addTransformRegex(model)')
+				i.icon.icon-add
+				| Add regex
+			.add-function.link-btn(v-on='click: addTransformFunction(model)')
+				i.icon.icon-plugin
+				| Add function
+		.test(v-if='model.transforms')
+			input.input-text(v-on='keyup: testTransform($event, model.transforms)', placeholder='Test transform')
+			.divider
+			.transform-test
 
 	script(type='text/javascript', src='/static/js/main.bundle.js')

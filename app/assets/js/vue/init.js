@@ -6,8 +6,7 @@ var vueUtils = require('./utils')
 var Vue = require('../lib/vue')
 
 module.exports = function() {
-	require('./grammar')()
-	require('./transforms')()
+	require('./generator')()
 
 	function addContextSubmenu(node, parent) {
 		var id = 'node:' + node.id
