@@ -32,10 +32,10 @@ var exportFunctions = {
 			return ret.trim()
 		}.bind(this, arguments)
 	},
-	applyProbability: function() {
-		return function(probability, str) {
+	applyProbability: function(probability, str) {
+		return function() {
 			return (Math.random() * 100) < probability ? str : null
-		}.bind(this, arguments[0], [].slice.call(arguments, 1).join(''))
+		}
 	},
 	applyVariable: function(str, variable) {
 		return function() {
