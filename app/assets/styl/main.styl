@@ -63,6 +63,9 @@ global-reset()
 	&.icon-cog
 		&::before
 			content: '\e812'
+	&.icon-edit
+		&::before
+			content: '\e813'
 	&.add
 		&::after
 			content: '\e800'
@@ -513,6 +516,29 @@ section.tree
 				box-shadow: 0 1px 2px rgba(#000, .1)
 				background: rgba(#fff, .5)
 				font-weight: 700
+				position: relative
+				.probability
+					font-size: .3em
+					position: absolute
+					top: .1em
+					left: .1em
+					height: 1em
+					line-height: 1em
+					text-shadow: none
+					padding: .1em
+					color: rgba(#000, .2)
+				.menu
+					font-size: .7em
+					padding: 0 $quarter-gutter
+					border-left: 1px solid rgba(#000, .1)
+					display: none
+				&:hover
+					.probability
+						font-size: .6em
+						color: #fff
+						background: $color-foreground
+					.menu
+						display: block
 				.string
 					padding: 0 $quarter-gutter
 		.actions

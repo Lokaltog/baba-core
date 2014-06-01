@@ -227,7 +227,8 @@ html(lang='en')
 					.string(v-model='element.str', contenteditable, placeholder='string')
 					.menu-update-sentence-str(v-on='click: menuUpdateSentenceStr(this, element, sentence.sentence)', v-show='!preview')
 						span.probability(v-if='element.probability') {{element.probability}}%
-						span.menu &hellip;
+						span.menu
+							i.icon.icon-edit
 
 				div.menu-update-sentence-ref(v-on='click: menuUpdateSentenceRef(this, element, sentence.sentence)', v-show='typeof element.ref !== "undefined"')
 					.display(v-if='!preview')
