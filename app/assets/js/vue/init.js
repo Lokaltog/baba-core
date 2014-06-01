@@ -46,7 +46,7 @@ module.exports = function() {
 	}
 
 	function grammarWatcher() {
-		console.debug('Refreshing generator nodes')
+		console.debug('Refreshing grammar nodes')
 
 		// reset the exported preview generator every time the grammar changes
 		this.exportedGenerator = null
@@ -66,7 +66,22 @@ module.exports = function() {
 		// backup grammar in local storage
 		storage.save(this)
 	}
-	var transformsWatcher = grammarWatcher
+
+	function transformsWatcher() {
+		console.debug('Refreshing transforms nodes')
+
+		nodeCache.refresh(this.$root.generator)
+
+		// update open node object
+		for (var key in nodeCache.cache) {
+			if (nodeCache.cache.hasOwnProperty(key) && typeof this.openNodes[key] === 'undefined') {
+				this.openNodes.$add(key, false)
+			}
+		}
+
+		// backup grammar in local storage
+		storage.save(this)
+	}
 
 	function exposedWatcher() {
 		console.debug('Refreshing exposed nodes')
@@ -164,7 +179,7 @@ module.exports = function() {
 			},
 			getGrammarComponents: function(key) {
 				var cachedNode = nodeCache.get(key)
-				if (!cachedNode.node) {
+				if (!cachedNode || !cachedNode.node) {
 					return [{
 						label: '<<missing word>>',
 						key: '',
