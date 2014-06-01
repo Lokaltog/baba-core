@@ -57,10 +57,10 @@ html(lang='en')
 					.header
 						h1 Preview generated text
 					p(v-if='!$root.generator.exposed') You need to expose at least one sentence collection. Toggle the expose button to the right of any sentence collection above.
-					ul.generator-preview-buttons(v-if='$root.generator.exposed && $root.nodeCache')
-						li.link-btn(v-repeat='$root.generator.exposed', v-on='click: previewGenerator($event, $root.nodeCache[$value].node.label)')
+					ul.generator-preview-buttons(v-if='$root.generator.exposed')
+						li.link-btn(v-repeat='$root.generator.exposed', v-on='click: previewGenerator($event, getNode($value).node.label)')
 							i.icon.icon-refresh
-							| {{$root.nodeCache[$value].node.label}}
+							| {{getNode($value).node.label}}
 					#generator-preview-contents
 
 			section.step.save-grammar
@@ -225,7 +225,9 @@ html(lang='en')
 			li(v-repeat='element: sentence.sentence', v-class='str: element.str, ref: element.ref, preview: preview')
 				div(v-if='typeof element.ref === "undefined"')
 					.string(v-model='element.str', contenteditable, placeholder='string')
-					.menu-update-sentence-str(v-on='click: menuUpdateSentenceStr(this, element, sentence.sentence)', v-show='!preview') &hellip;
+					.menu-update-sentence-str(v-on='click: menuUpdateSentenceStr(this, element, sentence.sentence)', v-show='!preview')
+						span.probability(v-if='element.probability') {{element.probability}}%
+						span.menu &hellip;
 
 				div.menu-update-sentence-ref(v-on='click: menuUpdateSentenceRef(this, element, sentence.sentence)', v-show='typeof element.ref !== "undefined"')
 					.display(v-if='!preview')
@@ -238,6 +240,7 @@ html(lang='en')
 
 						ol.suffix(v-if='element.transform && filterTransforms(element.transform, "suffix")')
 							li(v-repeat='filterTransforms(element.transform, "suffix")') ·{{tag}}
+							li.probability(v-if='element.probability') {{element.probability}}%
 
 					.preview(v-if='preview')
 						ol.components

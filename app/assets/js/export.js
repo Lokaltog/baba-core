@@ -73,6 +73,9 @@ function exportGenerator(vm) {
 	var exportedNodes = []
 	var grammarExports = []
 	var variables = {}
+	var nodeCache = new utils.NodeCache()
+
+	nodeCache.refresh(vm.$root.generator)
 
 	exportedNodes.push(['SPACE', '" "'])
 
@@ -84,9 +87,9 @@ function exportGenerator(vm) {
 	}
 
 	// add node cache variables (unused variables will be removed by uglifyjs)
-	for (var node in vm.nodeCache) {
-		if (vm.nodeCache.hasOwnProperty(node)) {
-			node = vm.nodeCache[node].node
+	for (var node in nodeCache.cache) {
+		if (nodeCache.cache.hasOwnProperty(node)) {
+			node = nodeCache.get(node).node
 			var nodeName = 'node_' + node.id
 			// add exported functions as default dependencies
 			var dependencies = Object.keys(exportFunctions).concat(['SPACE'])
@@ -122,7 +125,7 @@ function exportGenerator(vm) {
 							var ret = ''
 
 							if (el.ref) {
-								var node = vm.nodeCache[el.ref].node
+								var node = nodeCache.get(el.ref).node
 								var grammarNode = 'node_' + node.id
 								var grammarNodeTransforms = []
 
@@ -139,7 +142,7 @@ function exportGenerator(vm) {
 								}
 
 								;(el.transform || []).forEach(function(tf) {
-									tf = vm.nodeCache[tf].node
+									tf = nodeCache.get(tf).node
 									var tfKey = 'node_' + tf.id
 									grammarNodeTransforms.push(tfKey)
 

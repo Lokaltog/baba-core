@@ -1,4 +1,36 @@
+var traverse = require('./lib/traverse')
+
+// Node cache
+function NodeCache() {
+	this.cache = {}
+}
+NodeCache.prototype.refresh = function(source) {
+	// Generate node cache, return traverse node objects
+	var self = this
+	traverse(source).forEach(function(node) {
+		if (node && node.id) {
+			var current = this
+			var parents = []
+			while (current.parent) {
+				if (current.node.id) {
+					parents.push(current.node.id)
+				}
+				current = current.parent
+			}
+			self.cache[node.id] = {
+				node: this.node,
+				parents: parents.reverse(),
+			}
+		}
+	})
+}
+NodeCache.prototype.get = function(key) {
+	return this.cache[key]
+}
+// End node cache
+
 module.exports = {
+	NodeCache: NodeCache,
 	randomItem: function(items) {
 		return items[Math.floor(Math.random() * items.length)]
 	},

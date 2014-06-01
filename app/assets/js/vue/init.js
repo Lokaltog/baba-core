@@ -2,11 +2,13 @@ var S = require('../lib/string')
 var saveAs = require('../lib/filesaver')
 var storage = require('../storage')
 var utils = require('../utils')
-var vueUtils = require('./utils')
 var Vue = require('../lib/vue')
+var traverse = require('../lib/traverse')
 
 module.exports = function() {
 	require('./generator')()
+
+	var nodeCache = new utils.NodeCache()
 
 	function addContextSubmenu(node, parent) {
 		var id = 'node:' + node.id
@@ -28,6 +30,21 @@ module.exports = function() {
 		}
 	}
 
+	function updateSlugs(obj) {
+		if (!obj.generator.grammar || !nodeCache.cache) {
+			return
+		}
+
+		obj.exposedSlugs = (obj.generator.exposed || []).map(function(el) {
+			if (!nodeCache.get(el)) {
+				return ''
+			}
+			return S(nodeCache.get(el).node.label).slugify().toString()
+		}).sort()
+
+		obj.grammarNameSlug = S(obj.generator.grammar.name || '').slugify().toString()
+	}
+
 	function grammarWatcher() {
 		console.debug('Refreshing generator nodes')
 
@@ -36,12 +53,12 @@ module.exports = function() {
 		$('#generator-preview-contents').text('')
 		$('.generator-preview-buttons li').removeClass('active')
 
-		vueUtils.createNodeCache(this)
-		vueUtils.updateSlugs(this)
+		nodeCache.refresh(this.$root.generator)
+		updateSlugs(this)
 
 		// update open node object
-		for (var key in this.nodeCache) {
-			if (this.nodeCache.hasOwnProperty(key) && typeof this.openNodes[key] === 'undefined') {
+		for (var key in nodeCache.cache) {
+			if (nodeCache.cache.hasOwnProperty(key) && typeof this.openNodes[key] === 'undefined') {
 				this.openNodes.$add(key, false)
 			}
 		}
@@ -54,8 +71,8 @@ module.exports = function() {
 	function exposedWatcher() {
 		console.debug('Refreshing exposed nodes')
 
-		vueUtils.createNodeCache(this)
-		vueUtils.updateSlugs(this)
+		nodeCache.refresh(this.$root.generator)
+		updateSlugs(this)
 
 		// backup grammar in local storage
 		storage.save(this)
@@ -65,15 +82,14 @@ module.exports = function() {
 		el: 'body',
 		data: {
 			generator: storage.load(),
-			nodeCache: {},
 			openNodes: {},
 			exportType: 'module',
 			tab: 'grammar',
 		},
 		lazy: true,
 		created: function() {
-			vueUtils.createNodeCache(this)
-			vueUtils.updateSlugs(this)
+			nodeCache.refresh(this.$root.generator)
+			updateSlugs(this)
 
 			if (!this.generator.grammar) {
 				this.generator.grammar = {}
@@ -93,6 +109,9 @@ module.exports = function() {
 		methods: {
 			swapItems: utils.swapItems,
 			sortByProperty: utils.sortByProperty,
+			getNode: function(key) {
+				return nodeCache.get(key)
+			},
 			removeGroup: function(model, parent) {
 				parent.children.$remove(model)
 				storage.save(this.$root) // force save
@@ -130,7 +149,7 @@ module.exports = function() {
 				})
 			},
 			getGrammarNode: function(searchPath) {
-				var node = this.nodeCache[searchPath]
+				var node = nodeCache.get(searchPath)
 				if (typeof node === 'undefined') {
 					return []
 				}
@@ -143,15 +162,16 @@ module.exports = function() {
 
 				return components
 			},
-			getGrammarComponents: function(searchPath) {
-				var nodes = this.getGrammarNode(searchPath)
-				if (!nodes.length) {
+			getGrammarComponents: function(key) {
+				var cachedNode = nodeCache.get(key)
+				if (!cachedNode.node) {
 					return [{
 						label: '<<missing word>>',
 						key: '',
 					}]
 				}
-				return nodes.map(function(el) {
+				return cachedNode.parents.map(function(key) {
+					var el = nodeCache.get(key).node
 					return {
 						label: el.label,
 						key: S(el.label).slugify().toString(),
@@ -159,7 +179,7 @@ module.exports = function() {
 				})
 			},
 			getGrammarComponentPreview: function(node) {
-				var cachedNode = this.nodeCache[node.ref]
+				var cachedNode = nodeCache.get(node.ref)
 				if (typeof cachedNode === 'undefined') {
 					return '<<invalid reference>>'
 				}
@@ -171,7 +191,7 @@ module.exports = function() {
 				// apply transforms
 				if (node.transform) {
 					node.transform.forEach(function(transform) {
-						var node = this.nodeCache[transform].node
+						var node = nodeCache.get(transform).node
 						item = utils.applyTransformArray(item, node.transforms)
 					}.bind(this))
 				}
@@ -179,7 +199,6 @@ module.exports = function() {
 				return item
 			},
 			getRawGenerator: function() {
-				var traverse = require('../lib/traverse')
 				var allowedKeys = [
 					'exposed', 'grammar', 'transforms', // root nodes
 					'author', 'comment', // grammar properties
@@ -308,7 +327,6 @@ module.exports = function() {
 			},
 			menuAddElement: function(node, sentence) {
 				var selector = '.menu-add-element'
-				var nodeCache = this.$root.nodeCache
 				var grammar = this.$root.generator.grammar || {}
 
 				$.contextMenu({
@@ -328,7 +346,7 @@ module.exports = function() {
 					},
 					callback: function(key, options) {
 						if (key.indexOf('node') !== -1) {
-							var keyNode = nodeCache[key.split(':')[1]].node
+							var keyNode = nodeCache.get(key.split(':')[1]).node
 							if (keyNode.type === 'wordlist' || keyNode.type === 'sentence') {
 								sentence.push({ ref: keyNode.id })
 							}
@@ -360,7 +378,6 @@ module.exports = function() {
 			},
 			menuUpdateSentenceStr: function(node, element, sentence) {
 				var selector = '.menu-update-sentence-str'
-				var nodeCache = this.$root.nodeCache
 				var grammar = this.$root.generator.grammar || {}
 
 				$.contextMenu({
@@ -380,7 +397,7 @@ module.exports = function() {
 					},
 					callback: function(key, options) {
 						if (key.indexOf('node') !== -1) {
-							var keyNode = nodeCache[key.split(':')[1]].node
+							var keyNode = nodeCache.get(key.split(':')[1]).node
 							if (keyNode.type === 'wordlist' || keyNode.type === 'sentence') {
 								// clear any element modifiers
 								element.$delete('transform')
@@ -452,7 +469,6 @@ module.exports = function() {
 			},
 			menuUpdateSentenceRef: function(node, element, sentence) {
 				var selector = '.menu-update-sentence-ref'
-				var nodeCache = this.$root.nodeCache
 				var grammar = this.$root.generator.grammar || {}
 				var transforms = this.$root.generator.transforms || {}
 
@@ -473,7 +489,7 @@ module.exports = function() {
 					},
 					callback: function(key) {
 						if (key.indexOf('node') !== -1) {
-							var keyNode = nodeCache[key.split(':')[1]].node
+							var keyNode = nodeCache.get(key.split(':')[1]).node
 							if (keyNode.type === 'wordlist' || keyNode.type === 'sentence') {
 								// clear any element modifiers
 								element.$delete('transform')
