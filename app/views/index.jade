@@ -252,7 +252,7 @@ html(lang='en')
 					i.icon.icon-add
 
 			li.actions
-				.refresh.btn(v-if='preview', v-on='click: updatePreview(model)')
+				.refresh.btn(v-show='preview')
 					i.icon.icon-refresh
 
 				.preview.btn(v-class='active: preview', v-on='click: preview = !preview') Preview
