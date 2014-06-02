@@ -163,6 +163,21 @@ module.exports = function() {
 					}
 				})
 			},
+			filterTransforms: function(transformList, type) {
+				var ret = []
+
+				;(transformList || []).forEach(function(ref) {
+					var refNode = nodeCache.get(ref)
+					if (!refNode) {
+						return
+					}
+					if ((typeof type === 'undefined' && !refNode.node.type) || refNode.node.type === type) {
+						ret.push(refNode.node)
+					}
+				})
+
+				return ret
+			},
 			getGrammarNode: function(searchPath) {
 				var node = nodeCache.get(searchPath)
 				if (typeof node === 'undefined') {

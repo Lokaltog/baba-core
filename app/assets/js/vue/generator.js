@@ -44,24 +44,6 @@ module.exports = function() {
 	Vue.component('container-sentence', {
 		template: '#container-sentence-template',
 		lazy: true,
-		methods: {
-			filterTransforms: function(transformList, type) {
-				var ret = []
-				var nc = this.$root.nodeCache
-
-				;(transformList || []).forEach(function(ref) {
-					if (!nc.hasOwnProperty(ref)) {
-						return
-					}
-					var tf = nc[ref].node
-					if (tf.type === type) {
-						ret.push(tf)
-					}
-				})
-
-				return ret
-			},
-		},
 	})
 
 	Vue.component('container-transforms', {
