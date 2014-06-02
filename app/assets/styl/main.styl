@@ -919,3 +919,37 @@ section.tree
 			position: absolute
 			left: 0
 			top: 50%
+
+// Typeahead popup
+.tt-dropdown-menu
+	background: #fff
+	box-shadow: 0 0 1px rgba(#000, .5), 0 3px 5px rgba(#000, .08)
+	text-transform: uppercase
+	font-size: .8em
+	padding: $quarter-gutter
+	&, & *
+		white-space: nowrap !important
+	.suggestion
+		display: flex
+		.label
+			background: $color-foreground-3
+			font-weight: bold
+			align-self: center
+			height: 1em
+			line-height: @height
+			padding: .2em
+		.component
+			margin: 0 0 0 $quarter-gutter
+		.tag
+			flex: 1 1 auto
+			text-align: right
+			color: $color-foreground-2
+			margin: 0 0 0 $quarter-gutter
+
+.tt-suggestion
+	min-width: 14em
+	white-space: nowrap
+	cursor: pointer
+	&.tt-cursor
+		background: $color-foreground
+		color: #fff

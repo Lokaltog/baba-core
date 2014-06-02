@@ -247,6 +247,8 @@ html(lang='en')
 						ol.components
 							li(v-class='getGrammarComponents(element.ref)[0].key')
 								| {{getGrammarComponentPreview(element)}}
+			li
+				input.generator-typeahead
 
 			li.buttons
 				.btn.menu-add-element(v-show='!preview', v-on='click: menuAddElement(this, sentence.sentence)')

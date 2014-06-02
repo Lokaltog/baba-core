@@ -11,15 +11,20 @@ NodeCache.prototype.refresh = function(source) {
 		if (node && node.id) {
 			var current = this
 			var parents = []
+			var root = ''
 			while (current.parent) {
 				if (current.node.id) {
 					parents.push(current.node.id)
+				}
+				else if (current.key === 'grammar' || current.key === 'transforms') {
+					root = current.key
 				}
 				current = current.parent
 			}
 			self.cache[node.id] = {
 				node: this.node,
 				parents: parents.reverse(),
+				root: root,
 			}
 		}
 	})

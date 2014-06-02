@@ -4,6 +4,7 @@ var storage = require('../storage')
 var utils = require('../utils')
 var Vue = require('../lib/vue')
 var traverse = require('../lib/traverse')
+var typeahead = require('../typeahead')
 
 module.exports = function() {
 	require('./generator')()
@@ -55,6 +56,7 @@ module.exports = function() {
 
 		nodeCache.refresh(this.$root.generator)
 		updateSlugs(this)
+		typeahead.updateSuggestions(nodeCache)
 
 		// update open node object
 		for (var key in nodeCache.cache) {
@@ -71,6 +73,7 @@ module.exports = function() {
 		console.debug('Refreshing transforms nodes')
 
 		nodeCache.refresh(this.$root.generator)
+		typeahead.updateSuggestions(nodeCache)
 
 		// update open node object
 		for (var key in nodeCache.cache) {
@@ -105,6 +108,7 @@ module.exports = function() {
 		created: function() {
 			nodeCache.refresh(this.$root.generator)
 			updateSlugs(this)
+			typeahead.updateSuggestions(nodeCache)
 
 			if (!this.generator.grammar) {
 				this.generator.grammar = {}
