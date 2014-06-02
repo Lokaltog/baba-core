@@ -1,5 +1,5 @@
 /*!
- * __GENERATOR_NAME__ by __GENERATOR_AUTHOR__
+ * {{{generatorName}}} by {{{generatorAuthor}}}
  *
  * Made with Baba: http://baba.computer/
  */
@@ -11,8 +11,8 @@
 		module.exports = factory()
 	}
 	else {
-		root.__MODULE_NAME__ = factory()
+		root.{{{moduleName}}} = factory()
 	}
 }(this, function() {
-	__GENERATOR__
+	{{{generator}}}
 }))

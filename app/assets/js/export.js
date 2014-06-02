@@ -1,5 +1,6 @@
 var utils = require('./utils')
 var S = require('./lib/string')
+var Mustache = require('./lib/mustache')
 
 var moduleName = 'Baba'
 var exportFunctions = {
@@ -260,26 +261,20 @@ module.exports = {
 		var deferred = $.Deferred()
 		var template
 		var templateVars = {
-			__GENERATOR__: exportGenerator(vm),
-			__GENERATOR_NAME__: (vm.generator.grammar.name || 'Unnamed text generator'),
-			__GENERATOR_AUTHOR__: (vm.generator.grammar.author || 'an unknown author'),
-			__MODULE_NAME__: moduleName,
+			generator: exportGenerator(vm),
+			generatorName: (vm.generator.grammar.name || 'Unnamed text generator'),
+			generatorAuthor: (vm.generator.grammar.author || 'an unknown author'),
+			moduleName: moduleName,
 		}
 
 		switch (type) {
 		default:
 		case 'module':
-			template = require('raw!./templates/export.module.js')
+			template = Mustache.render(require('raw!./templates/export.module.js'), templateVars)
 			break
 		case 'executable':
-			template = require('raw!./templates/export.executable.js')
+			template = Mustache.render(require('raw!./templates/export.executable.js'), templateVars)
 			break
-		}
-
-		for (var key in templateVars) {
-			if (templateVars.hasOwnProperty(key)) {
-				template = template.replace(new RegExp(key, 'g'), templateVars[key])
-			}
 		}
 
 		if (uglify) {
