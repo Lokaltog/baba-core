@@ -182,20 +182,6 @@ module.exports = function() {
 
 				return ret
 			},
-			getGrammarNode: function(searchPath) {
-				var node = nodeCache.get(searchPath)
-				if (typeof node === 'undefined') {
-					return []
-				}
-				var searchNode = node
-				var components = [node.node]
-				while (searchNode.parent) {
-					searchNode = searchNode.parent
-					components.unshift(searchNode.node)
-				}
-
-				return components
-			},
 			getGrammarComponents: function(key) {
 				var cachedNode = nodeCache.get(key)
 				if (!cachedNode || !cachedNode.node) {
