@@ -63,7 +63,13 @@ var exportFunctions = {
 	},
 	applyVariable: function(str, variable) {
 		return function() {
-			return variables[variable] || str
+			if (!variables[variable]) {
+				// assign parsed element reference (to ensure that it's a string) to
+				// the variable if the variable isn't set by the user, this ensures
+				// that the value will remain the same if the variable is used later
+				variables[variable] = parseElements(str)()
+			}
+			return variables[variable]
 		}
 	},
 	applyTransforms: function() {

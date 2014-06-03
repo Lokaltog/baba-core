@@ -223,7 +223,8 @@ module.exports = function() {
 					'exposed', 'grammar', 'transforms', // root nodes
 					'author', 'comment', // grammar properties
 					// common properties
-					'id', 'name', 'type', 'children', 'elements', 'label', 'tag', 'transforms', 'ref', 'str', 'whitespace', 'probability',
+					'id', 'name', 'type', 'children', 'elements', 'label', 'tag', 'transforms',
+					'ref', 'str', 'whitespace', 'probability', 'variable',
 				]
 				// sanitize exported data
 				return traverse(this.$root.generator).map(function(node) {
