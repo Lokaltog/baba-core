@@ -184,13 +184,6 @@ function exportGenerator(vm) {
 									dependencies.push(grammarNode)
 								}
 
-								if (grammarNode === nodeName) {
-									// recursive reference, the element has to be returned from a function as it doesn't exist at parse time
-									// the element has a 50% chance to return itself, usually it will repeat itself 0-2 times
-									// TODO add customizable probability
-									grammarNode = 'function() { return Math.random() < 0.5 ? parseElements(' + grammarNode + ') : "" }'
-								}
-
 								;(el.transform || []).forEach(function(tf) {
 									tf = nodeCache.get(tf).node
 									var tfKey = 'node_' + tf.id
