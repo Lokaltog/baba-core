@@ -6,11 +6,16 @@ var moduleName = 'Baba'
 var exportFunctions = {
 	randomItem: utils.randomItem,
 	shuffle: utils.shuffle,
+	VariableContainer: function(variables) {
+		this._v = variables
+	},
 	splitString: function(str) {
 		return str.split('|')
 	},
 	parseElements: function() {
-		return function(elements) {
+		var elements = [].slice.call(arguments)
+
+		return function() {
 			var ret = ''
 			var indexCounters = {}
 			var el, idx, type
@@ -43,7 +48,7 @@ var exportFunctions = {
 					ret += el
 				}
 				else if (type === 'function') {
-					ret += parseElements(el())()
+					ret += parseElements(el.bind(this)())()
 				}
 				else if (Array.isArray(el)) {
 					// add an element from the shuffled element array based on the
@@ -54,7 +59,7 @@ var exportFunctions = {
 			}
 
 			return ret.trim()
-		}.bind(this, [].slice.call(arguments))
+		}
 	},
 	applyProbability: function(probability, str) {
 		return function() {
@@ -63,6 +68,9 @@ var exportFunctions = {
 	},
 	applyVariable: function(str, variable) {
 		return function() {
+			if (this instanceof VariableContainer && this._v[variable]) {
+				return this._v[variable]
+			}
 			if (!variables[variable]) {
 				// assign parsed element reference (to ensure that it's a string) to
 				// the variable if the variable isn't set by the user, this ensures
@@ -72,8 +80,19 @@ var exportFunctions = {
 			return variables[variable]
 		}
 	},
+	applyVariableRefs: function(sentence, variableRefs) {
+		return function() {
+			for (var key in variableRefs) {
+				variableRefs[key] = parseElements(variableRefs[key])()
+			}
+			return sentence.bind(new VariableContainer(variableRefs))
+		}
+	},
 	applyTransforms: function() {
-		return function(elements, transforms) {
+		var elements = arguments[0]
+		var transforms = [].slice.call(arguments, 1)
+
+		return function() {
 			// we need to transform a string, so handle any arrays or functions first
 			var parsed = parseElements(elements)()
 			var search
@@ -95,7 +114,7 @@ var exportFunctions = {
 			})
 
 			return parsed
-		}.bind(this, arguments[0], [].slice.call(arguments, 1))
+		}
 	},
 }
 
@@ -182,8 +201,22 @@ function exportGenerator(vm) {
 									}
 								})
 
+								if (el.variableRefs) {
+									// convert variableRefs array to object argument
+									var refObj = '{'
+									el.variableRefs.forEach(function(ref) {
+										var refNode = 'node_' + ref[1]
+										if (dependencies.indexOf(refNode) === -1) {
+											// add variable ref dependencies
+											dependencies.push(refNode)
+										}
+										refObj += JSON.stringify(ref[0]) + ': ' + refNode + ', '
+									})
+									refObj += '}'
+									grammarNode = 'applyVariableRefs(' + grammarNode + ', ' + refObj + ')'
+								}
+
 								if (el.variable) {
-									variables[el.variable] = null
 									grammarNode = 'applyVariable(' + grammarNode + ', '
 									grammarNode += JSON.stringify(el.variable)
 									grammarNode += ')'

@@ -224,7 +224,7 @@ module.exports = function() {
 					'author', 'comment', // grammar properties
 					// common properties
 					'id', 'name', 'type', 'children', 'elements', 'label', 'tag', 'transforms',
-					'ref', 'str', 'whitespace', 'probability', 'variable',
+					'ref', 'str', 'whitespace', 'probability', 'variable', 'variableRefs',
 				]
 				// sanitize exported data
 				return traverse(this.$root.generator).map(function(node) {
