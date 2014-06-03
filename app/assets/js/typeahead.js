@@ -80,15 +80,18 @@ module.exports = function(nodeCache) {
 
 				var vm = $(this).closest('.sentence').get(0).vue_vm
 				var sentence = vm.sentence.sentence
-				var node = nodeCache.get(obj.id).node
 				var el = {}
 
 				if (obj.id === '__static_string__') {
 					// add static string
 					el.str = ''
 					sentence.push(el)
+					return
 				}
-				else if (node.transforms) {
+
+				var node = nodeCache.get(obj.id).node
+
+				if (node.transforms) {
 					// transform preceding sentence element
 					var word = sentence[sentence.length - 1]
 					if (word.ref) {

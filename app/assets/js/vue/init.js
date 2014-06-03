@@ -49,7 +49,7 @@ module.exports = function() {
 	function grammarWatcher() {
 		console.debug('Refreshing grammar nodes')
 
-		// reset the exported preview generator every time the grammar changes
+		// reset the exported preview generator
 		this.exportedGenerator = null
 		$('#generator-preview-contents').text('')
 		$('.generator-preview-buttons li').removeClass('active')
@@ -88,6 +88,11 @@ module.exports = function() {
 
 	function exposedWatcher() {
 		console.debug('Refreshing exposed nodes')
+
+		// reset the exported preview generator
+		this.exportedGenerator = null
+		$('#generator-preview-contents').text('')
+		$('.generator-preview-buttons li').removeClass('active')
 
 		nodeCache.refresh(this.$root.generator)
 		updateSlugs(this)
