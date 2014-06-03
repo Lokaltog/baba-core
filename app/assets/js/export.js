@@ -5,33 +5,56 @@ var Mustache = require('./lib/mustache')
 var moduleName = 'Baba'
 var exportFunctions = {
 	randomItem: utils.randomItem,
+	shuffle: utils.shuffle,
 	splitString: function(str, divider) {
 		return str.split(divider || '|')
 	},
 	parseElements: function() {
 		return function(elements) {
 			var ret = ''
-			for (var el in elements) { // jshint ignore:line
+			var indexCounters = {}
+			var el, idx, type
+
+			for (idx in elements) { // jshint ignore:line
 				// we're not overriding the prototype in the generator
 				// so we don't need a hasOwnProperty check here
-				el = elements[el]
+				el = elements[idx]
+				if (Array.isArray(el)) {
+					// shuffle all array arguments initially, this shuffles
+					// references so any reference will remain the same
+					shuffle(el)
+
+					// for improved randomness we'll avoid duplicate elements in a
+					// sentence by shuffling the element array initially and then
+					// "slicing" out the elements we need from the array instead of
+					// picking a random element on every iteration
+					indexCounters[elements.indexOf(el)] = 0
+				}
+			}
+
+			for (idx in elements) { // jshint ignore:line
+				// we're not overriding the prototype in the generator
+				// so we don't need a hasOwnProperty check here
+				el = elements[idx]
 
 				// chained ifs compiles down to less code than a switch
-				var type = typeof el
+				type = typeof el
 				if (type === 'string') {
 					ret += el
 				}
 				else if (type === 'function') {
 					ret += parseElements(el())()
 				}
-				else if (type === 'object') {
-					if (Array.isArray(el)) {
-						ret += parseElements(randomItem(el))()
-					}
+				else if (Array.isArray(el)) {
+					// add an element from the shuffled element array based on the
+					// index counter, or fall back to randomItem if we don't have
+					// enough elements for every element to be unique
+					ret += parseElements(el[indexCounters[elements.indexOf(el)]++] || randomItem(el))()
 				}
 			}
+
 			return ret.trim()
-		}.bind(this, arguments)
+		}.bind(this, [].slice.call(arguments))
 	},
 	applyProbability: function(probability, str) {
 		return function() {

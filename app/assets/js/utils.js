@@ -39,6 +39,14 @@ module.exports = {
 	randomItem: function(items) {
 		return items[Math.floor(Math.random() * items.length)]
 	},
+	shuffle: function(array) {
+		// Fisher-Yates shuffle
+		// from http://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array-in-javascript
+		for(var idx, tmp, counter = array.length;
+		    counter;
+		    idx = Math.floor(Math.random() * counter), tmp = array[--counter], array[counter] = array[idx], array[idx] = tmp);
+		return array
+	},
 	swapItems: function(arr, index, newIndex) {
 		var tmp = arr[index]
 		arr.$set(index, arr[newIndex])
