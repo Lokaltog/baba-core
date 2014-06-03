@@ -545,6 +545,13 @@ section.tree
 						display: block
 				.string
 					padding: 0 $quarter-gutter
+		li.typeahead
+			flex: 1 1 auto
+			input
+				background: transparent
+				width: 5em
+				&::-webkit-input-placeholder
+					color: rgba(#000, .5)
 		.actions
 			.btn
 				margin-left: $builder-gutter
@@ -926,11 +933,13 @@ section.tree
 	box-shadow: 0 0 1px rgba(#000, .5), 0 3px 5px rgba(#000, .08)
 	text-transform: uppercase
 	font-size: .8em
-	padding: $quarter-gutter
+	max-height: 10.4em
+	overflow: auto
 	&, & *
 		white-space: nowrap !important
 	.suggestion
 		display: flex
+		width: 100%
 		.label
 			background: $color-foreground-3
 			font-weight: bold
@@ -940,6 +949,9 @@ section.tree
 			padding: .2em
 		.component
 			margin: 0 0 0 $quarter-gutter
+			&:not(:nth-child(2))
+				&::before
+					content: ' / '
 		.tag
 			flex: 1 1 auto
 			text-align: right
@@ -950,6 +962,10 @@ section.tree
 	min-width: 14em
 	white-space: nowrap
 	cursor: pointer
+	padding: 0 $quarter-gutter
 	&.tt-cursor
 		background: $color-foreground
 		color: #fff
+		text-shadow: none
+		.label
+			background: $color-foreground-1

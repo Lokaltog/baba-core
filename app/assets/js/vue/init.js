@@ -4,12 +4,12 @@ var storage = require('../storage')
 var utils = require('../utils')
 var Vue = require('../lib/vue')
 var traverse = require('../lib/traverse')
-var typeahead = require('../typeahead')
 
 module.exports = function() {
 	require('./generator')()
 
 	var nodeCache = new utils.NodeCache()
+	var typeahead = require('../typeahead')(nodeCache)
 
 	function addContextSubmenu(node, parent) {
 		var id = 'node:' + node.id

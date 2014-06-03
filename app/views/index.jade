@@ -247,18 +247,18 @@ html(lang='en')
 						ol.components
 							li(v-class='getGrammarComponents(element.ref)[0].key')
 								| {{getGrammarComponentPreview(element)}}
-			li
-				input.generator-typeahead
 
-			li.buttons
+			li.typeahead(v-show='!preview')
+				input.generator-typeahead(placeholder='add...')
+
+			li.actions
 				.btn.menu-add-element(v-show='!preview', v-on='click: menuAddElement(this, sentence.sentence)')
 					i.icon.icon-add
 
-			li.actions
-				.refresh.btn(v-show='preview')
+				.btn.refresh(v-show='preview')
 					i.icon.icon-refresh
 
-				.preview.btn(v-class='active: preview', v-on='click: preview = !preview') Preview
+				.btn.preview(v-class='active: preview', v-on='click: preview = !preview') Preview
 
 		.add-section
 			.link-btn(v-on='click: elements.push({sentence:[]})')
