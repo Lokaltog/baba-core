@@ -6,8 +6,8 @@ var moduleName = 'Baba'
 var exportFunctions = {
 	randomItem: utils.randomItem,
 	shuffle: utils.shuffle,
-	splitString: function(str, divider) {
-		return str.split(divider || '|')
+	splitString: function(str) {
+		return str.split('|')
 	},
 	parseElements: function() {
 		return function(elements) {
@@ -70,16 +70,17 @@ var exportFunctions = {
 		return function(elements, transforms) {
 			// we need to transform a string, so handle any arrays or functions first
 			var parsed = parseElements(elements)()
+			var search
 
 			transforms.forEach(function(transform) {
 				transform.some(function(rule) {
 					if (typeof rule === 'function') {
 						// function transform
 						parsed = rule(parsed)
-						return false
+						return
 					}
 					// regexp transform
-					var search = new RegExp(rule[0], 'ig')
+					search = new RegExp(rule[0], 'ig')
 					if (parsed.match(search)) {
 						parsed = parsed.replace(search, rule[1])
 						return true
