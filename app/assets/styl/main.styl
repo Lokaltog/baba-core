@@ -45,10 +45,10 @@ global-reset()
 	&.icon-refresh
 		&::before
 			content: '\e803'
-	&.icon-minus
+	&.icon-cog
 		&::before
 			content: '\e806'
-	&.icon-plus
+	&.icon-speaker
 		&::before
 			content: '\e807'
 	&.icon-plugin
@@ -60,9 +60,6 @@ global-reset()
 	&.icon-add-folder
 		&::before
 			content: '\e811'
-	&.icon-cog
-		&::before
-			content: '\e812'
 	&.icon-edit
 		&::before
 			content: '\e813'
@@ -969,3 +966,104 @@ section.tree
 		text-shadow: none
 		.label
 			background: $color-foreground-1
+
+
+// new styles
+ul.tree
+	$inline-padding = .3em
+	background: #fff
+	padding: $half-gutter
+	margin-left: -($half-gutter)
+	user-select: none
+	.icon-plugin
+		color: $color-green
+	.icon-cog
+		color: $color-blue
+		margin: 0 $quarter-gutter 0 0
+	.header
+		display: flex
+		align-items: center
+		font-size: .9em
+		.name
+			flex: 1 0 auto
+			font-weight: 700
+			text-transform: uppercase
+		&:hover
+			background: rgba(#000, .05)
+		&::before
+			font: normal .7em/1em $font-icon
+			content: '\e800'
+			width: 1.6em
+			height: @width
+			line-height: @height + .2em
+			text-align: center
+			margin: 0 ($quarter-gutter / 2) 0 0
+			&:hover
+				background: $color-foreground-2
+	.return-random,
+	.return-merged
+		& > .header
+			&::after
+				color: $color-foreground-1
+				font: normal .8em/1em $font-icon
+				display: block
+				margin: 0 ($quarter-gutter / 2)
+	.return-random
+		& > .header
+			&::after
+				content: '\e814'
+	.return-merged
+		& > .header
+			&::after
+				content: '\e815'
+	ul.children
+		padding: 0 0 0 $half-gutter
+		margin: 0 0 0 .4em
+		border-left: 1px solid $color-foreground-3
+		&.inline
+			cursor: default
+			background: #f4f2ef
+			box-shadow: inset 0 1px 2px rgba(#000, .1)
+			display: flex
+			flex-wrap: wrap
+			display: flex
+			flex-wrap: wrap
+			align-items: center
+			padding: $inline-padding
+			border: 0
+			.inline
+				// don't pad nested inlines
+				padding: 0
+				// emphasize shadows on nested inlines to separate them better
+				box-shadow: inset 0 0 1px rgba(#000, .4)
+			.node
+				flex: 0 1 auto
+				.contents
+					padding: 0 $quarter-gutter
+					font-size: .9em
+					background: #fff
+					box-shadow: 0 1px 2px rgba(#000, .15)
+					margin: 0 $inline-padding 0 0
+				&.has-children + .node
+					margin-left: $inline-padding
+			.return-random,
+			.return-merged
+				.children
+					margin: 0 ($quarter-gutter / 2) 0 0
+					background: rgba(#000, .08)
+					padding: $inline-padding 0
+					margin: -($inline-padding) 0
+					text-shadow: 0 1px 0 rgba(#fff, .9)
+					&::before
+						color: $color-foreground-1
+						font: normal .8em/1em $font-icon
+						display: block
+						margin: 0 ($quarter-gutter / 2)
+			.return-random
+				.children
+					&::before
+						content: '\e814'
+			.return-merged
+				.children
+					&::before
+						content: '\e815'

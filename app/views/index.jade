@@ -48,8 +48,8 @@ html(lang='en')
 							li(v-class='active: tab === "grammar"', v-on='click: tab = "grammar"') Grammar
 							li(v-class='active: tab === "transforms"', v-on='click: tab = "transforms"') Transforms
 
-					section.tree.grammar(v-component='tree', v-with='model: generator.grammar, root: $root.generator.grammar', v-show='!tab || tab === "grammar"')
-					section.tree.transforms(v-component='tree', v-with='model: generator.transforms, root: $root.generator.transforms', v-show='tab === "transforms"')
+					ul.tree(v-component='tree', v-with='children: generator.grammar.children', v-show='!tab || tab === "grammar"')
+					ul.tree(v-component='tree', v-with='children: generator.transforms.children', v-show='tab === "transforms"')
 
 			section.step.preview-grammar
 				.number 3
@@ -165,129 +165,15 @@ html(lang='en')
 			button.btn.dismiss.no No
 
 	script(id='tree-template', type='text/x-template')
-		.header(v-if='model !== root')
-			i.toggle.icon(v-on='click: openNodes[model.id] = !openNodes[model.id]', v-class='icon-minus: (openNodes[model.id]), icon-plus: !(openNodes[model.id])')
-
-			.label(v-model='model.label', contenteditable, placeholder='group name')
-
-			.export(v-if='model.type === "sentence"')
-				.exported(v-show='$root.generator.exposed.indexOf(model.id) > -1', v-on='click: $root.generator.exposed.$remove(model.id)') Exposed
-				.unexported
-					.btn(v-show='$root.generator.exposed.indexOf(model.id) === -1', v-on='click: $root.generator.exposed.push(model.id)') Expose
-
-			div(v-if='tab === "grammar"')
-				.add-section(v-if='typeof model.children !== "undefined"')
-					.link-btn(v-on='click: addChild(model)')
-						i.icon.icon-folder.add
-						| Subgroup
-					.link-btn(v-on='click: addChild(model, "wordlist")')
-						i.icon.icon-add
-						| Word list
-					.link-btn(v-on='click: addChild(model, "sentence")')
-						i.icon.icon-add
-						| Sentences
-
-			div(v-if='tab === "transforms"')
-				.tag(v-if='!model.children', v-model='model.tag', contenteditable, placeholder='add editor tag')
-
-				.type(v-if='!model.children')
-					select(v-model='model.type')
-						option(value='') (none)
-						option(value='prefix') prefix
-						option(value='suffix') suffix
-
-				.add-section
-					.link-btn(v-on='click: addChild(model || $root.generator.transforms)')
-						i.icon.icon-folder.add
-						| Add group
-					.link-btn(v-on='click: addChild(model, "transforms")')
-						i.icon.icon-add
-						| Transform
-
-			.delete(v-on='click: removeGroup(model, parentModel)')
-				i.icon.icon-delete
-
-		.node-wrapper(v-if='(model === root) || openNodes[model.id]')
-			section(v-repeat='model: model.children | orderBy "label"', v-with='parentModel: model', v-component='tree')
-			.container-wrapper(v-class='model.type', v-with='model', v-component='container-{{getComponent(model)}}')
-
-	script(id='container-wordlist-template', type='text/x-template')
-		ul.builder.wordlist(v-if='elements')
-			li.str(v-repeat='elements')
-				.word(v-model='$value', contenteditable, placeholder='string', v-on='blur: elements.$set($index, $value)')
-				i.icon.icon-delete.delete(v-on='click: elements.$remove($value)')
-
-			li
-				input.text-element(type='text', placeholder='add string', data-autosize-input, v-on='keydown: addString | key enter')
-
-	script(id='container-sentence-template', type='text/x-template')
-		ul.builder.sentence(v-repeat='sentence: elements')
-			li(v-repeat='element: sentence.sentence', v-class='str: element.str, ref: element.ref, preview: preview')
-				div(v-if='typeof element.ref === "undefined"')
-					.string(v-model='element.str', contenteditable, placeholder='string')
-					.menu-update-sentence-str(v-on='click: menuUpdateSentenceStr(this, element, sentence.sentence)', v-show='!preview')
-						span.probability(v-if='element.probability') {{element.probability}}%
-						span.menu
-							i.icon.icon-edit
-
-				div.menu-update-sentence-ref(v-on='click: menuUpdateSentenceRef(this, element, sentence.sentence)', v-show='typeof element.ref !== "undefined"')
-					.display(v-if='!preview')
-						ol.prefix(v-if='element.transform && filterTransforms(element.transform, "prefix")')
-							li(v-repeat='filterTransforms(element.transform, "prefix")') {{tag}}·
-							li(v-repeat='filterTransforms(element.transform)') {{label.toLowerCase()}}
-
-						ol.components
-							li(v-repeat='getGrammarComponents(element.ref)', v-class='key') {{label}}
-
-						ol.suffix(v-if='element.transform && filterTransforms(element.transform, "suffix")')
-							li(v-repeat='filterTransforms(element.transform, "suffix")') ·{{tag}}
-							li.probability(v-if='element.probability') {{element.probability}}%
-
-					.preview(v-if='preview')
-						ol.components
-							li(v-class='getGrammarComponents(element.ref)[0].key')
-								| {{getGrammarComponentPreview(element)}}
-
-			li.typeahead(v-show='!preview')
-				input.generator-typeahead(placeholder='add...')
-
-			li.actions
-				.btn.menu-add-element(v-show='!preview', v-on='click: menuAddElement(this, sentence.sentence)')
-					i.icon.icon-add
-
-				.btn.refresh(v-show='preview')
-					i.icon.icon-refresh
-
-				.btn.preview(v-class='active: preview', v-on='click: preview = !preview') Preview
-
-		.add-section
-			.link-btn(v-on='click: elements.push({sentence:[]})')
-				i.icon.icon-add
-				| Add sentence
-
-	script(id='container-transforms-template', type='text/x-template')
-		ul
-			li.transform(v-repeat='tf: model.transforms')
-				.function(v-if='typeof tf === "function" || typeof tf === "string"')
-					textarea.input-text(v-on='change: updateTransformFunction($event, model.transforms, $index)') {{tf}}
-				.regex(v-if='typeof tf === "object"')
-					input.input-text(v-on='change: updateTransformRegex($event, model.transforms, tf, 0)', value='{{tf[0]}}')
-					.divider
-					input.input-text(v-on='change: updateTransformRegex($event, model.transforms, tf, 1)', value='{{tf[1]}}')
-				ul.actions
-					li.up(v-on='click: swapItems(model.transforms, $index, $index - 1)')
-					li.down(v-on='click: swapItems(model.transforms, $index, $index + 1)')
-					li.delete(v-on='click: model.transforms.$remove(tf)')
-		.add-transform(v-if='typeof model.children === "undefined"')
-			.add-regex.link-btn(v-on='click: addTransformRegex(model)')
-				i.icon.icon-add
-				| Add regex
-			.add-function.link-btn(v-on='click: addTransformFunction(model)')
+		li.node(v-repeat='node: children', v-class='has-children: node.children, \'return-\' + node.return')
+			.header(v-if='node.name')
+				.name {{node.name}}
+			ul.children(v-if='node.children', v-component='tree', v-with='children: node.children', v-class='inline: !node.name || !children[0].name')
+			.contents.str(v-if='node[0] === "str"') {{node[1]}}
+			.contents.ref(v-if='node[0] === "ref"')
+				i.icon.icon-cog
+				| REF
+			.contents.function(v-if='node[0] === "fn"')
 				i.icon.icon-plugin
-				| Add function
-		.test(v-if='model.transforms')
-			input.input-text(v-on='keyup: testTransform($event, model.transforms)', placeholder='Test transform')
-			.divider
-			.transform-test
 
 	script(type='text/javascript', src='/static/js/main.bundle.js')
