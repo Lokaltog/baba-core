@@ -49,21 +49,21 @@ module.exports = function() {
 	function grammarWatcher() {
 		console.debug('Refreshing grammar nodes')
 
-		// reset the exported preview generator
-		this.exportedGenerator = null
-		$('#generator-preview-contents').text('')
-		$('.generator-preview-buttons li').removeClass('active')
+		// // reset the exported preview generator
+		// this.exportedGenerator = null
+		// $('#generator-preview-contents').text('')
+		// $('.generator-preview-buttons li').removeClass('active')
 
 		nodeCache.refresh(this.$root.generator)
-		updateSlugs(this)
-		typeahead.updateSuggestions(nodeCache)
+		// updateSlugs(this)
+		// typeahead.updateSuggestions(nodeCache)
 
-		// update open node object
-		for (var key in nodeCache.cache) {
-			if (nodeCache.cache.hasOwnProperty(key) && typeof this.openNodes[key] === 'undefined') {
-				this.openNodes.$add(key, false)
-			}
-		}
+		// // update open node object
+		// for (var key in nodeCache.cache) {
+		// 	if (nodeCache.cache.hasOwnProperty(key) && typeof this.openNodes[key] === 'undefined') {
+		// 		this.openNodes.$add(key, false)
+		// 	}
+		// }
 
 		// backup grammar in local storage
 		storage.save(this)
@@ -73,14 +73,14 @@ module.exports = function() {
 		console.debug('Refreshing transforms nodes')
 
 		nodeCache.refresh(this.$root.generator)
-		typeahead.updateSuggestions(nodeCache)
+		// typeahead.updateSuggestions(nodeCache)
 
-		// update open node object
-		for (var key in nodeCache.cache) {
-			if (nodeCache.cache.hasOwnProperty(key) && typeof this.openNodes[key] === 'undefined') {
-				this.openNodes.$add(key, false)
-			}
-		}
+		// // update open node object
+		// for (var key in nodeCache.cache) {
+		// 	if (nodeCache.cache.hasOwnProperty(key) && typeof this.openNodes[key] === 'undefined') {
+		// 		this.openNodes.$add(key, false)
+		// 	}
+		// }
 
 		// backup grammar in local storage
 		storage.save(this)
@@ -89,13 +89,13 @@ module.exports = function() {
 	function exposedWatcher() {
 		console.debug('Refreshing exposed nodes')
 
-		// reset the exported preview generator
-		this.exportedGenerator = null
-		$('#generator-preview-contents').text('')
-		$('.generator-preview-buttons li').removeClass('active')
+		// // reset the exported preview generator
+		// this.exportedGenerator = null
+		// $('#generator-preview-contents').text('')
+		// $('.generator-preview-buttons li').removeClass('active')
 
 		nodeCache.refresh(this.$root.generator)
-		updateSlugs(this)
+		// updateSlugs(this)
 
 		// backup grammar in local storage
 		storage.save(this)
@@ -112,8 +112,8 @@ module.exports = function() {
 		lazy: true,
 		created: function() {
 			nodeCache.refresh(this.$root.generator)
-			updateSlugs(this)
-			typeahead.updateSuggestions(nodeCache)
+			// updateSlugs(this)
+			// typeahead.updateSuggestions(nodeCache)
 
 			if (!this.generator.grammar) {
 				this.generator.grammar = {}
@@ -224,12 +224,13 @@ module.exports = function() {
 				return item
 			},
 			getRawGenerator: function() {
+				return this.$root.generator
 				var allowedKeys = [
 					'exposed', 'grammar', 'transforms', // root nodes
 					'author', 'comment', // grammar properties
 					// common properties
 					'id', 'name', 'type', 'children', 'elements', 'label', 'tag', 'transforms',
-					'ref', 'str', 'whitespace', 'probability', 'variable', 'variableRefs',
+					'ref', 'str', 'whitespace', 'probability', 'variable', 'variableRefs', 'fn',
 				]
 				// sanitize exported data
 				return traverse(this.$root.generator).map(function(node) {
