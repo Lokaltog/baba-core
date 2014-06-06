@@ -165,7 +165,7 @@ html(lang='en')
 			button.btn.dismiss.no No
 
 	script(id='tree-template', type='text/x-template')
-		.node(v-repeat='node: children', v-class='has-children: node.children, node.inline ? \'inline-\' + node.inline : \'\', no-ws: typeof node.whitespace !== "undefined" && !node.whitespace', data-weight='{{ node.weight }}')
+		.node(v-repeat='node: children', v-class='has-children: node.children, node.inline ? \'inline-\' + node.inline : \'\', no-ws: typeof node.whitespace !== "undefined" && !node.whitespace')
 			.header(v-if='node.name')
 				.name {{ node.name }}
 				.edit
@@ -180,7 +180,9 @@ html(lang='en')
 				.function(v-if='node.type === "fn"')
 					i.icon.icon-plugin
 					| {{ node.value }}
-		.repeat(v-if='node.repeat.count')
+				.weight(v-if='node.weight') {{ node.weight }}×
+		.weight(v-if='node.weight') {{ node.weight }}×
+		.repeat(v-if='node.repeat && node.repeat.count')
 			| {{ node.repeat.count[0] }}··{{ node.repeat.count[1] }}
 
 	script(type='text/javascript', src='/static/js/main.bundle.js')

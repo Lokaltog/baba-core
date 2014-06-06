@@ -996,25 +996,15 @@ section.tree
 			margin: 0 ($quarter-gutter / 2) 0 0
 			&:hover
 				background: $color-foreground-2
-	[data-weight]:not([data-weigth=''])
-		position: relative
-		&::after
-			content: attr(data-weight) '×'
-			position: absolute
-			background: rgba($color-foreground-1, 0)
-			color: $color-foreground
-			padding: .1em .2em
-			top: -.2em
-			left: @top
-			font: 700 .7em/1 $font-main
-			opacity: .2
-			transition: all .1s linear
-		&:hover
-			&::after
-				color: #fff
-				opacity: 1
-				text-shadow: 0 1px 0 rgba(#000, .5)
-				background: rgba($color-foreground-1, 1)
+	.weight
+		font-size: .6em
+		font-weight: 700
+		color: $color-yellow
+		position: absolute
+		top: .1em
+		left: .1em
+		line-height: 1
+		text-shadow: 1px 1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, -1px -1px 0 #fff !important
 	.repeat
 		background: rgba(#fff, .5)
 		color: $color-foreground-2
@@ -1048,6 +1038,7 @@ section.tree
 		padding: 0 0 0 ($half-gutter / 1.5)
 		margin: $inline-padding 0 $inline-padding .45em
 		border-left: 1px solid $color-foreground-3
+		position: relative
 		&.inline
 			cursor: default
 			background: #f4f2ef
@@ -1072,6 +1063,7 @@ section.tree
 				flex: 0 1 auto
 				display: flex
 				.contents
+					display: flex
 					padding: 0 $quarter-gutter
 					font-size: .9em
 					background: #fff
@@ -1088,8 +1080,6 @@ section.tree
 					margin: 0 $quarter-gutter 0 0
 				.no-ws
 					// nodes with no added whitespace
-					.contents
-						margin: 0 .8em 0 0
 					.contents,
 					& + .node .contents
 						position: relative
@@ -1102,12 +1092,15 @@ section.tree
 							background: #fff
 							width: 20px
 					.contents
+						margin: 0 .8em 0 0
+						padding-right: .2em
 						&::after
 							content: ''
 							right: -10px
 							transform: perspective(5px) rotateX(-5deg) scaleY(2)
 							transform-origin: top left
 					& + .node .contents
+						padding-left: .2em
 						&::before
 							content: ''
 							left: -10px
