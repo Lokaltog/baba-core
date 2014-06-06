@@ -48,8 +48,8 @@ html(lang='en')
 							li(v-class='active: tab === "grammar"', v-on='click: tab = "grammar"') Grammar
 							li(v-class='active: tab === "transforms"', v-on='click: tab = "transforms"') Transforms
 
-					ul.tree(v-component='tree', v-with='children: generator.grammar.children', v-show='!tab || tab === "grammar"')
-					ul.tree(v-component='tree', v-with='children: generator.transforms.children', v-show='tab === "transforms"')
+					.tree(v-component='tree', v-with='children: generator.grammar.children', v-show='!tab || tab === "grammar"')
+					.tree(v-component='tree', v-with='children: generator.transforms.children', v-show='tab === "transforms"')
 
 			section.step.preview-grammar
 				.number 3
@@ -165,12 +165,12 @@ html(lang='en')
 			button.btn.dismiss.no No
 
 	script(id='tree-template', type='text/x-template')
-		li.node(v-repeat='node: children', v-class='has-children: node.children, node.inline ? \'inline-\' + node.inline : \'\', no-ws: typeof node.whitespace !== "undefined" && !node.whitespace', data-weight='{{ node.weight }}')
+		.node(v-repeat='node: children', v-class='has-children: node.children, node.inline ? \'inline-\' + node.inline : \'\', no-ws: typeof node.whitespace !== "undefined" && !node.whitespace', data-weight='{{ node.weight }}')
 			.header(v-if='node.name')
 				.name {{ node.name }}
 				.edit
 					i.icon.icon-cog
-			ul.children(v-if='node.children', v-component='tree', v-with='children: node.children', v-class='inline: node.inline')
+			.children(v-if='node.children', v-component='tree', v-with='children: node.children', v-class='inline: node.inline')
 			.contents(v-if='node.type')
 				.str(v-if='node.type === "str"')
 					| {{ node.value }}
@@ -180,5 +180,7 @@ html(lang='en')
 				.function(v-if='node.type === "fn"')
 					i.icon.icon-plugin
 					| {{ node.value }}
+		.repeat(v-if='node.repeat.count')
+			| {{ node.repeat.count[0] }}··{{ node.repeat.count[1] }}
 
 	script(type='text/javascript', src='/static/js/main.bundle.js')

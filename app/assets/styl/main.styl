@@ -969,7 +969,7 @@ section.tree
 
 
 // new styles
-ul.tree
+.tree
 	$inline-padding = .3em
 	background: #fff
 	padding: $half-gutter
@@ -1015,7 +1015,36 @@ ul.tree
 				opacity: 1
 				text-shadow: 0 1px 0 rgba(#000, .5)
 				background: rgba($color-foreground-1, 1)
-	ul.children
+	.repeat
+		background: rgba(#fff, .5)
+		color: $color-foreground-2
+		font-size: .7em
+		font-weight: 700
+		padding: 0 $quarter-gutter
+		margin: 0 $inline-padding 0 -.5em
+	.inline-random,
+	.inline-joined
+		& > .children.inline
+			.inline
+				margin: 0 ($quarter-gutter / 2) 0 0
+				background: rgba($color-foreground, .08)
+				padding: $inline-padding 0 !important
+				margin: -($inline-padding) 0
+				text-shadow: 0 1px 0 rgba(#fff, .9)
+			&::before
+				color: $color-foreground-1
+				font: normal .8em/1em $font-icon
+				display: block
+				margin: 0 ($quarter-gutter)
+	.inline-random
+		& > .children.inline
+			&::before
+				content: '\e814'
+	.inline-joined
+		& > .children.inline
+			&::before
+				content: '\e815'
+	.children
 		padding: 0 0 0 ($half-gutter / 1.5)
 		margin: $inline-padding 0 $inline-padding .45em
 		border-left: 1px solid $color-foreground-3
@@ -1041,6 +1070,7 @@ ul.tree
 				margin: 0 0 $inline-padding 0
 			.node
 				flex: 0 1 auto
+				display: flex
 				.contents
 					padding: 0 $quarter-gutter
 					font-size: .9em
@@ -1083,25 +1113,3 @@ ul.tree
 							left: -10px
 							transform: perspective(5px) rotateX(5deg) scaleY(2)
 							transform-origin: bottom right
-	.inline-random,
-	.inline-joined
-		& > .children.inline
-			.inline
-				margin: 0 ($quarter-gutter / 2) 0 0
-				background: rgba($color-foreground, .08)
-				padding: $inline-padding 0 !important
-				margin: -($inline-padding) 0
-				text-shadow: 0 1px 0 rgba(#fff, .9)
-			&::before
-				color: $color-foreground-1
-				font: normal .8em/1em $font-icon
-				display: block
-				margin: 0 ($quarter-gutter)
-	.inline-random
-		& > .children.inline
-			&::before
-				content: '\e814'
-	.inline-joined
-		& > .children.inline
-			&::before
-				content: '\e815'
