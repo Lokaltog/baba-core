@@ -165,7 +165,7 @@ html(lang='en')
 			button.btn.dismiss.no No
 
 	script(id='tree-template', type='text/x-template')
-		li.node(v-repeat='node: children', v-class='has-children: node.children, node.inline ? \'inline-\' + node.inline : \'\'')
+		li.node(v-repeat='node: children', v-class='has-children: node.children, node.inline ? \'inline-\' + node.inline : \'\', no-ws: typeof node[2] !== "undefined" && !node[2]')
 			.header(v-if='node.name')
 				.name {{node.name}}
 				.edit

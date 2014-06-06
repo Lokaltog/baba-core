@@ -1036,6 +1036,33 @@ ul.tree
 				.icon-cog
 					color: $color-blue
 					margin: 0 $quarter-gutter 0 0
+				.no-ws
+					// nodes with no added whitespace
+					.contents
+						margin: 0 .8em 0 0
+					.contents,
+					& + .node .contents
+						position: relative
+						z-index: 10
+						&::after, &::before
+							position: absolute
+							top: 0
+							bottom: 0
+							z-index: -1
+							background: #fff
+							width: 20px
+					.contents
+						&::after
+							content: ''
+							right: -10px
+							transform: perspective(5px) rotateX(-5deg) scaleY(2)
+							transform-origin: top left
+					& + .node .contents
+						&::before
+							content: ''
+							left: -10px
+							transform: perspective(5px) rotateX(5deg) scaleY(2)
+							transform-origin: bottom right
 	.inline-random,
 	.inline-joined
 		& > .children.inline
