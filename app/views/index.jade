@@ -165,15 +165,19 @@ html(lang='en')
 			button.btn.dismiss.no No
 
 	script(id='tree-template', type='text/x-template')
-		li.node(v-repeat='node: children', v-class='has-children: node.children, \'return-\' + node.return')
+		li.node(v-repeat='node: children', v-class='has-children: node.children, node.inline ? \'inline-\' + node.inline : \'\'')
 			.header(v-if='node.name')
 				.name {{node.name}}
-			ul.children(v-if='node.children', v-component='tree', v-with='children: node.children', v-class='inline: !node.name || !children[0].name')
-			.contents.str(v-if='node[0] === "str"') {{node[1]}}
-			.contents.ref(v-if='node[0] === "ref"')
-				i.icon.icon-cog
-				| REF
-			.contents.function(v-if='node[0] === "fn"')
-				i.icon.icon-plugin
+				.edit
+					i.icon.icon-cog
+			ul.children(v-if='node.children', v-component='tree', v-with='children: node.children', v-class='inline: node.inline')
+			.contents(v-if='node[0]')
+				.str(v-if='node[0] === "str"') {{node[1]}}
+				.ref(v-if='node[0] === "ref"')
+					i.icon.icon-cog
+					| ref {{node[1]}}
+				.function(v-if='node[0] === "fn"')
+					i.icon.icon-plugin
+					| {{ node[1] }}
 
 	script(type='text/javascript', src='/static/js/main.bundle.js')

@@ -975,11 +975,6 @@ ul.tree
 	padding: $half-gutter
 	margin-left: -($half-gutter)
 	user-select: none
-	.icon-plugin
-		color: $color-green
-	.icon-cog
-		color: $color-blue
-		margin: 0 $quarter-gutter 0 0
 	.header
 		display: flex
 		align-items: center
@@ -989,7 +984,8 @@ ul.tree
 			font-weight: 700
 			text-transform: uppercase
 		&:hover
-			background: rgba(#000, .05)
+			background: rgba($color-foreground, .05)
+			cursor: pointer
 		&::before
 			font: normal .7em/1em $font-icon
 			content: '\e800'
@@ -1000,25 +996,9 @@ ul.tree
 			margin: 0 ($quarter-gutter / 2) 0 0
 			&:hover
 				background: $color-foreground-2
-	.return-random,
-	.return-merged
-		& > .header
-			&::after
-				color: $color-foreground-1
-				font: normal .8em/1em $font-icon
-				display: block
-				margin: 0 ($quarter-gutter / 2)
-	.return-random
-		& > .header
-			&::after
-				content: '\e814'
-	.return-merged
-		& > .header
-			&::after
-				content: '\e815'
 	ul.children
-		padding: 0 0 0 $half-gutter
-		margin: 0 0 0 .4em
+		padding: 0 0 0 ($half-gutter / 1.5)
+		margin: $inline-padding 0 $inline-padding .45em
 		border-left: 1px solid $color-foreground-3
 		&.inline
 			cursor: default
@@ -1029,13 +1009,17 @@ ul.tree
 			display: flex
 			flex-wrap: wrap
 			align-items: center
-			padding: $inline-padding
+			padding: $inline-padding $inline-padding 0 0
 			border: 0
 			.inline
 				// don't pad nested inlines
 				padding: 0
 				// emphasize shadows on nested inlines to separate them better
 				box-shadow: inset 0 0 1px rgba(#000, .4)
+				& > .node
+					margin: 0
+			& > .node
+				margin: 0 0 $inline-padding 0
 			.node
 				flex: 0 1 auto
 				.contents
@@ -1046,24 +1030,31 @@ ul.tree
 					margin: 0 $inline-padding 0 0
 				&.has-children + .node
 					margin-left: $inline-padding
-			.return-random,
-			.return-merged
-				.children
-					margin: 0 ($quarter-gutter / 2) 0 0
-					background: rgba(#000, .08)
-					padding: $inline-padding 0
-					margin: -($inline-padding) 0
-					text-shadow: 0 1px 0 rgba(#fff, .9)
-					&::before
-						color: $color-foreground-1
-						font: normal .8em/1em $font-icon
-						display: block
-						margin: 0 ($quarter-gutter / 2)
-			.return-random
-				.children
-					&::before
-						content: '\e814'
-			.return-merged
-				.children
-					&::before
-						content: '\e815'
+				.icon-plugin
+					color: $color-green
+					margin: 0 $quarter-gutter 0 0
+				.icon-cog
+					color: $color-blue
+					margin: 0 $quarter-gutter 0 0
+	.inline-random,
+	.inline-joined
+		& > .children.inline
+			.inline
+				margin: 0 ($quarter-gutter / 2) 0 0
+				background: rgba($color-foreground, .08)
+				padding: $inline-padding 0 !important
+				margin: -($inline-padding) 0
+				text-shadow: 0 1px 0 rgba(#fff, .9)
+			&::before
+				color: $color-foreground-1
+				font: normal .8em/1em $font-icon
+				display: block
+				margin: 0 ($quarter-gutter)
+	.inline-random
+		& > .children.inline
+			&::before
+				content: '\e814'
+	.inline-joined
+		& > .children.inline
+			&::before
+				content: '\e815'
