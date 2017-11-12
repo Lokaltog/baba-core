@@ -230,7 +230,7 @@ export default (grammar) => {
 
 		// Exposed nodes
 		return {
-			${statements.expose.map(v => `${v[0]}: vars => { baba$$vars = vars; return ${v[1]} + ''}`).join(',')}
+			${statements.expose.map(v => `${v[0]}: vars => { baba$$vars = vars || {}; return ${v[1]} + ''}`).join(',')}
 		};
 		})();`;
 	};
