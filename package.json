@@ -1,6 +1,6 @@
 {
   "name": "baba-core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A tool for creating random text generators.",
   "homepage": "https://github.com/Lokaltog/baba-core",
   "repository": {
@@ -98,22 +98,29 @@
   "scripts": {
     "baba": "babel-node src/bin/baba.js",
     "lint": "eslint src",
-    "compile": "babel -d dist src",
+    "compile": "npm run compile-parser && npm run compile-script",
+    "compile-parser": "jison grammar/baba.jison -o src/baba-parser.js",
+    "compile-script": "babel -d dist src",
     "prepare": "npm run compile"
   },
   "main": "./dist/baba.js",
   "bin": {
     "baba": "./dist/bin/baba.js"
   },
-  "dependencies": {
+  "devDependencies": {
     "@babel/cli": "^7.0.0-beta.31",
     "@babel/core": "^7.0.0-beta.31",
     "@babel/node": "^7.0.0-beta.31",
     "@babel/preset-env": "^7.0.0-beta.31",
-    "babel-minify": "^0.2.0",
     "eslint": "^4.10.0",
-    "jison": "^0.4.18",
-    "prettier": "^1.8.2",
+    "jison": "^0.4.18"
+  },
+  "optionalDependencies": {
+    "babel-minify": "^0.2.0",
+    "prettier": "^1.8.2"
+  },
+  "dependencies": {
+    "baba-grammar-common": "^1.0.0",
     "yargs": "^10.0.3"
   }
 }

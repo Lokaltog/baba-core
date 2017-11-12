@@ -1,11 +1,8 @@
 import path from 'path';
-import jison from 'jison';
+import babaParser from './baba-parser';
 
-export default (parserSrc, grammar) => {
-	const parser = new jison.Parser(parserSrc);
-	const parsed = parser.parse(grammar);
-
-	// Returns sanitized identifer
+export default (grammar) => {
+	const parsed = babaParser.parse(grammar);
 	const getIdentifier = it => `baba$${it.join('__').replace(/[^a-z0-9_]/ig, '_')}`;
 
 	const reduceTree = (nodes, context=[]) => {

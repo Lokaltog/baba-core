@@ -8,11 +8,6 @@ import Baba from '../baba';
 yargs.command(['parse <file>', '$0'], 'Parse grammar and output JS module',
 	yargs => {
 		yargs
-			.option('parser', {
-				default: 'grammar/baba.jison',
-				type: 'string',
-				coerce: arg => fs.readFileSync(arg, 'utf8'),
-			})
 			.option('prettify', {
 				default: false,
 			})
@@ -26,7 +21,7 @@ yargs.command(['parse <file>', '$0'], 'Parse grammar and output JS module',
 			});
 	},
 	argv => {
-		const script = Baba(argv.parser, argv.file);
+		const script = Baba(argv.file);
 
 		if (argv.prettify) {
 			const prettier = require('prettier');
