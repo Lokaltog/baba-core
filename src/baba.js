@@ -42,7 +42,7 @@ export default (grammar) => {
 						let value = valueChildren.join(', ');
 						if (valueChildren.length > 1) {
 							// Only call choice method on lists with more than one item
-							value = `baba$$choice(${value})`;
+							value = `baba$$choice(() => [${value}])`;
 						}
 						else {
 							// Single values must be stringified
@@ -60,7 +60,7 @@ export default (grammar) => {
 						let value = valueChildren.join(', ');
 						if (valueChildren.length > 1) {
 							// Only call choice method on lists with more than one item
-							value = `baba$$choice(${value})`;
+							value = `baba$$choice(() => [${value}])`;
 						}
 						else {
 							// Single values must be stringified
@@ -81,7 +81,7 @@ export default (grammar) => {
 					interpolated_string() {
 						const children = reduceTree(identifier, context);
 						const weight = args[0] || 1;
-						let value = `baba$$concat(${children.filter(it => !it.statement).join(', ')})`;
+						let value = `baba$$concat(() => [${children.filter(it => !it.statement).join(', ')}])`;
 						if (weight > 1) {
 							value = `new Array(${weight}).fill(${value})`;
 						}
@@ -93,17 +93,14 @@ export default (grammar) => {
 						let value = `${children.filter(it => !it.statement).join(', ')}`;
 						if (quantifier === '?') {
 							// Optional quantifier
-							value = `baba$$choice(${value}, '')`;
+							value = `baba$$choice(() => [${value}, ''])`;
 						}
 						return { type, value, children };
 					},
 					tag_choice() {
 						const [type, left, right] = node;
-						const children = [
-							reduceTree(left),
-							reduceTree(right),
-						];
-						const value = `baba$$choice(${children.filter(it => !it.statement).join(', ')})`;
+						const children = reduceTree(left).concat(reduceTree(right));
+						const value = `baba$$choice(() => [${children.filter(it => !it.statement).join(', ')}])`;
 						return {
 							type,
 							value,
@@ -112,11 +109,8 @@ export default (grammar) => {
 					},
 					tag_concat() {
 						const [type, left, right] = node;
-						const children = [
-							reduceTree(left),
-							reduceTree(right),
-						];
-						const value = `baba$$concat(${children.filter(it => !it.statement).join(', ')})`;
+						const children = reduceTree(left).concat(reduceTree(right));
+						const value = `baba$$concat(() => [${children.filter(it => !it.statement).join(', ')}])`;
 						return {
 							type,
 							value,
@@ -203,15 +197,21 @@ export default (grammar) => {
 			// allows top-level definitions to be wrapped in closures to avoid 
 			// issues with undefined variables
 			this.toString = () => {
-				return fn() + '';
+				return (typeof fn === 'function' ? fn() : fn) + '';
 			}
 		}
-		const baba$$choice = (...arr) => {
-			// Flatten array (e.g. arrays of weighted items)
-			arr = Array.prototype.concat.apply([], arr);
-			return arr[Math.floor(Math.random() * arr.length)];
+		const baba$$choice = fn => {
+			let cached;
+			return new baba$$ClosureWrapper(() => {
+				if (!cached) {
+					// Flatten array (e.g. arrays of weighted items)
+					cached = Array.prototype.concat.apply([], fn());
+				}
+				const ret = cached[Math.floor(Math.random() * cached.length)];
+				return ret;
+			})
 		};
-		const baba$$concat = (...arr) => arr.join('');
+		const baba$$concat = fn => new baba$$ClosureWrapper(() => fn().join(''));
 		const baba$$re = (str, rules) => {
 			// Regex rule helper
 			let ret;
@@ -226,7 +226,7 @@ export default (grammar) => {
 		${functions.map(v => `const ${v[0]}$func = ${v[1]};`).join('\n')}
 
 		// Grammar rules
-		${Object.keys(vars).map(v => `const ${v} = new baba$$ClosureWrapper(() => ${vars[v].value});`).join('\n')}
+		${Object.keys(vars).map(v => `const ${v} = new baba$$ClosureWrapper(${vars[v].value});`).join('\n')}
 
 		// Exposed nodes
 		return {
