@@ -1,6 +1,6 @@
 {
   "name": "baba-core",
-  "version": "0.1.1",
+  "version": "0.1.3",
   "description": "A tool for creating random text generators.",
   "homepage": "https://github.com/Lokaltog/baba-core",
   "repository": {
@@ -99,7 +99,7 @@
     "baba": "babel-node src/bin/baba.js",
     "lint": "eslint src",
     "compile": "npm run compile-parser && npm run compile-script",
-    "compile-parser": "jison grammar/baba.jison -o src/baba-parser.js",
+    "compile-parser": "jison src/parser/baba.jison -o src/parser/baba.js",
     "compile-script": "babel -d dist src",
     "prepare": "npm run compile"
   },

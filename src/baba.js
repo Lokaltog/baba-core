@@ -1,5 +1,5 @@
 import path from 'path';
-import babaParser from './baba-parser';
+import babaParser from './parser/baba';
 
 export default (grammar) => {
 	const parsed = babaParser.parse(grammar);
