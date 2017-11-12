@@ -1,4 +1,3 @@
-import path from 'path';
 import babaParser from './parser/baba';
 
 export default (grammar) => {
@@ -10,26 +9,28 @@ export default (grammar) => {
 			const [type, identifier, ...args] = node;
 			try {
 				const obj = ({
-					at_statement() {
+					meta_statement() {
 						switch (identifier) {
-						case 'use':
+						case 'import':
 							return {
 								type,
 								identifier,
-								name: args[0][1],
-								value: true,
-								statement: true, // Statements aren't added to argument lists
+
+								file: args[0][0][1], // Raw value of first argument
+								alias: args[0][1][1], // Raw value of second argument
+								meta: true,
 							};
-						case 'expose':
-							// No need to track dependencies as the variables are 
-							// accessed at runtime in the function
+						case 'export': {
+							const parsedArgs = reduceTree(args[0]);
 							return {
 								type,
 								identifier,
-								name: JSON.stringify(args[0][1]),
-								value: getIdentifier(context),
-								statement: true, // Statements aren't added to argument lists
+
+								key: parsedArgs[0],
+								value: parsedArgs[1],
+								meta: true,
 							};
+						}
 						}
 						return { type };
 					},
@@ -38,7 +39,7 @@ export default (grammar) => {
 						const name = getIdentifier(fullContext);
 						const children = reduceTree(args[0], fullContext);
 
-						const valueChildren = children.filter(it => !it.statement);
+						const valueChildren = children.filter(it => !it.meta);
 						let value = valueChildren.join(', ');
 						if (valueChildren.length > 1) {
 							// Only call choice method on lists with more than one item
@@ -52,11 +53,11 @@ export default (grammar) => {
 						return { type, value, name, children };
 					},
 					list_block() {
-						const fullContext = context.concat(identifier[1]);
+						const fullContext = identifier ? context.concat(identifier[1]) : context;
 						const name = getIdentifier(fullContext);
 						const children = reduceTree(args[0], fullContext);
 
-						const valueChildren = children.filter(it => !it.statement);
+						const valueChildren = children.filter(it => !it.meta);
 						let value = valueChildren.join(', ');
 						if (valueChildren.length > 1) {
 							// Only call choice method on lists with more than one item
@@ -81,7 +82,7 @@ export default (grammar) => {
 					interpolated_string() {
 						const children = reduceTree(identifier, context);
 						const weight = args[0] || 1;
-						let value = `baba$$concat(() => [${children.filter(it => !it.statement).join(', ')}])`;
+						let value = `baba$$concat(() => [${children.filter(it => !it.meta).join(', ')}])`;
 						if (weight > 1) {
 							value = `new Array(${weight}).fill(${value})`;
 						}
@@ -90,7 +91,7 @@ export default (grammar) => {
 					tag() {
 						const [type, contents, quantifier] = node;
 						const children = reduceTree(contents, context);
-						let value = `${children.filter(it => !it.statement).join(', ')}`;
+						let value = `${children.filter(it => !it.meta).join(', ')}`;
 						if (quantifier === '?') {
 							// Optional quantifier
 							value = `baba$$choice(() => [${value}, ''])`;
@@ -100,7 +101,7 @@ export default (grammar) => {
 					tag_choice() {
 						const [type, left, right] = node;
 						const children = reduceTree(left).concat(reduceTree(right));
-						const value = `baba$$choice(() => [${children.filter(it => !it.statement).join(', ')}])`;
+						const value = `baba$$choice(() => [${children.filter(it => !it.meta).join(', ')}])`;
 						return {
 							type,
 							value,
@@ -110,7 +111,7 @@ export default (grammar) => {
 					tag_concat() {
 						const [type, left, right] = node;
 						const children = reduceTree(left).concat(reduceTree(right));
-						const value = `baba$$concat(() => [${children.filter(it => !it.statement).join(', ')}])`;
+						const value = `baba$$concat(() => [${children.filter(it => !it.meta).join(', ')}])`;
 						return {
 							type,
 							value,
@@ -155,9 +156,9 @@ export default (grammar) => {
 
 	const getScript = tree => {
 		// Collect data for export
-		const statements = {
-			expose: [], // exposed parameters
-			use: [], // imported files
+		const meta = {
+			export: [], // exported parameters
+			import: [], // imported files
 		};
 
 		const vars = {};
@@ -167,26 +168,30 @@ export default (grammar) => {
 				if (node.children) {
 					collect(node.children);
 				}
-				if (!node.statement) {
-					if (node.name && node.value) {
-						vars[node.name] = node;
-					}
+				if (!node.meta && node.name && node.value) {
+					vars[node.name] = node;
+				}
+				else if (node.meta) {
+					meta[node.identifier].push(node);
 				}
 				else {
-					statements[node.identifier].push([node.name, node.value]);
+					// Value node
 				}
 			});
 		};
 		collect(tree);
 
 		const functions = [];
-		statements.use.forEach(v => {
-			const file = v[0];
-			const name = path.parse(file).name;
-			const obj = require(file);
+		const exports = [];
+		
+		meta.import.forEach(node => {
+			const obj = require(node.file);
 			Object.keys(obj).forEach(f => {
-				functions.push([getIdentifier([name, f]), obj[f].toString()]);
+				functions.push([getIdentifier([node.alias, f]), obj[f].toString()]);
 			});
+		});
+		meta.export.forEach(node => {
+			exports.push([node.key.toString(), node.value.value ? node.value.value : node.value.name]);
 		});
 
 		return `
@@ -228,9 +233,9 @@ export default (grammar) => {
 		// Grammar rules
 		${Object.keys(vars).map(v => `const ${v} = new baba$$ClosureWrapper(${vars[v].value});`).join('\n')}
 
-		// Exposed nodes
+		// Exported nodes
 		return {
-			${statements.expose.map(v => `${v[0]}: vars => { baba$$vars = vars || {}; return ${v[1]} + ''}`).join(',')}
+			${exports.map(v => `${v[0]}: vars => { baba$$vars = vars || {}; return ${v[1]} + '' },`).join('\n')}
 		};
 		})();`;
 	};

@@ -3,19 +3,19 @@
 %s scope list tag arglist ipstring
 
 %%
+\s*'#'.*\n*\s* // ignore comments
 \n+ // ignore newlines completely
 <INITIAL,scope,arglist,tag>\s+ // ignore whitespace, but not in lists
-\s*'#'.* // ignore comments
 
-// At-rule
-\@[a-zA-Z0-9\._-]+\s* return 'AT_STATEMENT'
+// Meta statement
+\@[a-zA-Z0-9\._-]+ return 'META_STATEMENT'
 
 // String literals
-<INITIAL,scope,list,arglist,tag>\s*\'(?:[^'\\]|\\.)*\'\s* return 'SINGLE_QUOTED_STRING'
+<INITIAL,scope,list,arglist,tag>\'(?:[^'\\]|\\.)*\' return 'SINGLE_QUOTED_STRING'
 
 // Interpolated string
-<ipstring>\s*\"(?:\s*\+\s*\d+)? this.popState(); return 'DOUBLE_QUOTE'
-\"\s* this.begin('ipstring'); return 'DOUBLE_QUOTE'
+<ipstring>\"(?:\+\d+)? this.popState(); return 'DOUBLE_QUOTE'
+\" this.begin('ipstring'); return 'DOUBLE_QUOTE'
 <ipstring>(?:[^\\\<\"]|\\.)+ return 'LITERAL'
 
 // Scope
@@ -25,7 +25,7 @@
 
 // List
 \[\s* this.begin('list'); return 'LSBRACKET'
-<list>(?:\,)?\s*\]\s* this.popState(); return 'RSBRACKET'
+<list>(?:\,)?\s*\] this.popState(); return 'RSBRACKET'
 <list>\b(?:[^,\\\[\]\<\>\'\"\`]|\\.)+\b return 'LITERAL'
 <list>\s*\,\s* return 'LIST_SEPARATOR'
 
@@ -37,7 +37,6 @@
 // Tag
 \< this.begin('tag'); return 'LABRACKET'
 <tag>\> this.popState(); return 'RABRACKET'
-<tag>\s+ return 'ITEM_CONCAT'
 <tag>\| return 'ITEM_CHOICE'
 <tag>\: return 'ITEM_TRANSFORM'
 <tag>\??(?=\>) return 'QUANTIFIER'
@@ -47,7 +46,6 @@
 
 // Special
 <<EOF>> return 'EOF'
-\s+ return 'WS'
 . return 'INVALID'
 
 /lex
@@ -68,7 +66,7 @@ scope
 scope_expr
 	: scope_block
 	| list_block
-	| at_statement
+	| meta_statement
 	| identifier
 	;
 
@@ -91,8 +89,8 @@ list_block_item
 	| quoted_string
 	;
 
-at_statement
-	: AT_STATEMENT value -> ['at_statement', $1.trim().slice(1), $2]
+meta_statement
+	: META_STATEMENT arglist -> ['meta_statement', $1.trim().slice(1), $2]
 	;
 
 arglist
@@ -108,6 +106,7 @@ arglist_body
 arglist_item
 	: identifier
 	| quoted_string
+	| LSBRACKET list_block_content RSBRACKET -> ['list_block', null, $2]
 	;
 
 tag
