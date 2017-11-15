@@ -238,7 +238,7 @@ export default (grammar, minify) => {
 	templateAst.program.body = templateAst.program.body.concat(declarations.getAst());
 
 	const presets = [
-		['env', {
+		[require('babel-preset-env'), {
 			targets: {
 				node: true,
 			},
@@ -246,7 +246,7 @@ export default (grammar, minify) => {
 	];
 
 	if (minify) {
-		presets.push(['minify', {
+		presets.push([require('babel-preset-minify'), {
 			mangle: {
 				topLevel: true,
 			},
