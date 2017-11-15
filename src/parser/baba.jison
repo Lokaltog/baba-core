@@ -42,7 +42,8 @@
 <tag>\??(?=\>) return 'QUANTIFIER'
 
 // Other
-<INITIAL,scope,list,arglist,tag>\$?(?![0-9\-\.])[a-zA-Z0-9_\-\.]+ return 'IDENTIFIER'
+<INITIAL,scope,list,arglist,tag>\$ return 'VAR_PREFIX'
+<INITIAL,scope,list,arglist,tag>(?![0-9\-\.])[a-zA-Z0-9_\-\.]+ return 'IDENTIFIER'
 
 // Special
 <<EOF>> return 'EOF'
@@ -71,11 +72,11 @@ scope_expr
 	;
 
 scope_block
-	: identifier LBRACE scope RBRACE -> ['scope_block', $1, $3]
+	: identifier LBRACE scope RBRACE -> {type: 'scope_block', identifier: $1, children: $3}
 	;
 
 list_block
-	: identifier LSBRACKET list_block_content RSBRACKET -> ['list_block', $1, $3]
+	: identifier LSBRACKET list_block_content RSBRACKET -> {type: 'list_block', identifier: $1, children: $3}
 	;
 
 list_block_content
@@ -90,7 +91,7 @@ list_block_item
 	;
 
 meta_statement
-	: META_STATEMENT arglist -> ['meta_statement', $1.trim().slice(1), $2]
+	: META_STATEMENT arglist -> {type: 'meta_' + $1.trim().slice(1), arguments: $2}
 	;
 
 arglist
@@ -106,12 +107,12 @@ arglist_body
 arglist_item
 	: identifier
 	| quoted_string
-	| LSBRACKET list_block_content RSBRACKET -> ['list_block', null, $2]
+	| LSBRACKET list_block_content RSBRACKET -> {type: 'list_block', identifier: null, children: $2}
 	;
 
 tag
-	: LABRACKET tag_body RABRACKET -> ['tag', $2]
-	| LABRACKET tag_body QUANTIFIER RABRACKET -> ['tag', $2, $3.trim()]
+	: LABRACKET tag_body RABRACKET -> {type: 'tag', children: $2}
+	| LABRACKET tag_body QUANTIFIER RABRACKET -> {type: 'tag', children: $2, quantifier: $3.trim()}
 	;
 
 tag_body
@@ -119,12 +120,12 @@ tag_body
 	;
 
 tag_item_concat
-	: tag_item_concat tag_item_choice -> ['tag_concat', [$1], [$2]]
+	: tag_item_concat tag_item_choice -> {type: 'tag_concat', identifier: null, children: $1.type === 'tag_concat' ? $1.children.concat($2) : [$1, $2]}
 	| tag_item_choice
 	;
 
 tag_item_choice
-	: tag_item_choice ITEM_CHOICE tag_item -> ['tag_choice', [$1], [$3]]
+	: tag_item_choice ITEM_CHOICE tag_item -> {type: 'tag_choice', identifier: null, children: $1.type === 'tag_choice' ? $1.children.concat($3) : [$1, $3]}
 	| tag_item
 	;
 
@@ -134,19 +135,19 @@ tag_item
 	;
 
 value
-	: value ITEM_TRANSFORM identifier_expr -> ['transform', $1, $3]
-	| identifier_expr
+	: value ITEM_TRANSFORM identifier_expr -> {type: 'transform', fn: [$3], args: [$1]}
+	| identifier
 	| quoted_string
 	;
 
 identifier_expr
-	: identifier arglist -> ['call', $1, $2]
-	| identifier
+	: function_identifier arglist -> {type: 'function_call', fn: $1, args: $2}
+	| function_identifier
 	;
 
 quoted_string
-	: SINGLE_QUOTED_STRING -> ['literal', $1.trim().slice(1, -1)]
-	| DOUBLE_QUOTE double_quote_string DOUBLE_QUOTE -> ['interpolated_string', $2, $3.slice(2)]
+	: SINGLE_QUOTED_STRING -> {type: 'literal', value: $1.trim().slice(1, -1)}
+	| DOUBLE_QUOTE double_quote_string DOUBLE_QUOTE -> {type: 'interpolated_string', children: $2, weight: parseInt($3.slice(2), 10)}
 	;
 
 double_quote_string
@@ -160,9 +161,18 @@ double_quote_string_item
 	;
 
 literal
-	: LITERAL -> ['literal', $1.replace(/\\(.)/g, (m, p1) => p1)]
+	: LITERAL -> {type: 'literal', value: $1.replace(/\\(.)/g, (m, p1) => p1)}
 	;
 
 identifier
-	: IDENTIFIER -> ['identifier', $1.trim()]
+	: var_identifier
+	| IDENTIFIER -> {type: 'identifier', value: $1.trim()}
+	;
+
+var_identifier
+	: VAR_PREFIX IDENTIFIER -> {type: 'var_identifier', value: $2.trim()}
+	;
+
+function_identifier
+	: IDENTIFIER -> {type: 'function_identifier', value: $1.trim()}
 	;

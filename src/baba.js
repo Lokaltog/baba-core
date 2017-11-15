@@ -1,245 +1,263 @@
 import babaParser from './parser/baba';
+import * as babel from 'babel-core';
+import * as babylon from 'babylon';
+import * as t from "babel-types";
+import fs from 'fs';
 
-export default (grammar) => {
-	const parsed = babaParser.parse(grammar);
+export default (grammar, minify) => {
 	const getIdentifier = it => `baba$${it.join('__').replace(/[^a-z0-9_]/ig, '_')}`;
+	const getFunctionIdentifier = it => `baba$${it.join('__').replace(/[^a-z0-9_]/ig, '_')}$fn`;
+	const arrowWrap = (identifier, arg) => t.callExpression(
+		t.identifier(identifier),
+		[t.arrowFunctionExpression([], arg)],
+	);
 
-	const reduceTree = (nodes, context=[]) => {
-		return nodes.map(node => {
-			const [type, identifier, ...args] = node;
-			try {
-				const obj = ({
-					meta_statement() {
-						switch (identifier) {
-						case 'import':
-							return {
-								type,
-								identifier,
+	const template = fs.readFileSync('src/templates/default.js', 'utf-8');
+	const templateAst = babylon.parse(template, { sourceType: 'module' }); 
 
-								file: args[0][0][1], // Raw value of first argument
-								alias: args[0][1][1], // Raw value of second argument
-								meta: true,
-							};
-						case 'export': {
-							const parsedArgs = reduceTree(args[0]);
-							return {
-								type,
-								identifier,
+	const templateRefs = {};
+	(function extractTemplateData(node) {
+		if (Array.isArray(node)) {
+			node.forEach(sub =>	extractTemplateData(sub));
+			return;
+		}
 
-								key: parsedArgs[0],
-								value: parsedArgs[1],
-								meta: true,
-							};
-						}
-						}
-						return { type };
-					},
-					scope_block() {
-						const fullContext = context.concat(identifier[1]);
-						const name = getIdentifier(fullContext);
-						const children = reduceTree(args[0], fullContext);
-
-						const valueChildren = children.filter(it => !it.meta);
-						let value = valueChildren.join(', ');
-						if (valueChildren.length > 1) {
-							// Only call choice method on lists with more than one item
-							value = `baba$$choice(() => [${value}])`;
-						}
-						else {
-							// Single values must be stringified
-							value = `${value}`;
-						}
-
-						return { type, value, name, children };
-					},
-					list_block() {
-						const fullContext = identifier ? context.concat(identifier[1]) : context;
-						const name = getIdentifier(fullContext);
-						const children = reduceTree(args[0], fullContext);
-
-						const valueChildren = children.filter(it => !it.meta);
-						let value = valueChildren.join(', ');
-						if (valueChildren.length > 1) {
-							// Only call choice method on lists with more than one item
-							value = `baba$$choice(() => [${value}])`;
-						}
-						else {
-							// Single values must be stringified
-							value = `${value}`;
-						}
-
-						return { type, value, name, children };
-					},
-					identifier() {
-						let name = getIdentifier(identifier.split('.'));
-						if (identifier.substr(0, 1) === '$') {
-							// Variable reference
-							const varIdent = identifier.slice(1);
-							name = `baba$$var(${JSON.stringify(varIdent)}, () => ${getIdentifier(varIdent.split('.'))})`;
-						}
-						return { type, name };
-					},
-					interpolated_string() {
-						const children = reduceTree(identifier, context);
-						const weight = args[0] || 1;
-						let value = `baba$$concat(() => [${children.filter(it => !it.meta).join(', ')}])`;
-						if (weight > 1) {
-							value = `new Array(${weight}).fill(${value})`;
-						}
-						return { type, value, children };
-					},
-					tag() {
-						const [type, contents, quantifier] = node;
-						const children = reduceTree(contents, context);
-						let value = `${children.filter(it => !it.meta).join(', ')}`;
-						if (quantifier === '?') {
-							// Optional quantifier
-							value = `baba$$choice(() => [${value}, ''])`;
-						}
-						return { type, value, children };
-					},
-					tag_choice() {
-						const [type, left, right] = node;
-						const children = reduceTree(left).concat(reduceTree(right));
-						const value = `baba$$choice(() => [${children.filter(it => !it.meta).join(', ')}])`;
-						return {
-							type,
-							value,
-							children,
-						};
-					},
-					tag_concat() {
-						const [type, left, right] = node;
-						const children = reduceTree(left).concat(reduceTree(right));
-						const value = `baba$$concat(() => [${children.filter(it => !it.meta).join(', ')}])`;
-						return {
-							type,
-							value,
-							children,
-						};
-					},
-					literal() {
-						const value = JSON.stringify(identifier);
-						return { type, value };
-					},
-					transform() {
-						let [type, args, func] = node;
-						args = reduceTree([args]);
-						func = reduceTree([func]);
-						const value = `${func}$func(${args.join(', ')})`;
-						return {
-							type,
-							value,
-							children: args.concat(func),
-						};
-					},
-					call() {
-						const children = reduceTree(args[0], context);
-						const name = `${getIdentifier(identifier[1].split('.'))}$func(${children.join(', ')})`;
-						return { type, name, children };
-					},
-					mapping() {
-						return { type };
-					},
-				})[type]();
-				obj.toString = function() {
-					return this.name || this.value || '__MISSING_ID__';
-				};
-				return obj;
-			}
-			catch (e) {
-				console.error('Error in "%s" handler: %s', type, e);
-			}
-			return { type };
-		});
-	};
-
-	const getScript = tree => {
-		// Collect data for export
-		const meta = {
-			export: [], // exported parameters
-			import: [], // imported files
-		};
-
-		const vars = {};
-		const collect = nodes => {
-			nodes.forEach(node => {
-				// console.log(node.children);
-				if (node.children) {
-					collect(node.children);
-				}
-				if (!node.meta && node.name && node.value) {
-					vars[node.name] = node;
-				}
-				else if (node.meta) {
-					meta[node.identifier].push(node);
-				}
-				else {
-					// Value node
-				}
-			});
-		};
-		collect(tree);
-
-		const functions = [];
-		const exports = [];
-		
-		meta.import.forEach(node => {
-			const obj = require(node.file);
-			Object.keys(obj).forEach(f => {
-				functions.push([getIdentifier([node.alias, f]), obj[f].toString()]);
-			});
-		});
-		meta.export.forEach(node => {
-			exports.push([node.key.toString(), node.value.value ? node.value.value : node.value.name]);
-		});
-
-		return `
-		module.exports = (() => {
-		// Utils
-		function baba$$ClosureWrapper(fn) {
-			// Closure wrapper that just converts the contents to a string, this 
-			// allows top-level definitions to be wrapped in closures to avoid 
-			// issues with undefined variables
-			this.toString = () => {
-				return (typeof fn === 'function' ? fn() : fn) + '';
+		try {
+			const [, m] = node.leadingComments[0].value.trim().match(/@([a-z]+)/);
+			if (m) {
+				templateRefs[m] = node.declarations[0].id.name;
 			}
 		}
-		const baba$$choice = fn => {
-			let cached;
-			return new baba$$ClosureWrapper(() => {
-				if (!cached) {
-					// Flatten array (e.g. arrays of weighted items)
-					cached = Array.prototype.concat.apply([], fn());
-				}
-				const ret = cached[Math.floor(Math.random() * cached.length)];
+		catch (e) {
+			// Ignore
+		}
+	})(templateAst.program.body);
+
+	class DeclarationBlock {
+		constructor() {
+			this.imports = [];
+			this.exports = [];
+			this.definitions = [];
+			this.vars = [];
+		}
+
+		_getFunctions(node, path=[]) {
+			let ret = [];
+			if (Array.isArray(node)) {
+				node.forEach(subNode => {
+					ret = ret.concat(this._getFunctions(subNode, path.concat(subNode.key.name || subNode.key.value)));
+				});
 				return ret;
-			})
-		};
-		const baba$$concat = fn => new baba$$ClosureWrapper(() => fn().join(''));
-		const baba$$re = (str, rules) => {
-			// Regex rule helper
-			let ret;
-			str += '';
-			rules.some(filter => ret = str.match(filter[0]) && str.replace(filter[0], filter[1]));
+			}
+			if (t.isObjectProperty(node)) {
+				if (t.isObjectExpression(node.value)) {
+					return ret.concat(this._getFunctions(node.value.properties, path));
+				}
+				return {path, ast: node.value};
+			}
+			else if (t.isObjectMethod(node)) {
+				return {path, ast: t.functionExpression(null, node.params, node.body)};
+			}
 			return ret;
 		}
-		let baba$$vars = {};
-		const baba$$var = (id, ref) => baba$$vars[id] || ref();
 
-		// Imported functions
-		${functions.map(v => `const ${v[0]}$func = ${v[1]};`).join('\n')}
+		addImport(file, alias) {
+			const contents = fs.readFileSync(require.resolve(file), 'utf-8');
+			const contentsAst = babylon.parse(contents, { sourceType: 'module' }); 
+			contentsAst.program.body.forEach(rootNode => {
+				if (!t.isExportDefaultDeclaration(rootNode)) {
+					return;
+				}
+				this.imports = this.imports.concat(this._getFunctions(rootNode.declaration.properties, [alias]));
+			});
+		}
 
-		// Grammar rules
-		${Object.keys(vars).map(v => `const ${v} = new baba$$ClosureWrapper(${vars[v].value});`).join('\n')}
+		addExport(key, value) {
+			this.exports.push(t.objectProperty(t.stringLiteral(key), value));
+		}
 
-		// Exported nodes
-		return {
-			${exports.map(v => `${v[0]}: vars => { baba$$vars = vars || {}; return ${v[1]} + '' },`).join('\n')}
-		};
-		})();`;
+		addDefinition(identifier, value) {
+			this.definitions.push(t.variableDeclaration('const', [
+				t.variableDeclarator(
+					t.identifier(identifier),
+					value,
+				),
+			]));
+		}
+
+		addVar(identifier, alias, fallback) {
+			this.vars.push(t.variableDeclaration('const', [
+				t.variableDeclarator(
+					t.identifier(identifier),
+					t.callExpression(
+						t.identifier(templateRefs.variable),
+						[t.stringLiteral(alias), t.arrowFunctionExpression([], fallback)],
+					),
+				),
+			]));
+		}
+
+		getAst() {
+			// Imports
+			const imports = this.imports.map(imp => {
+				// const imported_func = functionWrapper(function)
+				return t.variableDeclaration('const', [
+					t.variableDeclarator(
+						t.identifier(getFunctionIdentifier(imp.path)),
+						t.callExpression(
+							t.identifier(templateRefs.function),
+							[imp.ast],
+						),
+					),
+				]);
+			});
+
+			// Exports
+			const exports = t.exportDefaultDeclaration(t.objectExpression(this.exports));
+
+			return imports
+				.concat(this.definitions)
+				.concat(this.vars)
+				.concat(exports);
+		}
+	}
+
+	const declarations = new DeclarationBlock();
+	const parsed = babaParser.parse(grammar);
+
+	let handlers;
+
+	const reduceTree = (nodes, path=[]) => {
+		// Note: A handler must return an AST node with children, or undefined
+		return nodes.map(node => {
+			try {
+				return handlers[node.type]({ node, path });
+			}
+			catch (e) {
+				console.error('Error in "%s" at "%s" handler: %s', node.type, path.join('.'), e);
+				throw e;
+			}
+		});
 	};
 
-	const tree = reduceTree(parsed);
-	return getScript(tree);
+	handlers = {
+		meta_import({ node }) {
+			const [file, alias] = node.arguments;
+			declarations.addImport(file.value, alias.value);
+		},
+		meta_export({ node, path }) {
+			const [key, value] = node.arguments;
+
+			declarations.addExport(key.value, t.callExpression(
+				t.identifier(templateRefs.export), [t.arrowFunctionExpression([], reduceTree([value], path)[0])]
+			));
+		},
+		list_block({ node, path }) {
+			const nodePath = node.identifier ? path.concat(node.identifier.value) : [];
+			const subTree = reduceTree(node.children, nodePath);
+
+			let ret = arrowWrap(templateRefs.choice, t.arrayExpression(subTree));
+
+			if (!nodePath.length) {
+				// Anonymous list
+				return ret;
+			}
+
+			const identifier = getIdentifier(nodePath);
+
+			if (node.identifier.type === 'var_identifier') {
+				// Variable declaration and fallback definition
+				declarations.addVar(identifier, node.identifier.value, ret);
+			}
+			else {
+				declarations.addDefinition(identifier, ret);
+			}
+
+			return t.identifier(identifier);
+		},
+		scope_block({ node, path }) {
+			return this.list_block({ node, path });
+		},
+		literal({ node }) {
+			return t.stringLiteral(node.value);
+		},
+		identifier({ node, path }) {
+			return t.identifier(getIdentifier(path.concat(node.value.split('.'))));
+		},
+		var_identifier({ node, path }) {
+			return this.identifier({ node, path });
+		},
+		function_identifier({ node, path }) {
+			return t.identifier(getFunctionIdentifier(path.concat(node.value.split('.'))));
+		},
+		interpolated_string({ node }) {
+			let subTree = reduceTree(node.children);
+			let ret = arrowWrap(templateRefs.concat, t.arrayExpression(subTree));
+			if (node.weight > 1) {
+				// Returns `new Array(weight).fill(CONCAT(() => NODES))`
+				return t.callExpression(t.memberExpression(t.newExpression(t.identifier('Array'), [t.numericLiteral(node.weight)]), t.identifier('fill')), [ret]);
+			}
+			// Returns `CONCAT(() => NODES)`
+			return ret;
+		},
+		tag({ node, path }) {
+			if (node.quantifier === '?') {
+				// "Optional" quantifier
+				node.children.push({ type: 'literal', value: '' });
+				return this.tag_choice({ node, path });
+			}
+			return reduceTree(node.children, path)[0];
+		},
+		tag_choice({ node, path }) {
+			return this.list_block({ node, path });
+		},
+		tag_concat({ node, path }) {
+			return arrowWrap(templateRefs.concat, t.arrayExpression(reduceTree(node.children, path)));
+		},
+		transform({ node, path }) {
+			const argTree = reduceTree(node.args, path);
+			const fnTree = reduceTree(node.fn, path);
+			return t.callExpression(
+				fnTree[0],
+				[argTree[0]],
+			);
+		},
+		function_call({ node, path }) {
+			// Note: Function calls must return a callable
+			const argTree = reduceTree(node.args, path);
+			const fnIdentifier = t.identifier(getFunctionIdentifier(node.fn.value.split('.')));
+			return t.callExpression(
+				fnIdentifier,
+				argTree,
+			);
+		},
+	};
+
+	reduceTree(parsed);
+
+	templateAst.program.body = templateAst.program.body.concat(declarations.getAst());
+
+	const presets = [
+		['env', {
+			targets: {
+				node: true,
+			},
+		}],
+	];
+
+	if (minify) {
+		presets.push(['minify', {
+			mangle: {
+				topLevel: true,
+			},
+		}]);
+	}
+
+	return babel.transformFromAst(templateAst, null, {
+		presets,
+		babelrc: false,
+		generatorOpts: {
+			comments: false,
+		},
+	}).code;
 };

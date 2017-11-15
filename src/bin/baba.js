@@ -8,9 +8,6 @@ import Baba from '../baba';
 yargs.command(['parse <file>', '$0'], 'Parse grammar and output JS module',
 	yargs => {
 		yargs
-			.option('prettify', {
-				default: false,
-			})
 			.option('minify', {
 				default: false,
 			})
@@ -21,18 +18,7 @@ yargs.command(['parse <file>', '$0'], 'Parse grammar and output JS module',
 			});
 	},
 	argv => {
-		const script = Baba(argv.file);
-
-		if (argv.prettify) {
-			const prettier = require('prettier');
-			process.stdout.write(prettier.format(script));
-			return;
-		}
-		if (argv.minify) {
-			const minify = require('babel-minify');
-			process.stdout.write(minify(script).code);
-			return;
-		}
+		const script = Baba(argv.file, argv.minify);
 
 		process.stdout.write(script);
 	})
