@@ -12,7 +12,7 @@ export default (grammar, minify) => {
 		[t.arrowFunctionExpression([], arg)],
 	);
 
-	const template = fs.readFileSync('src/templates/default.js', 'utf-8');
+	const template = fs.readFileSync(require.resolve('./templates/default'), 'utf-8');
 	const templateAst = babylon.parse(template, { sourceType: 'module' }); 
 
 	const templateRefs = {};
