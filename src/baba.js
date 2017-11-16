@@ -182,7 +182,15 @@ export default (grammar, minify) => {
 			const subTree = reduceTree([node.tag], path);
 			const identifier = getIdentifier(path.concat(node.identifier.value));
 
-			declarations.addDefinition(identifier, arrowWrap(templateRefs.concat, t.arrayExpression(subTree)));
+			let ret = arrowWrap(templateRefs.choice, t.arrayExpression(subTree));
+
+			if (node.identifier.type === 'var_identifier') {
+				// Variable declaration and fallback definition
+				declarations.addVar(identifier, node.identifier.value, ret);
+			}
+			else {
+				declarations.addDefinition(identifier, ret);
+			}
 
 			return t.identifier(identifier);
 		},
@@ -190,7 +198,15 @@ export default (grammar, minify) => {
 			const subTree = reduceTree([node.string], path);
 			const identifier = getIdentifier(path.concat(node.identifier.value));
 
-			declarations.addDefinition(identifier, subTree[0]);
+			let ret = subTree[0];
+
+			if (node.identifier.type === 'var_identifier') {
+				// Variable declaration and fallback definition
+				declarations.addVar(identifier, node.identifier.value, ret);
+			}
+			else {
+				declarations.addDefinition(identifier, ret);
+			}
 
 			return t.identifier(identifier);
 		},
