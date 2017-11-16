@@ -178,6 +178,22 @@ export default (grammar, minify) => {
 		scope_block({ node, path }) {
 			return this.list_block({ node, path });
 		},
+		tag_block({ node, path }) {
+			const subTree = reduceTree([node.tag], path);
+			const identifier = getIdentifier(path.concat(node.identifier.value));
+
+			declarations.addDefinition(identifier, arrowWrap(templateRefs.concat, t.arrayExpression(subTree)));
+
+			return t.identifier(identifier);
+		},
+		quoted_string_block({ node, path }) {
+			const subTree = reduceTree([node.string], path);
+			const identifier = getIdentifier(path.concat(node.identifier.value));
+
+			declarations.addDefinition(identifier, subTree[0]);
+
+			return t.identifier(identifier);
+		},
 		literal({ node }) {
 			return t.stringLiteral(node.value);
 		},

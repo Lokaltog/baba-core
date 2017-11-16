@@ -4,7 +4,6 @@
 
 %%
 \s*'#'.*\n*\s* // ignore comments
-\n+ // ignore newlines completely
 <INITIAL,scope,arglist,tag>\s+ // ignore whitespace, but not in lists
 
 // Meta statement
@@ -68,6 +67,8 @@ scope
 scope_expr
 	: scope_block
 	| list_block
+	| tag_block
+	| quoted_string_block
 	| meta_statement
 	| identifier
 	;
@@ -108,7 +109,12 @@ arglist_body
 arglist_item
 	: identifier
 	| quoted_string
+	| tag
 	| LSBRACKET list_block_content RSBRACKET -> {type: 'list_block', identifier: null, children: $2}
+	;
+
+tag_block
+	: identifier tag -> {type: 'tag_block', identifier: $1, tag: $2}
 	;
 
 tag
@@ -155,6 +161,10 @@ function_expr
 var_assign_expr
 	: var_assign_expr VAR_ASSIGN identifier -> {type: 'var_assign', name: $1, value: [$3]}
 	| identifier
+	;
+
+quoted_string_block
+	: identifier quoted_string -> {type: 'quoted_string_block', identifier: $1, string: $2}
 	;
 
 quoted_string
