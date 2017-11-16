@@ -131,21 +131,30 @@ tag_item_choice
 	;
 
 tag_item
-	: value
+	: quoted_string
+	| transform_expr
 	| tag
+	;
+
+transform_expr
+	: transform_expr ITEM_TRANSFORM function_expr {
+		if ($3.type === 'identifier') $3.type = 'function_identifier';
+		$$ = {type: 'transform', fn: [$3], args: [$1]}
+	}
+	| function_expr
+	;
+
+function_expr
+	: var_assign_expr arglist {
+		$1.type = 'function_identifier';
+		$$ = {type: 'function_call', fn: $1, args: $2}
+	}
 	| var_assign_expr
 	;
 
-value
-	: value ITEM_TRANSFORM identifier_expr -> {type: 'transform', fn: [$3], args: [$1]}
-	| var_assign_expr ITEM_TRANSFORM identifier_expr -> {type: 'transform', fn: [$3], args: [$1]}
+var_assign_expr
+	: var_assign_expr VAR_ASSIGN identifier -> {type: 'var_assign', name: $1, value: [$3]}
 	| identifier
-	| quoted_string
-	;
-
-identifier_expr
-	: function_identifier arglist -> {type: 'function_call', fn: $1, args: $2}
-	| function_identifier
 	;
 
 quoted_string
@@ -167,15 +176,6 @@ literal
 	: LITERAL -> {type: 'literal', value: $1.replace(/\\(.)/g, (m, p1) => p1)}
 	;
 
-var_assign_expr
-	: var_identifier VAR_ASSIGN var_assign_value -> {type: 'var_assign', name: $1, value: [$3]}
-	;
-
-var_assign_value
-	: identifier
-	| quoted_string
-	;
-
 identifier
 	: var_identifier
 	| IDENTIFIER -> {type: 'identifier', value: $1.trim()}
@@ -183,8 +183,4 @@ identifier
 
 var_identifier
 	: VAR_PREFIX IDENTIFIER -> {type: 'var_identifier', value: $2.trim()}
-	;
-
-function_identifier
-	: IDENTIFIER -> {type: 'function_identifier', value: $1.trim()}
 	;
