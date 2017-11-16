@@ -23,7 +23,9 @@ let _vars = {};
 
 // @variable
 const variableRef = (id, ref) => {
-	return new ClosureWrapper(() => _vars[id] || ref());
+	const ret = new ClosureWrapper(() => _vars[id] || (_vars[id] = ref() + ''));
+	ret.a = value => new ClosureWrapper(() => _vars[id] = value() + '');
+	return ret;
 };
 
 // @concat

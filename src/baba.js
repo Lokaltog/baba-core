@@ -187,6 +187,18 @@ export default (grammar, minify) => {
 		var_identifier({ node, path }) {
 			return this.identifier({ node, path });
 		},
+		var_assign({ node }) {
+			// Returns `VARIABLE.a(() => VALUE`
+			return t.callExpression(
+				t.memberExpression(
+					t.identifier(getIdentifier(node.name.value.split('.'))),
+					t.identifier('a'),
+				),
+				[
+					t.arrowFunctionExpression([], reduceTree(node.value)[0]),
+				],
+			);
+		},
 		function_identifier({ node, path }) {
 			return t.identifier(getFunctionIdentifier(path.concat(node.value.split('.'))));
 		},

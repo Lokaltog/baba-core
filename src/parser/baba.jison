@@ -40,6 +40,7 @@
 <tag>\| return 'ITEM_CHOICE'
 <tag>\: return 'ITEM_TRANSFORM'
 <tag>\??(?=\>) return 'QUANTIFIER'
+<tag>\= return 'VAR_ASSIGN'
 
 // Other
 <INITIAL,scope,list,arglist,tag>\$ return 'VAR_PREFIX'
@@ -132,10 +133,12 @@ tag_item_choice
 tag_item
 	: value
 	| tag
+	| var_assign_expr
 	;
 
 value
 	: value ITEM_TRANSFORM identifier_expr -> {type: 'transform', fn: [$3], args: [$1]}
+	| var_assign_expr ITEM_TRANSFORM identifier_expr -> {type: 'transform', fn: [$3], args: [$1]}
 	| identifier
 	| quoted_string
 	;
@@ -162,6 +165,15 @@ double_quote_string_item
 
 literal
 	: LITERAL -> {type: 'literal', value: $1.replace(/\\(.)/g, (m, p1) => p1)}
+	;
+
+var_assign_expr
+	: var_identifier VAR_ASSIGN var_assign_value -> {type: 'var_assign', name: $1, value: [$3]}
+	;
+
+var_assign_value
+	: identifier
+	| quoted_string
 	;
 
 identifier
