@@ -1,6 +1,6 @@
 %lex
 
-%s scope list tag arg_list ipstring
+%s scope list tag arg_list interp_string
 
 %%
 \s*'#'.*\n*\s* // ignore comments
@@ -13,9 +13,9 @@
 <INITIAL,scope,list,arg_list,tag>\'(?:[^'\\]|\\.)*\' return 'SINGLE_QUOTED_STRING'
 
 // Interpolated string
-<ipstring>\"(?:\+\d+)? this.popState(); return 'DOUBLE_QUOTE'
-\" this.begin('ipstring'); return 'DOUBLE_QUOTE'
-<ipstring>(?:[^\\\<\"]|\\.)+ return 'LITERAL'
+<interp_string>\"(?:\+\d+)? this.popState(); return 'DOUBLE_QUOTE'
+\" this.begin('interp_string'); return 'DOUBLE_QUOTE'
+<interp_string>(?:[^\\\<\"]|\\.)+ return 'LITERAL'
 
 // Scope
 '{' this.begin('scope'); return 'LBRACE'
@@ -25,7 +25,7 @@
 // List
 \[\s* this.begin('list'); return 'LSBRACKET'
 <list>(?:\,)?\s*\] this.popState(); return 'RSBRACKET'
-<list>\b(?:[^,\\\[\]\<\>\'\"\`]|\\.)+\b return 'LITERAL'
+<list>\b(?:[^,\\\[\]\<\>\'\"]|\\.)+\b return 'LITERAL'
 <list>\s*\,\s* return 'LIST_SEPARATOR'
 
 // Argument list
@@ -56,7 +56,7 @@
 %%
 
 baba
-	: scope EOF { return $1 }
+	: scope_body EOF { return $1 }
 	;
 
 meta_statement
@@ -65,11 +65,15 @@ meta_statement
 
 // Scope
 scope_block
-	: identifier LBRACE scope RBRACE -> {type: 'scope_block', identifier: $1, children: $3}
+	: identifier scope -> {type: 'scope_block', identifier: $1, children: $2}
 	;
 
 scope
-	: scope scope_item -> $1.concat([$2])
+	: LBRACE scope_body RBRACE -> $2
+	;
+
+scope_body
+	: scope_body scope_item -> $1.concat([$2])
 	| scope_item -> [$1]
 	;
 
@@ -83,12 +87,16 @@ scope_item
 
 // List
 list_block
-	: identifier LSBRACKET list RSBRACKET -> {type: 'list_block', identifier: $1, children: $3}
+	: identifier list -> {type: 'list_block', identifier: $1, children: $2}
 	;
 
 list
-	: list LIST_SEPARATOR list_item -> $1.concat([$3])
-	| list LIST_SEPARATOR -> [$1]
+	: LSBRACKET list_body RSBRACKET -> $2
+	;
+
+list_body
+	: list_body LIST_SEPARATOR list_item -> $1.concat([$3])
+	| list_body LIST_SEPARATOR -> [$1]
 	| list_item -> [$1]
 	;
 
@@ -165,7 +173,7 @@ arg_list_item
 	: identifier
 	| quoted_string
 	| tag
-	| LSBRACKET list RSBRACKET -> {type: 'list_block', identifier: null, children: $2}
+	| list -> {type: 'list_block', identifier: null, children: $2}
 	;
 
 // Atoms
