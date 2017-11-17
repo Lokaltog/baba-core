@@ -4,7 +4,7 @@ import * as babylon from 'babylon';
 import * as t from "babel-types";
 import fs from 'fs';
 
-export default (grammar, minify) => {
+const getAst = grammar => {
 	const getIdentifier = it => `baba$${it.join('__').replace(/[^a-z0-9_]/ig, '_')}`;
 	const getFunctionIdentifier = it => `baba$${it.join('__').replace(/[^a-z0-9_]/ig, '_')}$fn`;
 	const arrowWrap = (identifier, arg) => t.callExpression(
@@ -281,12 +281,12 @@ export default (grammar, minify) => {
 
 	templateAst.program.body = templateAst.program.body.concat(declarations.getAst());
 
+	return templateAst;
+};
+
+export default (grammar, targets, minify=false) => {
 	const presets = [
-		[require('babel-preset-env'), {
-			targets: {
-				node: true,
-			},
-		}],
+		[require('babel-preset-env'), { targets }],
 	];
 
 	if (minify) {
@@ -297,7 +297,7 @@ export default (grammar, minify) => {
 		}]);
 	}
 
-	return babel.transformFromAst(templateAst, null, {
+	return babel.transformFromAst(getAst(grammar), null, {
 		presets,
 		babelrc: false,
 		generatorOpts: {
