@@ -213,7 +213,7 @@ arg_list_element
 	: identifier
 	| quoted_string
 	| tag
-	| list -> {type: 'list_block', identifier: null, children: $2}
+	| list -> {type: 'list_block', identifier: null, children: $1}
 	;
 
 // Atoms
