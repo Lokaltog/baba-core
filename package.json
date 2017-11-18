@@ -1,0 +1,120 @@
+{
+  "name": "baba-core",
+  "version": "0.3.0",
+  "description": "A tool for creating random text generators.",
+  "homepage": "https://github.com/Lokaltog/baba-core",
+  "repository": {
+    "type": "git",
+    "url": "Lokaltog/baba-core"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Kim Silkebækken",
+    "email": "kim@silkebaekken.no",
+    "web": "https://silkebaekken.no/"
+  },
+  "eslintConfig": {
+    "extends": "eslint:recommended",
+    "rules": {
+      "block-scoped-var": "error",
+      "comma-dangle": [
+        "warn",
+        "always-multiline"
+      ],
+      "consistent-return": "error",
+      "curly": [
+        "warn",
+        "all"
+      ],
+      "dot-location": [
+        "warn",
+        "property"
+      ],
+      "eqeqeq": [
+        "error",
+        "smart"
+      ],
+      "guard-for-in": "warn",
+      "indent": [
+        "warn",
+        "tab"
+      ],
+      "no-alert": "off",
+      "no-case-declarations": "error",
+      "no-console": "off",
+      "no-debugger": "warn",
+      "no-else-return": "error",
+      "no-empty-function": "warn",
+      "no-extra-bind": "error",
+      "no-fallthrough": "error",
+      "no-loop-func": "error",
+      "no-multi-spaces": "warn",
+      "no-multi-str": "error",
+      "no-native-reassign": "error",
+      "no-new": "warn",
+      "no-param-reassign": "error",
+      "no-redeclare": "error",
+      "no-sequences": "error",
+      "no-throw-literal": "error",
+      "no-unused-vars": "error",
+      "no-undef": "error",
+      "no-use-before-define": "error",
+      "no-useless-concat": "error",
+      "no-useless-escape": "error",
+      "no-warning-comments": "off",
+      "no-with": "error",
+      "radix": "error",
+      "semi": [
+        "warn",
+        "always"
+      ],
+      "yoda": "error"
+    },
+    "parserOptions": {
+      "ecmaVersion": 8,
+      "ecmaFeatures": {
+        "impliedStrict": true,
+        "experimentalObjectRestSpread": true
+      },
+      "sourceType": "module"
+    },
+    "env": {
+      "es6": true,
+      "node": true
+    }
+  },
+  "babel": {
+    "presets": [
+      [
+        "env",
+        {
+          "targets": {
+            "node": "current"
+          }
+        }
+      ]
+    ]
+  },
+  "scripts": {
+    "baba": "babel-node src/bin/baba.js",
+    "lint": "eslint src",
+    "compile": "npm run compile-parser && npm run compile-script",
+    "compile-parser": "jison src/parser/baba.jison -o src/parser/baba.js",
+    "compile-script": "babel -d dist src",
+    "prepare": "npm run compile"
+  },
+  "main": "./dist/baba.js",
+  "bin": {
+    "baba": "./dist/bin/baba.js"
+  },
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-minify": "^0.2.0",
+    "babylon": "^6.18.0",
+    "eslint": "^4.10.0",
+    "jison": "^0.4.18",
+    "yargs": "^10.0.3"
+  }
+}
