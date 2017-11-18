@@ -4,9 +4,6 @@ function ClosureWrapper(fn, args=[]) {
 	this.toString = () => fn(...args) + '';
 }
 
-// @function
-const functionWrapper = fn => (...args) => new ClosureWrapper(fn, args);
-
 // @choice
 const randomNode = fn => {
 	let cached;
@@ -31,14 +28,18 @@ const variableRef = (id, ref) => {
 // @concat
 const concatNode = fn => new ClosureWrapper(() => fn().join(''));
 
-// TODO: Move to external module
-const baba$$mapping = (input, rules) => {
-	// Regex mapping helper for transforms
-	let ret;
-	let str = input + '';
-	rules.some(filter => ret = str.match(filter[0]) && str.replace(filter[0], filter[1]));
-	return ret;
+// @mapping
+const mapRules = (...rules) => {
+	return input => {
+		let ret;
+		let str = input + '';
+		rules.some(filter => ret = str.match(filter[0]) && str.replace(filter[0], filter[1]));
+		return ret;
+	};
 };
+
+// @function
+const mapFunction = fn => input => fn(input + '');
 
 // @export
 const exportValue = fn => {

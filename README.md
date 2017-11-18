@@ -126,9 +126,11 @@ always begin in an unnamed _root scope_. Scopes cannot be
 [exported](#meta-statements).
 
 Scope blocks may be nested, and each scope may contain any number of [meta 
-statements](#meta-statements) and [blocks](#blocks).
+statements](#meta-statements), [blocks](#blocks), [mappings](#mappings) and 
+[functions](#functions).
 
-Nested scope blocks must be referred to with the full scope path:
+Nested scope blocks must be referred to with the full scope path, with levels 
+separated by `.`:
 
 ```
 a { b { c [ ... ] } }
@@ -141,7 +143,7 @@ a { b { c [ ... ] } }
 baba-grammar  = scope-element, ? EOF ? ;
 
 scope         = "{", { scope-element }, "}" ;
-scope-element = meta-statement | block ;
+scope-element = meta-statement | block | mapping | function;
 ```
 
 ### Lists
@@ -206,7 +208,7 @@ tag-element-concat = ( tag-element-concat, tag-element-choice )
                    | tag-element-choice ;
 tag-element-choice = ( tag-element-choice, "|", tag-element )
                    | tag-element ;
-tag-element        = quoted-string | transform-expr | tag ;
+tag-element        = transform-expr | tag ;
 ```
 
 ### Tag expressions
@@ -223,8 +225,8 @@ expression**. Only identifiers are valid variable values.
 
 Identifiers in tags may be transformed by external functions with a **transform 
 expression**. When a transform is applied, the transform function is called 
-with the _evaluated identifier value_ as its only argument. The transform 
-function must return a string.
+with the _evaluated identifier value_ (a string) as its only argument. The 
+transform function must return a string.
 
 #### Functions
 
@@ -246,13 +248,14 @@ The returned function must return a string.
 #### Syntax
 
 ```ebnf
-transform-expr  = transform-expr, ":", function-expr
-                | function-expr ;
-function-expr   = ( var-assign-expr, argument-list )
-                | var-assign-expr ;
-var-assign-expr = ( var-identifier, "=", identifier )
-                | var-identifier
-                | identifier ;
+transform-expr   = transform-expr, ":", function-expr
+                 | function-expr ;
+function-expr    = ( var-assign-expr, argument-list )
+                 | var-assign-expr ;
+var-assign-expr  = ( var-assign-expr, "=", var-assign-value )
+                 | var-assign-value ;
+var-assign-value = identifier
+                 | quoted-string ;
 
 argument-list         = "(", [ argument-list-body ], ")" ;
 argument-list-body    = argument-list-element, [ { ",", argument-list-element } ] ;
@@ -308,6 +311,81 @@ interp-string-weight  = "+", ? number ? ;
 interp-string-element = ? string literal ? | tag ;
 ```
 
+### Functions
+
+**Functions** are inline JS functions that may be used in tag expressions. 
+Functions may receive any type and number of arguments, including tags and 
+identifiers.
+
+Functions must be valid JS. Behind the scenes functions are parsed by Babylon 
+and the resulting AST is inserted into the grammar AST as arrow function 
+expressions.
+
+Because of identifier mangling applied internally by Baba, you cannot reference 
+other Baba functions inside a function body.
+
+#### Examples
+
+```
+uppercase(str) {
+    return str.toUpperCase();
+}
+demo-function(arg) {
+    return element => element + '-' + arg;
+}
+@export('demo', <'a':demo-function(<'b'|'c'>):uppercase>)
+# -> demo = "A-B" OR "A-C"
+```
+
+#### Syntax
+
+```ebnf
+function = identifier, argument-list, "{", ? function body ?, "}";
+```
+
+### Mappings
+
+**Mappings** are used to transform a string into another string. Mappings 
+support regular expression or literal string replacement. They are applied on 
+the resulting string of a tag expression.
+
+Mappings may be bidirectional. One-directional mappings are separated with 
+`->`, bidirectional mappings are separated with `<->`.
+
+#### Examples
+
+```
+pluralize {
+    /(.*)/i -> '$1s'
+}
+# Note: there's a better version available in baba-grammar-common
+# <'word':pluralize> => "words"
+
+size-swap {
+    'large' <-> 'small'
+}
+# <'large':size-swap> => "small"
+# <'small':size-swap> => "large"
+# <'medium':size-swap> => "medium"
+
+color-transform {
+    'blue'   -> 'red'
+    'yellow' -> 'purple'
+}
+# <'blue':color-transform> => "red"
+# <'yellow':color-transform> => "purple"
+# <'brown':color-transform> => "brown"
+```
+
+#### Syntax
+
+```ebnf
+mapping           = mapping-from, mapping-direction, mapping-to;
+mapping-from      = literal-string | ? regular expression ? ;
+mappnig-to        = literal-string;
+mapping-direction = "->" | "<->" ;
+```
+
 ### Meta statements
 
 **Meta statements** provide information about the grammar, e.g. which data 
@@ -334,11 +412,11 @@ meta-statement = "@", identifier, argument-list ;
 
 #### `export(key: string, value: ( identifier | list | tag | string ))`
 
-Exports a key/value pair.
+Adds a key/value pair to the exported module object.
 
-#### `import(file: string, alias: identifier)`
+#### `import(file: string, scope: identifier)`
 
-Imports functions from an external file.
+Imports a Baba file into a scope.
 
 ## Compilation process
 

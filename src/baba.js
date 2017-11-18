@@ -13,7 +13,7 @@ const getAst = grammar => {
 	);
 
 	const template = fs.readFileSync(require.resolve('./templates/default'), 'utf-8');
-	const templateAst = babylon.parse(template, { sourceType: 'module' }); 
+	const templateAst = babylon.parse(template, { sourceType: 'module' });
 
 	const templateRefs = {};
 	(function extractTemplateData(node) {
@@ -35,10 +35,10 @@ const getAst = grammar => {
 
 	class DeclarationBlock {
 		constructor() {
-			this.imports = [];
 			this.exports = [];
 			this.definitions = [];
 			this.vars = [];
+			this.mappings = {};
 		}
 
 		_getFunctions(node, path=[]) {
@@ -62,14 +62,47 @@ const getAst = grammar => {
 		}
 
 		addImport(file, alias) {
-			const contents = fs.readFileSync(require.resolve(file), 'utf-8');
-			const contentsAst = babylon.parse(contents, { sourceType: 'module' }); 
-			contentsAst.program.body.forEach(rootNode => {
-				if (!t.isExportDefaultDeclaration(rootNode)) {
-					return;
-				}
-				this.imports = this.imports.concat(this._getFunctions(rootNode.declaration.properties, [alias]));
-			});
+			const contents = fs.readFileSync(file + '.baba', 'utf-8');
+			reduceTree(babaParser.parse(contents), [alias]); // Parse and insert the imported grammar
+		}
+
+		addFunction(identifier, args, body) {
+			this.definitions.push(t.variableDeclaration('const', [
+				t.variableDeclarator(
+					t.identifier(identifier),
+					t.callExpression(
+						t.identifier(templateRefs.function),
+						[
+							t.arrowFunctionExpression(
+								args.map(arg => t.identifier(arg)),
+								// The function must be wrapped in a function body to 
+								// be able to parsed, otherwise we'll likely receive 
+								// a "return outside function" exception
+								babylon.parse(`() => { ${body} }`).program.body[0].expression.body,
+							),
+						],
+					),
+				),
+			]));
+		}
+
+		addMapping(identifier, from, to, type) {
+			if (!this.mappings[identifier]) {
+				this.mappings[identifier] = [];
+			}
+
+			let ret = [
+				from.type === 'regexp' ? babylon.parse(from.value).program.body[0].expression : t.stringLiteral(from.value),
+				t.stringLiteral(to.value),
+			];
+
+			this.mappings[identifier].push(t.arrayExpression(ret));
+
+			if (type === '<->') {
+				// Add reverse mapping (bidirectional)
+				ret.reverse();
+				this.mappings[identifier].push(t.arrayExpression(ret));
+			}
 		}
 
 		addExport(key, value) {
@@ -98,27 +131,19 @@ const getAst = grammar => {
 		}
 
 		getAst() {
-			// Imports
-			const imports = this.imports.map(imp => {
-				// const imported_func = functionWrapper(function)
-				return t.variableDeclaration('const', [
-					t.variableDeclarator(
-						t.identifier(getFunctionIdentifier(imp.path)),
-						t.callExpression(
-							t.identifier(templateRefs.function),
-							[imp.ast],
+			let mappings = Object.entries(this.mappings)
+				.reduce((acc, [identifier, arr]) =>
+					acc.concat(t.variableDeclaration('const', [
+						t.variableDeclarator(
+							t.identifier(identifier),
+							t.callExpression(t.identifier(templateRefs.mapping), arr),
 						),
-					),
-				]);
-			});
+					])), []);
 
-			// Exports
-			const exports = t.exportDefaultDeclaration(t.objectExpression(this.exports));
-
-			return imports
+			return mappings
 				.concat(this.definitions)
 				.concat(this.vars)
-				.concat(exports);
+				.concat(t.exportDefaultDeclaration(t.objectExpression(this.exports)));
 		}
 	}
 
@@ -137,7 +162,7 @@ const getAst = grammar => {
 				console.error('Error in "%s" at "%s" handler: %s', node.type, path.join('.'), e);
 				throw e;
 			}
-		});
+		}).filter(item => !!item); // Remove empty items
 	};
 
 	handlers = {
@@ -152,9 +177,14 @@ const getAst = grammar => {
 				t.identifier(templateRefs.export), [t.arrowFunctionExpression([], reduceTree([value], path)[0])]
 			));
 		},
-		list_block({ node, path }) {
+		list_block({ node, path, addDeclaration=true }) {
 			const nodePath = node.identifier ? path.concat(node.identifier.value) : [];
 			const subTree = reduceTree(node.children, nodePath);
+
+			if (!subTree.length) {
+				// Ignore empty scopes/lists
+				return null;
+			}
 
 			let ret = arrowWrap(templateRefs.choice, t.arrayExpression(subTree));
 
@@ -165,18 +195,23 @@ const getAst = grammar => {
 
 			const identifier = getIdentifier(nodePath);
 
-			if (node.identifier.type === 'var_identifier') {
-				// Variable declaration and fallback definition
-				declarations.addVar(identifier, node.identifier.value, ret);
-			}
-			else {
-				declarations.addDefinition(identifier, ret);
+			if (addDeclaration) {
+				if (node.identifier.type === 'var_identifier') {
+					// Variable declaration and fallback definition
+					declarations.addVar(identifier, node.identifier.value, ret);
+				}
+				else {
+					declarations.addDefinition(identifier, ret);
+				}
 			}
 
 			return t.identifier(identifier);
 		},
 		scope_block({ node, path }) {
-			return this.list_block({ node, path });
+			// TODO Scopes may be exported if declarations are added, make this 
+			// configurable. It's off by default to save space in the generated 
+			// JS file.
+			return this.list_block({ node, path, addDeclaration: false });
 		},
 		tag_block({ node, path }) {
 			const subTree = reduceTree([node.tag], path);
@@ -212,6 +247,15 @@ const getAst = grammar => {
 		},
 		literal({ node }) {
 			return t.stringLiteral(node.value);
+		},
+		function({ node, path }) {
+			declarations.addFunction(
+				getFunctionIdentifier(path.concat(node.identifier.value)),
+				node.arguments.map(arg => arg.value),
+				node.body);
+		},
+		mapping({ node, path }) {
+			declarations.addMapping(getFunctionIdentifier(path), node.from, node.to, node.dir);
 		},
 		identifier({ node, path }) {
 			return t.identifier(getIdentifier(path.concat(node.value.split('.'))));
