@@ -3,10 +3,11 @@ import * as babel from 'babel-core';
 import * as babylon from 'babylon';
 import * as t from "babel-types";
 import fs from 'fs';
+import path from 'path';
 
-const getAst = grammar => {
-	const getIdentifier = it => `baba$${it.join('__').replace(/[^a-z0-9_]/ig, '_')}`;
-	const getFunctionIdentifier = it => `baba$${it.join('__').replace(/[^a-z0-9_]/ig, '_')}$fn`;
+const getAst = (grammar, searchPaths=[]) => {
+	const getIdentifier = it => `baba$${it.join('$').replace(/[^a-z0-9_]/ig, '_')}`;
+	const getFunctionIdentifier = it => `baba$${it.join('$').replace(/[^a-z0-9_]/ig, '_')}$$fn`;
 	const arrowWrap = (identifier, arg) => t.callExpression(
 		t.identifier(identifier),
 		[t.arrowFunctionExpression([], arg)],
@@ -62,7 +63,20 @@ const getAst = grammar => {
 		}
 
 		addImport(file, alias) {
-			const contents = fs.readFileSync(file + '.baba', 'utf-8');
+			let contents = null;
+			searchPaths.forEach(searchPath => {
+				try {
+					const filePath = path.join(searchPath, file + '.baba');
+					contents = fs.readFileSync(filePath, 'utf-8');
+					return;
+				}
+				catch (e) {
+					// ignore
+				}
+			});
+			if (contents === null) {
+				throw new Error(`Could not find grammar file "${file}" in any search path:\n\n\t${searchPaths.join(',\n\t')}`);
+			}
 			reduceTree(babaParser.parse(contents), [alias]); // Parse and insert the imported grammar
 		}
 
@@ -328,7 +342,7 @@ const getAst = grammar => {
 	return templateAst;
 };
 
-export default (grammar, targets, minify=false) => {
+export default (file, targets, minify=false) => {
 	const presets = [
 		[require('babel-preset-env'), { targets }],
 	];
@@ -341,11 +355,19 @@ export default (grammar, targets, minify=false) => {
 		}]);
 	}
 
-	return babel.transformFromAst(getAst(grammar), null, {
-		presets,
-		babelrc: false,
-		generatorOpts: {
-			comments: false,
-		},
-	}).code;
+	const filePath = path.resolve(path.dirname(file));
+	const searchPaths = [
+		filePath,
+		path.join(filePath, 'node_modules'),
+	];
+
+	return babel.transformFromAst(
+		getAst(fs.readFileSync(file, 'utf-8'), searchPaths),
+		null, {
+			presets,
+			babelrc: false,
+			generatorOpts: {
+				comments: false,
+			},
+		}).code;
 };

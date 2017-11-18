@@ -24,7 +24,6 @@ yargs.command(['parse <file>', '$0'], 'Parse grammar and output JS module',
 		.positional('file', {
 			describe: 'Baba grammar file',
 			type: 'string',
-			coerce: arg => fs.readFileSync(arg, 'utf8'),
 		}),
 	argv => {
 		const script = Baba(argv.file, {
