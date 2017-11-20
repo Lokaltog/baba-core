@@ -39,7 +39,7 @@ const variableRef = (id, ref) => {
 };
 
 // @concat
-const concatNode = fn => new ClosureWrapper(() => fn().map(node => node + '').join(''));
+const concatNode = fn => new ClosureWrapper(() => fn().join(''));
 
 // @mapping
 const mapRules = (...rules) => input => new ClosureWrapper(() => {
