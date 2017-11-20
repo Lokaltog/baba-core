@@ -50,7 +50,7 @@ const mapRules = (...rules) => input => new ClosureWrapper(() => {
 });
 
 // @function
-const mapFunction = fn => input => new ClosureWrapper(() => fn(input + ''));
+const mapFunction = fn => input => new ClosureWrapper(() => fn(input() + ''));
 
 // @export
 const exportValue = fn => {
