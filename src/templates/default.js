@@ -4,21 +4,26 @@ function ClosureWrapper(fn, args=[]) {
 	this.toString = () => fn(...args) + '';
 }
 
+function shuffle(arr) {
+	let randomIndex, itemAtIndex, i;
+	for (i = arr.length - 1; i > 0; i--) {
+		randomIndex = Math.floor(Math.random() * (i + 1));
+		itemAtIndex = arr[i];
+		arr[i] = arr[randomIndex];
+		arr[randomIndex] = itemAtIndex;
+	}
+}
+
 // @choice
 const randomNode = fn => {
-	let cached;
-	let prev;
+	let cached = [];
 	return new ClosureWrapper(() => {
-		if (!cached) {
+		if (!cached.length) {
 			// Flatten array (e.g. arrays of weighted items)
 			cached = Array.prototype.concat.apply([], fn());
+			shuffle(cached);
 		}
-		// Avoid selecting the same item twice
-		let item;
-		for (let i = 0; !item || (prev === item && i < cached.length); i++) {
-			item = cached[Math.floor(Math.random() * cached.length)];
-		}
-		return prev = item;
+		return cached.pop();
 	});
 };
 
