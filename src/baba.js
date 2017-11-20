@@ -5,7 +5,23 @@ import * as t from "babel-types";
 import fs from 'fs';
 import path from 'path';
 
-const getAst = (grammar, searchPaths=[]) => {
+function findImport(directory, fileName) {
+	const file = [
+		path.join(directory, fileName),
+		path.join(directory, 'node_modules', fileName),
+	].filter(f => fs.existsSync(f) && fs.statSync(f).isFile())[0];
+
+	if (file) {
+		return file;
+	}
+	let parent = path.resolve(directory, '..');
+	if (parent === directory) {
+		return null;
+	}
+	return findImport(parent, fileName);
+}
+
+const getAst = grammar => {
 	const getIdentifier = it => `baba$${it.join('$').replace(/[^a-z0-9_]/ig, '_')}`;
 	const getFunctionIdentifier = it => `baba$${it.join('$').replace(/[^a-z0-9_]/ig, '_')}$$fn`;
 	const getVarIdentifier = it => `baba$${it.join('$').replace(/[^a-z0-9_]/ig, '_')}$$var`;
@@ -65,20 +81,11 @@ const getAst = (grammar, searchPaths=[]) => {
 		}
 
 		addImport(file, alias) {
-			let contents = null;
-			searchPaths.forEach(searchPath => {
-				try {
-					const filePath = path.join(searchPath, file + '.baba');
-					contents = fs.readFileSync(filePath, 'utf-8');
-					return;
-				}
-				catch (e) {
-					// ignore
-				}
-			});
-			if (contents === null) {
-				throw new Error(`Could not find grammar file "${file}" in any search path:\n\n\t${searchPaths.join(',\n\t')}`);
+			const filePath = findImport(path.resolve(path.dirname(file)), file + '.baba');
+			if (!filePath) {
+				throw new Error(`Could not find grammar file "${file}"`);
 			}
+			const contents = fs.readFileSync(filePath, 'utf-8');
 			reduceTree(babaParser.parse(contents), [alias]); // Parse and insert the imported grammar
 		}
 
@@ -368,14 +375,8 @@ export default (file, targets, minify=false) => {
 		}]);
 	}
 
-	const filePath = path.resolve(path.dirname(file));
-	const searchPaths = [
-		filePath,
-		path.join(filePath, 'node_modules'),
-	];
-
 	return babel.transformFromAst(
-		getAst(fs.readFileSync(file, 'utf-8'), searchPaths),
+		getAst(fs.readFileSync(file, 'utf-8')),
 		null, {
 			presets,
 			babelrc: false,
