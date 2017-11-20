@@ -7,12 +7,18 @@ function ClosureWrapper(fn, args=[]) {
 // @choice
 const randomNode = fn => {
 	let cached;
+	let prev;
 	return new ClosureWrapper(() => {
 		if (!cached) {
 			// Flatten array (e.g. arrays of weighted items)
 			cached = Array.prototype.concat.apply([], fn());
 		}
-		return cached[Math.floor(Math.random() * cached.length)];
+		// Avoid selecting the same item twice
+		let item;
+		for (let i = 0; !item || (prev === item && i < cached.length); i++) {
+			item = cached[Math.floor(Math.random() * cached.length)];
+		}
+		return prev = item;
 	});
 };
 
