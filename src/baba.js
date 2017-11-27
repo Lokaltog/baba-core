@@ -5,9 +5,26 @@ import * as t from "babel-types";
 import fs from 'fs';
 import path from 'path';
 
-const getAst = (grammar, searchPaths=[]) => {
+function findImport(directory, fileName) {
+	const file = [
+		path.join(directory, fileName),
+		path.join(directory, 'node_modules', fileName),
+	].filter(f => fs.existsSync(f) && fs.statSync(f).isFile())[0];
+
+	if (file) {
+		return file;
+	}
+	let parent = path.resolve(directory, '..');
+	if (parent === directory) {
+		return null;
+	}
+	return findImport(parent, fileName);
+}
+
+const getAst = grammar => {
 	const getIdentifier = it => `baba$${it.join('$').replace(/[^a-z0-9_]/ig, '_')}`;
 	const getFunctionIdentifier = it => `baba$${it.join('$').replace(/[^a-z0-9_]/ig, '_')}$$fn`;
+	const getVarIdentifier = it => `baba$${it.join('$').replace(/[^a-z0-9_]/ig, '_')}$$var`;
 	const arrowWrap = (identifier, arg) => t.callExpression(
 		t.identifier(identifier),
 		[t.arrowFunctionExpression([], arg)],
@@ -39,6 +56,7 @@ const getAst = (grammar, searchPaths=[]) => {
 			this.exports = [];
 			this.definitions = [];
 			this.vars = [];
+			this.declaredVars = [];
 			this.mappings = {};
 		}
 
@@ -63,20 +81,11 @@ const getAst = (grammar, searchPaths=[]) => {
 		}
 
 		addImport(file, alias) {
-			let contents = null;
-			searchPaths.forEach(searchPath => {
-				try {
-					const filePath = path.join(searchPath, file + '.baba');
-					contents = fs.readFileSync(filePath, 'utf-8');
-					return;
-				}
-				catch (e) {
-					// ignore
-				}
-			});
-			if (contents === null) {
-				throw new Error(`Could not find grammar file "${file}" in any search path:\n\n\t${searchPaths.join(',\n\t')}`);
+			const filePath = findImport(path.resolve(path.dirname(file)), file + '.baba');
+			if (!filePath) {
+				throw new Error(`Could not find grammar file "${file}"`);
 			}
+			const contents = fs.readFileSync(filePath, 'utf-8');
 			reduceTree(babaParser.parse(contents), [alias]); // Parse and insert the imported grammar
 		}
 
@@ -114,8 +123,7 @@ const getAst = (grammar, searchPaths=[]) => {
 
 			if (type === '<->') {
 				// Add reverse mapping (bidirectional)
-				ret.reverse();
-				this.mappings[identifier].push(t.arrayExpression(ret));
+				this.mappings[identifier].push(t.arrayExpression(ret.slice().reverse()));
 			}
 		}
 
@@ -132,13 +140,17 @@ const getAst = (grammar, searchPaths=[]) => {
 			]));
 		}
 
-		addVar(identifier, alias, fallback) {
+		addVar(identifier, alias, value) {
+			if (~this.declaredVars.indexOf(identifier)) {
+				return;
+			}
+			this.declaredVars.push(identifier);
 			this.vars.push(t.variableDeclaration('const', [
 				t.variableDeclarator(
 					t.identifier(identifier),
 					t.callExpression(
 						t.identifier(templateRefs.variable),
-						[t.stringLiteral(alias), t.arrowFunctionExpression([], fallback)],
+						[t.stringLiteral(alias), t.arrowFunctionExpression([], value)],
 					),
 				),
 			]));
@@ -212,7 +224,7 @@ const getAst = (grammar, searchPaths=[]) => {
 			if (addDeclaration) {
 				if (node.identifier.type === 'var_identifier') {
 					// Variable declaration and fallback definition
-					declarations.addVar(identifier, node.identifier.value, ret);
+					declarations.addVar(getVarIdentifier(path.concat(node.identifier.value)), node.identifier.value, ret);
 				}
 				else {
 					declarations.addDefinition(identifier, ret);
@@ -235,7 +247,7 @@ const getAst = (grammar, searchPaths=[]) => {
 
 			if (node.identifier.type === 'var_identifier') {
 				// Variable declaration and fallback definition
-				declarations.addVar(identifier, node.identifier.value, ret);
+				declarations.addVar(getVarIdentifier(path.concat(node.identifier.value)), node.identifier.value, ret);
 			}
 			else {
 				declarations.addDefinition(identifier, ret);
@@ -251,7 +263,7 @@ const getAst = (grammar, searchPaths=[]) => {
 
 			if (node.identifier.type === 'var_identifier') {
 				// Variable declaration and fallback definition
-				declarations.addVar(identifier, node.identifier.value, ret);
+				declarations.addVar(getVarIdentifier(path.concat(node.identifier.value)), node.identifier.value, ret);
 			}
 			else {
 				declarations.addDefinition(identifier, ret);
@@ -275,19 +287,27 @@ const getAst = (grammar, searchPaths=[]) => {
 			return t.identifier(getIdentifier(path.concat(node.value.split('.'))));
 		},
 		var_identifier({ node, path }) {
-			return this.identifier({ node, path });
+			return t.identifier(getVarIdentifier(path.concat(node.value.split('.'))));
 		},
-		var_assign({ node }) {
+		var_assign({ node, optional=false }) {
+			const identifier = getVarIdentifier(node.name.value.split('.'));
+			const ret = reduceTree(node.value)[0];
+			declarations.addVar(identifier, node.name.value, ret);
+
 			// Returns `VARIABLE.a(() => VALUE`
 			return t.callExpression(
 				t.memberExpression(
-					t.identifier(getIdentifier(node.name.value.split('.'))),
+					t.identifier(identifier),
 					t.identifier('a'),
 				),
 				[
-					t.arrowFunctionExpression([], reduceTree(node.value)[0]),
+					t.arrowFunctionExpression([], ret),
+					t.booleanLiteral(optional),
 				],
 			);
+		},
+		var_opt_assign({ node }) {
+			return this.var_assign({ node, optional: true });
 		},
 		function_identifier({ node, path }) {
 			return t.identifier(getFunctionIdentifier(path.concat(node.value.split('.'))));
@@ -321,7 +341,7 @@ const getAst = (grammar, searchPaths=[]) => {
 			const fnTree = reduceTree(node.fn, path);
 			return t.callExpression(
 				fnTree[0],
-				[argTree[0]],
+				[t.arrowFunctionExpression([], argTree[0])]
 			);
 		},
 		function_call({ node, path }) {
@@ -355,14 +375,8 @@ export default (file, targets, minify=false) => {
 		}]);
 	}
 
-	const filePath = path.resolve(path.dirname(file));
-	const searchPaths = [
-		filePath,
-		path.join(filePath, 'node_modules'),
-	];
-
 	return babel.transformFromAst(
-		getAst(fs.readFileSync(file, 'utf-8'), searchPaths),
+		getAst(fs.readFileSync(file, 'utf-8')),
 		null, {
 			presets,
 			babelrc: false,

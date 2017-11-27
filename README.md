@@ -219,7 +219,13 @@ transforms and function calls.
 #### Variables
 
 Variables may be assigned values inside tags with a **variable assign 
-expression**. Only identifiers are valid variable values.
+expression**. Currently only identifiers can be assigned to variables.
+
+**Regular variable assignment** uses the `=` operator, and will always assign 
+the value.
+
+**Optional variable assignment** uses the `?=` operator, and will assign the 
+value only if the variable hasn't been assigned a value yet.
 
 #### Transforms
 
@@ -252,7 +258,7 @@ transform-expr   = transform-expr, ":", function-expr
                  | function-expr ;
 function-expr    = ( var-assign-expr, argument-list )
                  | var-assign-expr ;
-var-assign-expr  = ( var-assign-expr, "=", var-assign-value )
+var-assign-expr  = ( var-assign-expr, ( "?=" | "=" ), var-assign-value )
                  | var-assign-value ;
 var-assign-value = identifier
                  | quoted-string ;

@@ -57,6 +57,7 @@
 <tag>\| return 'ELEMENT_CHOICE'
 <tag>\: return 'ELEMENT_TRANSFORM'
 <tag>\??(?=\>) return 'QUANTIFIER'
+<tag>\?\= return 'VAR_OPT_ASSIGN'
 <tag>\= return 'VAR_ASSIGN'
 
 // Other
@@ -189,7 +190,8 @@ function_expr
 	;
 
 var_assign_expr
-	: var_assign_expr VAR_ASSIGN var_assign_value -> {type: 'var_assign', name: $1, value: [$3]}
+	: var_assign_expr VAR_OPT_ASSIGN var_assign_value -> {type: 'var_opt_assign', name: $1, value: [$3]}
+	| var_assign_expr VAR_ASSIGN var_assign_value -> {type: 'var_assign', name: $1, value: [$3]}
 	| var_assign_value
 	;
 

@@ -4,15 +4,26 @@ function ClosureWrapper(fn, args=[]) {
 	this.toString = () => fn(...args) + '';
 }
 
+function shuffle(arr) {
+	let randomIndex, itemAtIndex, i;
+	for (i = arr.length - 1; i > 0; i--) {
+		randomIndex = Math.floor(Math.random() * (i + 1));
+		itemAtIndex = arr[i];
+		arr[i] = arr[randomIndex];
+		arr[randomIndex] = itemAtIndex;
+	}
+}
+
 // @choice
 const randomNode = fn => {
-	let cached;
+	let cached = [];
 	return new ClosureWrapper(() => {
-		if (!cached) {
+		if (!cached.length) {
 			// Flatten array (e.g. arrays of weighted items)
 			cached = Array.prototype.concat.apply([], fn());
+			shuffle(cached);
 		}
-		return cached[Math.floor(Math.random() * cached.length)];
+		return cached.pop();
 	});
 };
 
@@ -20,8 +31,10 @@ let _vars = {};
 
 // @variable
 const variableRef = (id, ref) => {
-	const ret = new ClosureWrapper(() => _vars[id] || (_vars[id] = ref() + ''));
-	ret.a = value => new ClosureWrapper(() => _vars[id] = value() + '');
+	let currentVal = _vars[id] || (ref() + '');
+	const ret = new ClosureWrapper(() => currentVal);
+	ret.a = (value, optional) => new ClosureWrapper(() =>
+		!currentVal || !optional ? (currentVal = value() + '') : currentVal);
 	return ret;
 };
 
@@ -29,17 +42,15 @@ const variableRef = (id, ref) => {
 const concatNode = fn => new ClosureWrapper(() => fn().join(''));
 
 // @mapping
-const mapRules = (...rules) => {
-	return input => {
-		let ret;
-		let str = input + '';
-		rules.some(filter => ret = str.match(filter[0]) && str.replace(filter[0], filter[1]));
-		return ret;
-	};
-};
+const mapRules = (...rules) => input => new ClosureWrapper(() => {
+	let ret;
+	let str = input() + '';
+	rules.some(filter => ret = str.match(filter[0]) && str.replace(filter[0], filter[1]));
+	return ret || str;
+});
 
 // @function
-const mapFunction = fn => input => fn(input + '');
+const mapFunction = fn => input => new ClosureWrapper(() => fn(input() + ''));
 
 // @export
 const exportValue = fn => {
