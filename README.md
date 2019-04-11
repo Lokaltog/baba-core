@@ -37,6 +37,19 @@ console.log(myGrammar.test());
 // Outputs "foo", "bar" or "baz"
 ```
 
+You may also generate test output from all exported identifiers:
+
+```bash
+baba my-grammar.baba --test-output
+
+# Example output:
+# git-verb
+#   → stash
+#   → reset
+#   → index
+#   → annotate
+```
+
 ## Resources
 
 * [Vim syntax](https://github.com/Lokaltog/vim-baba)
