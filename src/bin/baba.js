@@ -10,6 +10,7 @@ yargs.command(['parse <file>', '$0'], 'Parse grammar and output JS module',
 	yargs => yargs
 		.option('minify', {
 			describe: 'Minify output',
+			type: 'boolean',
 			default: false,
 		})
 		.option('test-output', {
