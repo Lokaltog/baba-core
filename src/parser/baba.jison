@@ -124,7 +124,7 @@ function_body
 
 // List
 list_block
-	: identifier list -> {type: 'list_block', identifier: $1, children: $2}
+	: identifier list -> {type: 'list_block', identifier: $1, children: $2.flat()}
 	;
 
 list
