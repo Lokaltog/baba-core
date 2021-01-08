@@ -169,7 +169,7 @@ const getAst = (grammar, jsTemplate='default') => {
 			return mappings
 				.concat(this.definitions)
 				.concat(this.vars)
-				.concat(t.exportDefaultDeclaration(t.objectExpression(this.exports)));
+				.concat(t.returnStatement(t.objectExpression(this.exports)));
 		}
 	}
 

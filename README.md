@@ -33,7 +33,9 @@ file doesn't have any dependencies and works standalone:
 ```js
 import myGrammar from './my-grammar';
 
-console.log(myGrammar.test());
+const generator = myGrammar();
+
+console.log(generator.test());
 // Outputs "foo", "bar" or "baz"
 ```
 

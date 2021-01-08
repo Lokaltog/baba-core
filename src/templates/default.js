@@ -32,7 +32,7 @@ let _vars = {};
 // @variable
 const variableRef = (id, ref) => {
 	let currentVal = _vars[id] || (ref() + '');
-	const ret = new ClosureWrapper(() => currentVal);
+	const ret = new ClosureWrapper(() => _vars[id] || (ref() + ''));
 	ret.a = (value, optional) => new ClosureWrapper(() =>
 		!currentVal || !optional ? (currentVal = value() + '') : currentVal);
 	return ret;
