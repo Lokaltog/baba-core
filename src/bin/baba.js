@@ -34,12 +34,17 @@ yargs.command(['parse <file>', '$0'], 'Parse grammar and output JS module',
 		.positional('file', {
 			describe: 'Baba grammar file',
 			type: 'string',
+		})
+		.positional('template', {
+			describe: 'JS template',
+			type: 'string',
+			default: 'default',
 		}),
 	argv => {
 		const script = Baba(argv.file, {
 			browsers: argv.targetBrowsers,
 			node: argv.targetNode,
-		}, argv.minify);
+		}, argv.minify, argv.template);
 
 		if (typeof argv.testOutput !== 'undefined') {
 			const wrap = (s, w) => s.replace(new RegExp(`(?![^\\n]{1,${w}}$)([^\\n]{1,${w}})\\s`, 'g'), '$1\n');

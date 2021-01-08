@@ -21,7 +21,7 @@ function findImport(directory, fileName) {
 	return findImport(parent, fileName);
 }
 
-const getAst = grammar => {
+const getAst = (grammar, jsTemplate='default') => {
 	const getIdentifier = it => `baba$${it.join('$').replace(/[^a-z0-9_]/ig, '_')}`;
 	const getFunctionIdentifier = it => `baba$${it.join('$').replace(/[^a-z0-9_]/ig, '_')}$$fn`;
 	const getVarIdentifier = it => `baba$${it.join('$').replace(/[^a-z0-9_]/ig, '_')}$$var`;
@@ -30,7 +30,7 @@ const getAst = grammar => {
 		[t.arrowFunctionExpression([], arg)],
 	);
 
-	const template = fs.readFileSync(require.resolve('./templates/default'), 'utf-8');
+	const template = fs.readFileSync(require.resolve(`./templates/${jsTemplate}`), 'utf-8');
 	const templateAst = babylon.parse(template, { sourceType: 'module' });
 
 	const templateRefs = {};
@@ -359,24 +359,28 @@ const getAst = grammar => {
 
 	templateAst.program.body = templateAst.program.body.concat(declarations.getAst());
 
+	templateAst.program.body = [(t.exportDefaultDeclaration(t.arrowFunctionExpression([], 
+		t.blockStatement(templateAst.program.body))))]
+
 	return templateAst;
 };
 
-export default (file, targets, minify=false) => {
-	const presets = [
-		[require('babel-preset-env'), { targets }],
-	];
+export default (file, targets, minify=false, template='default') => {
+	const presets = [];
 
 	if (minify) {
-		presets.push([require('babel-preset-minify'), {
-			mangle: {
-				topLevel: true,
-			},
-		}]);
+		presets.push(
+			[require('babel-preset-env'), { targets }],
+			[require('babel-preset-minify'), {
+				mangle: {
+					topLevel: true,
+				},
+			}],
+		);
 	}
 
 	return babel.transformFromAst(
-		getAst(fs.readFileSync(file, 'utf-8')),
+		getAst(fs.readFileSync(file, 'utf-8'), template),
 		null, {
 			presets,
 			babelrc: false,
